@@ -1,0 +1,26 @@
+{
+    "name": "UTJ.UnityPlayerSync.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:fea82b92eb7ce2f40a863ea006b625ba",
+        "GUID:0e80379a029da2e44b192fcaf767e3af",
+        "GUID:41c31d2e520782f4790d421da85ffc5f"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "Select...",
+            "expression": "",
+            "define": ""
+        }
+    ],
+    "noEngineReferences": false
+}
