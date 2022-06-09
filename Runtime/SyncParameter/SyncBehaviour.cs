@@ -8,6 +8,7 @@ namespace UTJ.UnityPlayerSyncEngine
     public class SyncBehaviour : SyncComponent
     {
         protected SyncBool m_Enabled;
+        private Behaviour m_Behaviour;
 
         public bool enabled
         {
@@ -17,10 +18,9 @@ namespace UTJ.UnityPlayerSyncEngine
 
         public SyncBehaviour(Behaviour behaviour):base(behaviour)        
         {
-            if (behaviour != null)
-            {
-                m_Enabled = new SyncBool(behaviour.enabled);
-            }
+            m_Behaviour = behaviour;
+            m_Enabled = new SyncBool(behaviour.enabled);
+            
         }
 
         public override void Serialize(BinaryWriter binaryWriter)
@@ -35,14 +35,12 @@ namespace UTJ.UnityPlayerSyncEngine
             m_Enabled.Deserialize(binaryReader);
         }
 
-        public override void WriteBack(Component component)
+        public override void WriteBack()
         {
-            base.WriteBack(component);
-            var behabiour = component as Behaviour;
-
+            base.WriteBack();            
             if (m_Enabled.hasChanged)
             {
-                behabiour.enabled = m_Enabled.value;
+                m_Behaviour.enabled = m_Enabled.value;
             }
         }
 

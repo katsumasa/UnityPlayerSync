@@ -1,26 +1,28 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UTJ.RemoteConnect.Editor;
 using UTJ.UnityPlayerSyncEngine;
 
 namespace UTJ.UnityPlayerSyncEditor
 {
                
-    public class UnityPlayerSyncEditorWindow : RemoteConnectEditorWindow
+    public class UnityEditorSyncWindow : RemoteConnectEditorWindow
     {
         [MenuItem("Window/UTJ/UnityPlayerSync/Open")]
         static void OpenWindow()
         {
-            var window = (UnityPlayerSyncEditorWindow)EditorWindow.GetWindow(typeof(UnityPlayerSyncEditorWindow));
+            var window = (UnityEditorSyncWindow)EditorWindow.GetWindow(typeof(UnityEditorSyncWindow));
         }
 
         protected override void OnEnable()
         {            
             kMsgSendEditorToPlayer = UnityPlayerSyncRuntime.kMsgSendEditorToPlayer;
             kMsgSendPlayerToEditor = UnityPlayerSyncRuntime.kMsgSendPlayerToEditor;
-            remoteMessageCB = MessageReciveCB;
+            eventMessageCB = EventMessageReciveCB;            
             base.OnEnable();
 
             EditorApplication.contextualPropertyMenu += OnPropertyContextMenu;
@@ -46,16 +48,51 @@ namespace UTJ.UnityPlayerSyncEditor
             Debug.Log(message.messageId);
         }
 
+
+        void EventMessageReciveCB(byte[] vs)
+        {
+            var ms = new MemoryStream(vs);
+            var br = new BinaryReader(ms);
+            try
+            {
+                var id = br.ReadInt32();
+
+                var newScene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+
+                var sm = new SyncSceneManager();
+                sm.Deserialize(br);
+                sm.WriteBack();
+            }
+            finally
+            {
+                br.Close();
+                ms.Close();
+            }
+        }
+
         private void OnGUI()
         {
             ConnectionTargetSelectionDropdown();
 
             if (GUILayout.Button("SYNC"))
             {
-                var message = new RemoteConnect.Message(0);
-                
+                var ms = new MemoryStream();
+                var bw = new BinaryWriter(ms);
+                try
+                {
+                    bw.Write(0);
+                    SendRemoteMessage(ms.ToArray());
+                }
+                finally
+                {
+                    bw.Close();
+                    ms.Close();
+                }
+            }
 
-                SendRemoteMessage(RemoteConnect.Message.Serialize(message));
+            if(GUILayout.Button("Close"))
+            {
+
             }
 
         }
