@@ -51,7 +51,7 @@ public class NewTestScript
 
         foreach(var obj in objs)
         {
-            SyncValueType.Allocater(obj.GetType().Name,obj);
+            SyncValueType.Allocater(obj.GetType(),obj);
             //Debug.Log(obj.GetType().Name);
         }
     }
@@ -59,8 +59,24 @@ public class NewTestScript
     [Test]   
     public void SyncGameObject()
     {        
-        var gameObject = new GameObject();
+        var gameObject = new GameObject();        
         var syncGameObject = new  SyncGameObject(gameObject);
+        var memory = new MemoryStream();
+        var writer = new BinaryWriter(memory);
+        byte[] bytes;
+        syncGameObject.Serialize(writer);
+
+        bytes = memory.ToArray();
+        
+        writer.Close();
+        memory.Close();
+
+        memory = new MemoryStream(bytes);
+        var reader = new BinaryReader(memory);
+        var syncGameObject2 = new SyncGameObject();
+        syncGameObject.Deserialize(reader);
+        reader.Close();
+        memory.Close();       
     }
 
     // A Test behaves as an ordinary method

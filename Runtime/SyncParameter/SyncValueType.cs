@@ -14,21 +14,39 @@ namespace UTJ.UnityPlayerSyncEngine
         static readonly System.Type[] m_AvailableTypes =
         {
             typeof(bool),
+            typeof(bool[]),
             typeof(byte),
+            typeof(byte[]),
             typeof(char),
+            typeof(char[]),
             typeof(short),
+            typeof(short[]),
             typeof(int),
+            typeof(int[]),
+            typeof(List<int>),
             typeof(long),
+            typeof(long[]),
             typeof(sbyte),
+            typeof(sbyte[]),
             typeof(float),
+            typeof(float[]),
             typeof(string),
+            typeof(string[]),
             typeof(ushort),
+            typeof(ushort[]),
             typeof(uint),
+            typeof(uint[]),
             typeof(ulong),
+            typeof(ulong[]),
             //
             typeof(Vector2),
+            typeof(Vector2[]),
             typeof(Vector3),
-            typeof(Vector4),            
+            typeof(Vector3[]),
+            typeof(Vector4),
+            typeof(Vector4[]),
+            typeof(Quaternion),
+            typeof(Quaternion[]),
         };
 
 
@@ -46,107 +64,82 @@ namespace UTJ.UnityPlayerSyncEngine
                
 
 
-        public static SyncValueType Allocater(System.Type type)
-        {
-            return Allocater(type.Name);
-        }
+        
 
-        public static SyncValueType Allocater(System.Type type,object obj)
+        public static SyncValueType Allocater(System.Type type,object obj = null)
         {
-            return Allocater(type.Name, obj);
-        }
 
-        public static SyncValueType Allocater(string name)
-        {
-            switch (name)
-            {
-                case "Boolean": return new SyncBool();
-                case "Byte": return new SyncByte();
-                case "Char": return new SyncChar();
-                case "Int16": return new SyncInt16();
-                case "Int32": return new SyncInt();
-                case "Int64": return new SyncInt64();
-                case "SByte": return new SyncSByte();
-                case "Single": return new SyncSingle();
-                case "String": return new SyncString();
-                case "UInt16": return new SyncUInt16();
-                case "UInt32": return new SyncUInt();
-                case "UInt64": return new SyncUInt64();                
-                case "Vector2": return new SyncVector2(Vector2.zero);
-                case "Vector3": return new SyncVector3(Vector3.zero);
-                case "Vector4": return new SyncVector4(Vector4.zero);                
+            if (type == typeof(bool) || type == typeof(bool[]) || type == typeof(List <bool>))
+            {                                
+                return new SyncBool(obj);
+            }            
+            if(type == typeof(byte) || type == typeof(byte[]) || type == typeof(List<byte>))
+            {                
+                return new SyncByte(obj);
+            }            
+            if(type == typeof(char) || type == typeof(char[]) || type == typeof(List<char>)){
+                
+                return new SyncChar(obj);
             }
-            throw new ArgumentException($"{name}is not avaiavle.");            
+            if(type == typeof(short) || type == typeof(short[]) || type == typeof(List<short>))
+            {
+
+                return new SyncInt16(obj);
+            }
+            if(type == typeof(int) || type == typeof(int[]) || type == typeof(List<int>))
+            {
+                return new SyncInt(obj);
+            }            
+            if(type == typeof(long) || type == typeof(long[]) || type == typeof(List<int>))
+            {
+                return new SyncInt64(obj);
+            }
+            if(type == typeof(sbyte) || type == typeof(sbyte[]) || type == typeof(List<sbyte>))
+            {
+                return new SyncSByte(obj);
+            }
+            if(type == typeof(float) || type == typeof(float[]) || type == typeof(List<float>))
+            {
+                return new SyncSingle(obj);
+            }
+            if(type == typeof(string) || type == typeof(string[]) || type == typeof(List<string>))
+            {
+                return new SyncString(obj);
+            }
+            if(type == typeof(ushort) || type == typeof(ushort[]) || type == typeof(List<ushort>))
+            {
+                return new SyncUInt16(obj);
+            }
+            if(type == typeof(uint) || type == typeof(uint[]) || type == typeof(List<uint>))
+            {
+                return new SyncUInt(obj);
+            }
+            if(type == typeof(ulong) || type == typeof(ulong[]) || type == typeof(List<ulong>))
+            {
+                return new SyncUInt64(obj);
+            }
+            //
+            if(type == typeof(Vector2) || type == typeof(Vector2[]) || type == typeof(List<Vector2>))
+            {
+                return new SyncVector2((Vector2)obj);
+            }
+            if(type == typeof(Vector3) || type == typeof(Vector3[]) || type == typeof(List<Vector3>))
+            {
+                return new SyncVector3((Vector3)obj);
+            }
+            if(type == typeof(Vector4) || type == typeof(Vector4[]) || type == typeof(List<Vector4>))
+            {
+                return new SyncVector4((Vector4)obj);
+            }
+
+            throw new ArgumentException($"{type}is not avaiavle.");
+
         }
 
-        public static SyncValueType Allocater(string name, object obj)
-        {
-            switch (name)
-            {
-                case "Boolean": return new SyncBool(obj);
-                case "Byte": return new SyncByte(obj);
-                case "Char": return new SyncChar(obj);
-                case "Int16": return new SyncInt16(obj);
-                case "Int32": return new SyncInt(obj);
-                case "Int64": return new SyncInt64(obj);
-                case "SByte": return new SyncSByte(obj);
-                case "Single": return new SyncSingle(obj);
-                case "String": return new SyncString(obj);
-                case "UInt16": return new SyncUInt16(obj);
-                case "UInt32": return new SyncUInt(obj);
-                case "UInt64": return new SyncUInt64(obj);                
-                case "Vector2": return new SyncVector2((Vector2)obj);
-                case "Vector3": return new SyncVector3((Vector3)obj);
-                case "Vector4": return new SyncVector4((Vector4)obj);                
-            }
-            throw new ArgumentException($"{name}is not avaiavle.");
-        }
+        
 
-        public object GetValue(string name)
-        {
-            switch (name)
-            {
-                case "Boolean": return ((SyncBool)this).value;
-                case "Byte":    return ((SyncByte)this).value;
-                case "Char":    return ((SyncChar)this).value;
-                case "Int16":   return ((SyncInt16)this).value;
-                case "Int32":   return ((SyncInt)this).value;
-                case "Int64":   return ((SyncInt64)this).value;
-                case "SByte":   return ((SyncSByte)this).value;
-                case "Single":  return ((SyncSingle)this).value;
-                case "String":  return ((SyncString)this).value;
-                case "UInt16":  return ((SyncUInt16)this).value;
-                case "UInt32":  return ((SyncUInt)this).value;
-                case "UInt64":  return ((SyncUInt64)this).value;
-                case "Vector2": return ((SyncVector2)this).value;
-                case "Vector3": return ((SyncVector3)this).value;
-                case "Vector4": return ((SyncVector4)this).value;
-            }
-            throw new ArgumentException($"{name}is not avaiavle.");
-        }
+        public SyncValueType() : base() { }
 
-        public object GetValues(string name)
-        {
-            switch (name)
-            {
-                case "Boolean": return ((SyncBool)this).values;
-                case "Byte":    return ((SyncByte)this).values;
-                case "Char":    return ((SyncChar)this).values;
-                case "Int16":   return ((SyncInt16)this).values;
-                case "Int32":   return ((SyncInt)this).values;
-                case "Int64":   return ((SyncInt64)this).values;
-                case "SByte":   return ((SyncSByte)this).values;
-                case "Single":  return ((SyncSingle)this).values;
-                case "String":  return ((SyncString)this).values;
-                case "UInt16":  return ((SyncUInt16)this).values;
-                case "UInt32":  return ((SyncUInt)this).values;
-                case "UInt64":  return ((SyncUInt64)this).values;
-                case "Vector2": return ((SyncVector2)this).values;
-                case "Vector3": return ((SyncVector3)this).values;
-                case "Vector4": return ((SyncVector4)this).values;
-            }
-            throw new ArgumentException($"{name}is not avaiavle.");
-        }
 
 
         public SyncValueType(object obj) : base(obj) { }
@@ -186,38 +179,46 @@ namespace UTJ.UnityPlayerSyncEngine
             }
         }
         
-        public SyncValueType() : base(typeof(T))
+        public SyncValueType() : base()
         {
-            m_Length = 1;
-            m_Values = new T[1];
         }
 
-        public SyncValueType(Type type) : base(type)
-        {            
-            m_Length = 1;
-            m_Values = new T[1];
-        }
-        
+
         public SyncValueType(object value):base(value)
         {
-            m_Length = 1;
-            m_Values = new T[1];
-            m_Values[0] = (T)value;
-        }
-        
-        public SyncValueType(object[] values):base(values)
-        {
-            if (values != null)
+            if(value == null)
             {
-                m_Length = values.Length;
-                m_Values = new T[values.Length];
-                Array.Copy(values, m_Values, values.Length);
+                return;
+            }
+
+            var t = value.GetType();
+            if (t.IsArray)
+            {
+                var array = (T[])value;
+                m_Length = array.Length;
+                m_Values = new T[m_Length];
+                Array.Copy(array, m_Values, array.Length);
+            }
+            else if(t.IsGenericType && t.GetGenericTypeDefinition() == typeof(List<>))
+            {
+                var list = (List<T>)value;
+                m_Length = list.Count;
+                m_Values = new T[m_Length];
+                for(var i = 0; i < m_Length; i++)
+                {
+                    m_Values[i] = list[i];
+                }
             }
             else
             {
-                m_Length = -1;
+                m_Length = 1;
+                m_Values = new T[1];
+                m_Values[0] = (T)value;
             }
+
+            
         }
+                
 
         public override void Serialize(BinaryWriter binaryWriter)
         {
@@ -235,19 +236,23 @@ namespace UTJ.UnityPlayerSyncEngine
             }            
         }
 
-        public virtual void WriteBack(ref T v)
-        {
-            if (m_HasChanded)
-            {
-                v = m_Values[0];
-            }
-        }
 
-        public virtual void WriteBack(ref T[] v)
+        public override object GetValue()
         {
-            if (m_HasChanded)
+            var t = SyncType.GetType(m_Type);
+
+            if (m_Type.IsArray)
             {
-                v = m_Values;
+                return m_Values;
+            }
+            else if (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(List<>))
+            {
+                var list = new List<T>(m_Values);
+                return list;
+            }
+            else
+            {
+                return m_Values[0];
             }
         }
     }
@@ -378,6 +383,8 @@ namespace UTJ.UnityPlayerSyncEngine
             }
         }
     }
+
+    
 
 
     public class SyncInt64 : SyncValueType<long>

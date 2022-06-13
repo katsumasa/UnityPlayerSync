@@ -81,7 +81,10 @@ namespace UTJ.UnityPlayerSyncEngine
             base.WriteBack();
             if(m_parentInstanceID.value <= 0)
             {
-                m_Transform.parent = null;
+                // 下記のエラーが発生するので、parentをnullにするのはペンディング
+                // Setting the parent of a transform which resides in a Prefab instance is not possible
+                // 
+                //m_Transform.parent = null;
                 if(m_Transform.gameObject.scene.handle != m_SceneHn.value)
                 {
                     for(var i = 0; i < SceneManager.sceneCount; i++)
