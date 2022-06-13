@@ -7,7 +7,7 @@ namespace UTJ.UnityPlayerSyncEngine
 {
     public class SyncVector2 : SyncValueType<Vector2>
     {
-        public SyncVector2(Vector2 vector2) : base(vector2) { }
+        public SyncVector2(object vector2) : base(vector2) { }
         
 
         public override void Serialize(BinaryWriter binaryWriter)
@@ -33,7 +33,7 @@ namespace UTJ.UnityPlayerSyncEngine
 
     public class SyncVector3 : SyncValueType<Vector3>
     {
-        public SyncVector3(Vector3 vector3):base(vector3)
+        public SyncVector3(object vector3):base(vector3)
         {     
         }
 
@@ -63,7 +63,7 @@ namespace UTJ.UnityPlayerSyncEngine
 
     public class SyncVector4 : SyncValueType<Vector4>
     {        
-        public SyncVector4(Vector4 vector4) : base(vector4) { }
+        public SyncVector4(object vector4) : base(vector4) { }
         
 
         public override void Serialize(BinaryWriter binaryWriter)

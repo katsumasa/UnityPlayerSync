@@ -7,7 +7,7 @@ namespace UTJ.UnityPlayerSyncEngine
 {
     public class SyncQuaternion : SyncValueType<Quaternion>
     {
-        public SyncQuaternion(Quaternion quaternion) : base(quaternion) { }
+        public SyncQuaternion(object quaternion) : base(quaternion) { }
 
         public override void Serialize(BinaryWriter binaryWriter)
         {

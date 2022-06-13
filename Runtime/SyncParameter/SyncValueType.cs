@@ -15,38 +15,56 @@ namespace UTJ.UnityPlayerSyncEngine
         {
             typeof(bool),
             typeof(bool[]),
+            typeof(List<bool>),
             typeof(byte),
             typeof(byte[]),
+            typeof(List<byte>),
             typeof(char),
             typeof(char[]),
+            typeof(List<char>),
             typeof(short),
             typeof(short[]),
+            typeof(List<short>),
             typeof(int),
             typeof(int[]),
             typeof(List<int>),
             typeof(long),
             typeof(long[]),
+            typeof(List<long>),
             typeof(sbyte),
             typeof(sbyte[]),
+            typeof(List<sbyte>),
             typeof(float),
             typeof(float[]),
+            typeof(List<float>),
             typeof(string),
             typeof(string[]),
+            typeof(List<string>),
             typeof(ushort),
             typeof(ushort[]),
+            typeof(List<ushort>),
             typeof(uint),
             typeof(uint[]),
+            typeof(List<uint>),
             typeof(ulong),
             typeof(ulong[]),
+            typeof(List<ulong>),
             //
             typeof(Vector2),
             typeof(Vector2[]),
+            typeof(List<Vector2>),
             typeof(Vector3),
             typeof(Vector3[]),
+            typeof(List<Vector3>),
             typeof(Vector4),
             typeof(Vector4[]),
+            typeof(List<Vector4>),
             typeof(Quaternion),
             typeof(Quaternion[]),
+            typeof(List<Quaternion>),
+            typeof(Color),
+            typeof(Color[]),
+            typeof(List<Color>),
         };
 
 
@@ -121,17 +139,24 @@ namespace UTJ.UnityPlayerSyncEngine
             //
             if(type == typeof(Vector2) || type == typeof(Vector2[]) || type == typeof(List<Vector2>))
             {
-                return new SyncVector2((Vector2)obj);
+                return new SyncVector2(obj);
             }
             if(type == typeof(Vector3) || type == typeof(Vector3[]) || type == typeof(List<Vector3>))
             {
-                return new SyncVector3((Vector3)obj);
+                return new SyncVector3(obj);
             }
             if(type == typeof(Vector4) || type == typeof(Vector4[]) || type == typeof(List<Vector4>))
             {
-                return new SyncVector4((Vector4)obj);
+                return new SyncVector4(obj);
             }
-
+            if(type == typeof(Quaternion) || type == typeof(Quaternion[]) || type == typeof(List<Quaternion>))
+            {
+                return new SyncQuaternion(obj);
+            }
+            if(type == typeof(Color) || type == typeof(Color[]) || type == typeof(List<Color>))
+            {
+                return new SyncColor(obj);
+            }
             throw new ArgumentException($"{type}is not avaiavle.");
 
         }
