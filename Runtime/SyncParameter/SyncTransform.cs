@@ -11,107 +11,95 @@ namespace UTJ.UnityPlayerSyncEngine
 
     public class SyncTransform : SyncUnityEngineObject
     {
+        
 
-
-
-        protected SyncVector3 m_localPosition;
-        protected SyncQuaternion m_localRotation;
-        protected SyncVector3 m_localScale;        
-        protected SyncInt m_parentInstanceID;
-        protected SyncInt m_childCount;
-        protected SyncInt m_SceneHn;
-
-        private Transform m_Transform;
-
-        public SyncTransform():base(typeof(Transform))
+        static List<SyncTransform> m_SyncTransforms;
+        
+        public static void Clear()
         {
-            m_localPosition = new SyncVector3(Vector3.zero);
-            m_localRotation = new SyncQuaternion(Quaternion.identity);
-            m_localScale = new SyncVector3(Vector3.zero);
-            m_parentInstanceID = new SyncInt();
-            m_childCount = new SyncInt();
-            m_SceneHn = new SyncInt();
-
+            if (m_SyncTransforms != null)
+            {
+                m_SyncTransforms.Clear();
+            }
         }
 
 
-        public SyncTransform(Transform transform) : base(transform)
+        public Transform GetTransform()
         {
-            m_Transform = transform;
-            if (transform != null)
+            return (Transform)m_object;
+        }
+
+
+        public SyncTransform(object obj) : base(obj) 
+        { 
+            if(m_SyncTransforms == null)
             {
-                m_localPosition = new SyncVector3(transform.localPosition);
-                m_localRotation = new SyncQuaternion(transform.localRotation);
-                m_localScale = new SyncVector3(transform.localScale);
-                if (transform.parent != null)
-                {
-                    m_parentInstanceID = new SyncInt(transform.parent.GetInstanceID());
-                }
-                else
-                {
-                    m_parentInstanceID = new SyncInt(-1);
-                }
-                m_SceneHn = new SyncInt(transform.gameObject.scene.handle);
+                m_SyncTransforms = new List<SyncTransform>();
             }
+            m_SyncTransforms.Add(this);
+        }
+
+        ~SyncTransform()
+        {
+            m_SyncTransforms.Remove(this);
         }
 
 
         public override void Serialize(BinaryWriter binaryWriter)
         {
+            var transform = (Transform)m_object;
+            var localPosition = new SyncVector3(transform.localPosition);
+            var localRotation = new SyncQuaternion(transform.localRotation);
+            var localScale = new SyncVector3(transform.localScale);
+            int parentInstanceID = (transform.parent != null) ? transform.parent.GetInstanceID() : -1;
+                                                
             base.Serialize(binaryWriter);
-            m_localPosition.Serialize(binaryWriter);
-            m_localRotation.Serialize(binaryWriter);
-            m_localScale.Serialize(binaryWriter);
-            m_parentInstanceID.Serialize(binaryWriter);
-            m_SceneHn.Serialize(binaryWriter);
+            binaryWriter.Write(transform.GetInstanceID());
+            binaryWriter.Write(parentInstanceID);
+            localPosition.Serialize(binaryWriter);
+            localRotation.Serialize(binaryWriter);
+            localScale.Serialize(binaryWriter);                                    
         }
+
 
         public override void Deserialize(BinaryReader binaryReader)
         {
+            var transform = (Transform)m_object;
+            var localPosition = new SyncVector3(transform.localPosition);
+            var localRotation = new SyncQuaternion(transform.localRotation);
+            var localScale = new SyncVector3(transform.localScale);
+                        
             base.Deserialize(binaryReader);
-            m_localPosition.Deserialize(binaryReader);
-            m_localRotation.Deserialize(binaryReader);
-            m_localScale.Deserialize(binaryReader);
-            m_parentInstanceID.Deserialize(binaryReader);
-            m_SceneHn.Deserialize(binaryReader);
+            m_InstanceID = binaryReader.ReadInt32();
+            var parentInstanceID = binaryReader.ReadInt32();
+            localPosition.Deserialize(binaryReader);
+            localRotation.Deserialize(binaryReader);
+            localScale.Deserialize(binaryReader);
+            
+            
+            var parentSyncTransform = SyncTransform.GetSyncTransform((int)parentInstanceID);
+            if (parentSyncTransform != null)
+            {
+                transform.parent = (Transform)parentSyncTransform.m_object;
+            }
+            transform.localPosition = (Vector3)localPosition.GetValue();
+            transform.localRotation = (Quaternion)localRotation.GetValue();
+            transform.localScale = (Vector3)localScale.GetValue();
         }
 
-        public override void WriteBack()
+
+        static SyncTransform GetSyncTransform(int instanceID)
         {
-            base.WriteBack();
-            if(m_parentInstanceID.value <= 0)
+            foreach(var syncTransForm in m_SyncTransforms)
             {
-                // 下記のエラーが発生するので、parentをnullにするのはペンディング
-                // Setting the parent of a transform which resides in a Prefab instance is not possible
-                // 
-                //m_Transform.parent = null;
-                if(m_Transform.gameObject.scene.handle != m_SceneHn.value)
+                if(syncTransForm.m_InstanceID == instanceID)
                 {
-                    for(var i = 0; i < SceneManager.sceneCount; i++)
-                    {
-                        var scene = SceneManager.GetSceneAt(i);
-                        if(scene.handle == m_SceneHn.value)
-                        {
-                            SceneManager.MoveGameObjectToScene(m_Transform.gameObject,scene);
-                            break;
-                        }
-                    }
+                    return syncTransForm;
                 }
             }
-            else
-            {
-                m_Transform.parent = SyncTransform.GetTransform(m_parentInstanceID.value);
-            }
-            m_Transform.localPosition = m_localPosition.value;
-            m_Transform.localRotation = m_localRotation.value;
-            m_Transform.localScale = m_localScale.value;
-
+            return null;
         }
-
-        public void SetTransform(Transform transform)
-        {
-            m_Transform = transform;
-        }
+        
 
 
         public static Transform GetTransform(int instanceID)

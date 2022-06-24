@@ -24,13 +24,11 @@ namespace UTJ.UnityPlayerSyncEngine
 
         public override void Serialize(BinaryWriter binaryWriter)
         {
-            base.Serialize(binaryWriter);
             binaryWriter.Write(m_FullName);
         }
 
         public override void Deserialize(BinaryReader binaryReader)
-        {
-            base.Deserialize(binaryReader);
+        {         
             m_FullName = binaryReader.ReadString();
         }
     }

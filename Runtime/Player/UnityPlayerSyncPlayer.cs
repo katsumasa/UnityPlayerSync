@@ -9,13 +9,13 @@ namespace UTJ.UnityPlayerSyncEngine {
     public class UnityPlayerSyncPlayer : UTJ.RemoteConnect.Player
     {
 
+        
 
 
         protected override void OnEnable()
         {
             kMsgSendEditorToPlayer = UnityPlayerSyncRuntime.kMsgSendEditorToPlayer;
-            kMsgSendPlayerToEditor = UnityPlayerSyncRuntime.kMsgSendPlayerToEditor;
-            //remoteMessageCB = MessageReciveCB;
+            kMsgSendPlayerToEditor = UnityPlayerSyncRuntime.kMsgSendPlayerToEditor;           
             messageEventCB = MessageReciveEventCB;
             base.OnEnable();
         }
@@ -29,7 +29,7 @@ namespace UTJ.UnityPlayerSyncEngine {
             try
             {
                 bw.Write(0);
-                var syncSceneManager = new SyncSceneManager();
+                var syncSceneManager = new SyncSceneManager(true);
                 syncSceneManager.Serialize(bw);
                 var vs = ms.ToArray();
 
@@ -42,27 +42,7 @@ namespace UTJ.UnityPlayerSyncEngine {
                 ms.Close();
             }
 
-        }
-
-
-        void MessageReciveCB(UTJ.RemoteConnect.Message remoteMessageBase)
-        {
-            Debug.Log(remoteMessageBase.messageId);
-            var message = new RemoteConnect.Message(1);
-
-            var syncSceneManager = new SyncSceneManager();
-            var memory = new MemoryStream();
-            var writer = new BinaryWriter(memory);
-            byte[] bytes;
-
-            syncSceneManager.Serialize(writer);
-            bytes = memory.ToArray();
-            writer.Close();
-            memory.Close();
-
-            SendRemoteMessage(RemoteConnect.Message.Serialize(message));
-        }
-
+        }        
 
     }
 }

@@ -57,9 +57,9 @@ namespace UTJ.UnityPlayerSyncEditor
             {
                 var id = br.ReadInt32();
 
-                var newScene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
-                var sm = new SyncSceneManager();
+                //var newScene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+                var sm = new SyncSceneManager(false);
                 sm.Deserialize(br);
                 sm.WriteBack();
             }

@@ -7,42 +7,41 @@ using UnityEngine.SceneManagement;
 namespace UTJ.UnityPlayerSyncEngine
 {
     public class SyncScene : SyncObject
-    {
-        protected SyncInt m_Handle;
-        protected SyncString m_Name;
-        protected SyncInt m_RootCount;        
+    {        
         protected SyncGameObject[] m_syncGameObjects;
 
-        private Scene m_Scene;
-
-
-        public SyncScene() : base(typeof(Scene)) 
+        Scene m_Scene
         {
-            m_Handle = new SyncInt();
-            m_Name = new SyncString();
-            m_RootCount = new SyncInt();
+            get { return (Scene)m_object; }            
         }
+
+
+        
 
         public SyncScene(Scene scene) : base(scene) 
         {
-            m_Scene = scene;
-            m_Name = new SyncString(scene.name);
-            m_Handle = new SyncInt(scene.handle);
-            m_RootCount = new SyncInt(scene.rootCount);
-            var list = new List<SyncGameObject>();
-            foreach(var gameObject in scene.GetRootGameObjects())
+            if (scene.rootCount <= 0)
             {
-                AddGameObjectInChildren(gameObject,list);
+                m_syncGameObjects = new SyncGameObject[0];
             }
-            m_syncGameObjects = list.ToArray();
+            else
+            {
+                var list = new List<SyncGameObject>();
+                var gameObjects = scene.GetRootGameObjects();
+                foreach (var gameObject in gameObjects)
+                {
+                    AddGameObjectInChildren(gameObject, list);
+                }
+                m_syncGameObjects = list.ToArray();
+            }
         }
+
 
         public override void Serialize(BinaryWriter binaryWriter)
         {
             base.Serialize(binaryWriter);
-            m_Handle.Serialize(binaryWriter);
-            m_Name.Serialize(binaryWriter);
-            m_RootCount.Serialize(binaryWriter);
+            var scene = (Scene)m_object;                        
+            binaryWriter.Write(scene.name);            
             binaryWriter.Write(m_syncGameObjects.Length);
             for(var i = 0; i < m_syncGameObjects.Length; i++)
             {
@@ -53,17 +52,17 @@ namespace UTJ.UnityPlayerSyncEngine
         public override void Deserialize(BinaryReader binaryReader)
         {
             base.Deserialize(binaryReader);
-            m_Handle.Deserialize(binaryReader);
-            m_Name.Deserialize(binaryReader);
-            m_RootCount.Deserialize(binaryReader);
+            var scene = (Scene)m_object;
+            scene.name = binaryReader.ReadString();            
+            var len = binaryReader.ReadInt32();
 
-
+#if false
             if (m_Scene == null)
             {
                 for (var i = 0; i < SceneManager.sceneCount; i++)
                 {
                     var scene = SceneManager.GetSceneAt(i);
-                    if (scene.name == m_Name.value)
+                    if (scene.name == m_Name)
                     {
                         m_Scene = scene;
                         break;
@@ -71,25 +70,25 @@ namespace UTJ.UnityPlayerSyncEngine
                 }
                 if(m_Scene == null)
                 {
-                    m_Scene = SceneManager.CreateScene(m_Name.value);
+                    m_Scene = SceneManager.CreateScene(m_Name);
                 }
             }
+#endif
 
-
-            var len = binaryReader.ReadInt32();
+            
             m_syncGameObjects = new SyncGameObject[len];
             for(var i = 0; i < len; i++)
             {
-                m_syncGameObjects[i] = new SyncGameObject();
+                var gameObject = new GameObject();                
+                UnityEngine.SceneManagement.SceneManager.MoveGameObjectToScene(gameObject, scene);
+                m_syncGameObjects[i] = new SyncGameObject(gameObject);
                 m_syncGameObjects[i].Deserialize(binaryReader);
             }
         }
 
 
-        public void WriteBack()
-        {
-            m_Scene.name = m_Name.value;
-
+        public  void WriteBack()
+        {            
             for(var i = 0; i < m_syncGameObjects.Length; i++)
             {
                 m_syncGameObjects[i].WriteBack();

@@ -8,79 +8,73 @@ using UnityEngine;
 namespace UTJ.UnityPlayerSyncEngine
 {
     public class SyncComponent : SyncUnityEngineObject
-    {
-
-        public static Dictionary<string, System.Type> m_AvaiavleTypes = new Dictionary<string, System.Type>()
-        {
-            {"UnityEngine.Component",typeof(UnityEngine.Component) },
-        };
-
-        
-        
-        
-        protected SyncValueType[] m_Properties;
+    {                                
+        protected SyncValueObject[] m_Properties;
         protected SyncPropertyInfo[] m_PropertyInfos;
-
-        protected SyncValueType[] m_Fields;
+        protected SyncValueObject[] m_Fields;
         protected SyncFieldInfo[] m_FieldInfos;
-
-
-        private Component m_Component;
-
         
-
-
-        public SyncComponent(Component component) : base(component)
+        public Component GetComponent()
         {
-            m_Component = component;    
+            return (Component)m_object;
+        }
+        
+        public SyncComponent(object obj,bool isPlayer = true) : base(obj)
+        {
+            if(isPlayer == false)
+            {
+                return;
+            }
 
-            var type = component.GetType();                
-            var props = type.GetProperties();
-                
+            var component = (Component)m_object;
+            var type = component.GetType();
 
-            List<SyncValueType> list = new List<SyncValueType>();
-            List<SyncPropertyInfo> propList = new List<SyncPropertyInfo>();
+            
+
+            // プロパティの取得
+            var props = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);                
+            var list = new List<SyncValueObject>();
+            var propList = new List<SyncPropertyInfo>();
             foreach(var prop in props)
             {
-                if(!SyncValueType.IsAvailableType(prop.PropertyType))
-                {
-                    continue;
-                }                                       
+                
                 if(!prop.CanRead)
                 {
                     continue;
                 }
-
-                // UnityではObsoleteになったgetterでNotSupportedExceptionをthrowしている為、キャッチしてスルーする必要があるが、
+                // UnityではObsoleteになったgetterがNotSupportedExceptionをthrowしている為、キャッチしてスルーする必要があるが、
                 // TestRunnerがSystem.ExceptionでキャッチしているのでこちらもSystem.Exceptionでキャッチせざるを得ない
-                object o;
+                object o = null;
                 try
                 {
-                    o = prop.GetValue(component);
+                    if (!IsSkipGetValue(prop))
+                    {
+                        o = prop.GetValue(component);
+                    }
                 }
                 //catch(System.NotSupportedException)
-                catch(System.Exception)
+                catch(System.Exception e)
                 {                            
                     continue;
                 }                    
-                list.Add(SyncValueType.Allocater(prop.PropertyType, o));
+                var syncValueType = SyncValueObject.Allocater(prop.PropertyType, prop.PropertyType,o);
+                if(syncValueType == null)
+                {
+                    continue;
+                }
+                list.Add(syncValueType);
                 propList.Add(new SyncPropertyInfo(prop));                    
             }
             m_Properties = list.ToArray();
             m_PropertyInfos = propList.ToArray();
 
-                     
+
+            // フィールド（変数)の取得
             list.Clear();
             var fiList = new List<SyncFieldInfo>();
             var fis = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             foreach(var fi in fis)
-            {
-                var at = Attribute.GetCustomAttribute(fi, typeof(SerializeField));
-                var IsSerializeField = at != null ? true : false;
-                if (!SyncValueType.IsAvailableType(fi.FieldType))
-                {
-                    continue;
-                }
+            {                                
                 if(fi.IsInitOnly)
                 {
                     continue;
@@ -89,27 +83,32 @@ namespace UTJ.UnityPlayerSyncEngine
                 {
                     continue;
                 }
-                if(fi.IsPrivate && !IsSerializeField)
-                {
-                    continue;
-                }
                 if (fi.IsStatic)
                 {
                     continue;
                 }
-                
-                object o;
-                try
+                var at = Attribute.GetCustomAttribute(fi, typeof(SerializeField));
+                var IsSerializeField = at != null ? true : false;
+                if (fi.IsPrivate && !IsSerializeField)
                 {
-                    o = fi.GetValue(component);
+                    continue;
+                }                
+                object o = null;
+                try
+                {                    
+                     o = fi.GetValue(component);                    
                 }
                 catch(System.Exception)
                 {
                     continue;
                 }
-                list.Add(SyncValueType.Allocater(fi.FieldType,o));
+                var syncValueType = SyncValueObject.Allocater(fi.FieldType, fi.FieldType,o);
+                if(syncValueType == null)
+                {
+                    continue;
+                }
+                list.Add(syncValueType);
                 fiList.Add(new SyncFieldInfo(fi));
-                
             }
             m_Fields = list.ToArray();
             m_FieldInfos = fiList.ToArray();            
@@ -153,10 +152,10 @@ namespace UTJ.UnityPlayerSyncEngine
                 m_PropertyInfos[i].Deserialize(binaryReader);
             }
             
-            m_Properties = new SyncValueType[len];
+            m_Properties = new SyncValueObject[len];
             for (var i = 0; i < m_Properties.Length; i++)
             {
-                m_Properties[i] = SyncValueType.Allocater(SyncType.GetType(m_PropertyInfos[i].PropertyType));
+                m_Properties[i] = SyncValueObject.Allocater(SyncType.GetType(m_PropertyInfos[i].PropertyType), SyncType.GetType(m_PropertyInfos[i].PropertyType));
                 m_Properties[i].Deserialize(binaryReader);
             }
 
@@ -168,52 +167,68 @@ namespace UTJ.UnityPlayerSyncEngine
                 m_FieldInfos[i].Deserialize(binaryReader);
             }
 
-            m_Fields = new SyncValueType[len];
+            m_Fields = new SyncValueObject[len];
             for(var i = 0; i < len; i++)
             {
-                m_Fields[i] = SyncValueType.Allocater(SyncType.GetType(m_FieldInfos[i].FieldType));
+                m_Fields[i] = SyncValueObject.Allocater(SyncType.GetType(m_FieldInfos[i].FieldType), SyncType.GetType(m_FieldInfos[i].FieldType));
                 m_Fields[i].Deserialize(binaryReader);
             }
         }
 
 
-        public override void WriteBack()
+        public void WriteBack()        
         {
-            base.WriteBack();
-            if(m_Component == null)
-            {
-                return;
-            }
-            var type = m_Component.GetType();                
+            var component = (Component)m_object;
+
+            var type = component.GetType();                
             for(var i = 0; i < m_Properties.Length; i++)
-            {
-                if(!m_Properties[i].hasChanged)
-                {
-                    continue;
-                }
+            {            
                 var prop = type.GetProperty(m_PropertyInfos[i].Name);
                 if (!prop.CanWrite)
                 {
                     continue;
                 }                                    
                 var o = m_Properties[i].GetValue();
-                prop.SetValue(m_Component, o);                
+                prop.SetValue(component, o);                
             }
 
             for(var i = 0; i < m_Fields.Length; i++)
-            {
-                if(!m_Fields[i].hasChanged)
-                {
-                    continue;
-                }
+            {            
                 var fi = type.GetField(m_FieldInfos[i].Name, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
                 if (fi.IsInitOnly||fi.IsLiteral)
                 {
                     continue;
                 }                
                 var o = m_Fields[i].GetValue();
-                fi.SetValue(m_Component, o);                                
+                fi.SetValue(component, o);                                
             }
         }
+
+
+        bool IsSkipGetValue(PropertyInfo info)
+        {
+#if UNITY_EDITOR
+            if (info.DeclaringType == typeof(UnityEngine.MeshFilter))
+            {
+                if (info.PropertyType == typeof(UnityEngine.Mesh) && info.Name == "mesh")
+                {
+                    return true;
+                }
+            }
+
+            if(info.DeclaringType == typeof(UnityEngine.Renderer))
+            {
+                if(info.PropertyType == typeof(UnityEngine.Material) && (info.Name == "material"))
+                {
+                    return true;
+                }
+                if (info.PropertyType == typeof(UnityEngine.Material[]) && (info.Name == "materials"))
+                {
+                    return true;
+                }
+            }
+#endif
+            return false;
+        }       
     }
 }

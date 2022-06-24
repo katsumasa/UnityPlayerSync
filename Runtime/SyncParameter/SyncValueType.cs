@@ -8,215 +8,34 @@ using UnityEngine;
 
 namespace UTJ.UnityPlayerSyncEngine
 {
-
-    public class SyncValueType : SyncObject
-    {
-        static readonly System.Type[] m_AvailableTypes =
-        {
-            typeof(bool),
-            typeof(bool[]),
-            typeof(List<bool>),
-            typeof(byte),
-            typeof(byte[]),
-            typeof(List<byte>),
-            typeof(char),
-            typeof(char[]),
-            typeof(List<char>),
-            typeof(short),
-            typeof(short[]),
-            typeof(List<short>),
-            typeof(int),
-            typeof(int[]),
-            typeof(List<int>),
-            typeof(long),
-            typeof(long[]),
-            typeof(List<long>),
-            typeof(sbyte),
-            typeof(sbyte[]),
-            typeof(List<sbyte>),
-            typeof(float),
-            typeof(float[]),
-            typeof(List<float>),
-            typeof(string),
-            typeof(string[]),
-            typeof(List<string>),
-            typeof(ushort),
-            typeof(ushort[]),
-            typeof(List<ushort>),
-            typeof(uint),
-            typeof(uint[]),
-            typeof(List<uint>),
-            typeof(ulong),
-            typeof(ulong[]),
-            typeof(List<ulong>),
-            //
-            typeof(Vector2),
-            typeof(Vector2[]),
-            typeof(List<Vector2>),
-            typeof(Vector3),
-            typeof(Vector3[]),
-            typeof(List<Vector3>),
-            typeof(Vector4),
-            typeof(Vector4[]),
-            typeof(List<Vector4>),
-            typeof(Quaternion),
-            typeof(Quaternion[]),
-            typeof(List<Quaternion>),
-            typeof(Color),
-            typeof(Color[]),
-            typeof(List<Color>),
-        };
-
-
-        public static bool IsAvailableType(System.Type type)
-        {
-            for (var i = 0; i < m_AvailableTypes.Length; i++)
-            {
-                if (m_AvailableTypes[i] == type)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-               
-
-
-        
-
-        public static SyncValueType Allocater(System.Type type,object obj = null)
-        {
-
-            if (type == typeof(bool) || type == typeof(bool[]) || type == typeof(List <bool>))
-            {                                
-                return new SyncBool(obj);
-            }            
-            if(type == typeof(byte) || type == typeof(byte[]) || type == typeof(List<byte>))
-            {                
-                return new SyncByte(obj);
-            }            
-            if(type == typeof(char) || type == typeof(char[]) || type == typeof(List<char>)){
-                
-                return new SyncChar(obj);
-            }
-            if(type == typeof(short) || type == typeof(short[]) || type == typeof(List<short>))
-            {
-
-                return new SyncInt16(obj);
-            }
-            if(type == typeof(int) || type == typeof(int[]) || type == typeof(List<int>))
-            {
-                return new SyncInt(obj);
-            }            
-            if(type == typeof(long) || type == typeof(long[]) || type == typeof(List<int>))
-            {
-                return new SyncInt64(obj);
-            }
-            if(type == typeof(sbyte) || type == typeof(sbyte[]) || type == typeof(List<sbyte>))
-            {
-                return new SyncSByte(obj);
-            }
-            if(type == typeof(float) || type == typeof(float[]) || type == typeof(List<float>))
-            {
-                return new SyncSingle(obj);
-            }
-            if(type == typeof(string) || type == typeof(string[]) || type == typeof(List<string>))
-            {
-                return new SyncString(obj);
-            }
-            if(type == typeof(ushort) || type == typeof(ushort[]) || type == typeof(List<ushort>))
-            {
-                return new SyncUInt16(obj);
-            }
-            if(type == typeof(uint) || type == typeof(uint[]) || type == typeof(List<uint>))
-            {
-                return new SyncUInt(obj);
-            }
-            if(type == typeof(ulong) || type == typeof(ulong[]) || type == typeof(List<ulong>))
-            {
-                return new SyncUInt64(obj);
-            }
-            //
-            if(type == typeof(Vector2) || type == typeof(Vector2[]) || type == typeof(List<Vector2>))
-            {
-                return new SyncVector2(obj);
-            }
-            if(type == typeof(Vector3) || type == typeof(Vector3[]) || type == typeof(List<Vector3>))
-            {
-                return new SyncVector3(obj);
-            }
-            if(type == typeof(Vector4) || type == typeof(Vector4[]) || type == typeof(List<Vector4>))
-            {
-                return new SyncVector4(obj);
-            }
-            if(type == typeof(Quaternion) || type == typeof(Quaternion[]) || type == typeof(List<Quaternion>))
-            {
-                return new SyncQuaternion(obj);
-            }
-            if(type == typeof(Color) || type == typeof(Color[]) || type == typeof(List<Color>))
-            {
-                return new SyncColor(obj);
-            }
-            throw new ArgumentException($"{type}is not avaiavle.");
-
-        }
-
-        
-
-        public SyncValueType() : base() { }
-
-
-
-        public SyncValueType(object obj) : base(obj) { }
-
-    }
-
-
-
-    public class SyncValueType<T> : SyncValueType
+    
+    public class SyncValueType<T> : SyncValueObject
     {
         protected int m_Length;
         protected T[] m_Values;
+               
+        
+        public SyncValueType() : base() { }
         
 
-
-        public virtual T value
+        public SyncValueType(object value,System.Type type):base(value,type)
         {
-            get { return m_Values[0]; }
-            set { m_Values[0] = value; m_HasChanded = true; }
-        }
-
-        public virtual T[] values
-        {
-            get { return m_Values; }
-            set
-            { 
-                m_Values = value; 
-                m_HasChanded = true;
-                if (m_Values == null)
+            m_Length = 0;
+            m_Values = null;         
+            if(value is UnityEngine.Object)
+            {
+                var obj = (UnityEngine.Object)value;                
+                if(obj == null)
                 {
-                    m_Length = -1;
+                    return;
                 }
-                else
-                {
-                    m_Length = m_Values.Length;
-                }
-            }
-        }
-        
-        public SyncValueType() : base()
-        {
-        }
-
-
-        public SyncValueType(object value):base(value)
-        {
-            if(value == null)
+            } 
+            else if(value == null)
             {
                 return;
-            }
-
+            }            
             var t = value.GetType();
+            
             if (t.IsArray)
             {
                 var array = (T[])value;
@@ -224,12 +43,12 @@ namespace UTJ.UnityPlayerSyncEngine
                 m_Values = new T[m_Length];
                 Array.Copy(array, m_Values, array.Length);
             }
-            else if(t.IsGenericType && t.GetGenericTypeDefinition() == typeof(List<>))
+            else if (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(List<>))
             {
                 var list = (List<T>)value;
                 m_Length = list.Count;
                 m_Values = new T[m_Length];
-                for(var i = 0; i < m_Length; i++)
+                for (var i = 0; i < m_Length; i++)
                 {
                     m_Values[i] = list[i];
                 }
@@ -241,8 +60,17 @@ namespace UTJ.UnityPlayerSyncEngine
                 m_Values[0] = (T)value;
             }
 
-            
+            if(m_Values[0]==null)
+            {
+                Debug.Log("");
+            }
+                
+
         }
+
+
+        public SyncValueType(object value) : this(value, typeof(T)) { }
+        
                 
 
         public override void Serialize(BinaryWriter binaryWriter)
@@ -255,7 +83,7 @@ namespace UTJ.UnityPlayerSyncEngine
         {
             base.Deserialize(binaryReader);
             m_Length = binaryReader.ReadInt32();
-            if (m_Length >= 0)
+            if (m_Length > 0)
             {
                 m_Values = new T[m_Length];
             }            
@@ -283,11 +111,11 @@ namespace UTJ.UnityPlayerSyncEngine
     }
 
 
-    public class SyncBool : SyncValueType<bool>
+    public class SyncValueBool : SyncValueType<bool>
     {
-        public SyncBool() : base() { }
+        public SyncValueBool() : base() { }
 
-        public SyncBool(object arg) : base(arg) { }
+        public SyncValueBool(object arg) : base(arg) { }
 
         public override void Serialize(BinaryWriter binaryWriter)
         {
@@ -308,11 +136,11 @@ namespace UTJ.UnityPlayerSyncEngine
         }
     }
 
-    public class SyncByte : SyncValueType<byte>
+    public class SyncValueByte : SyncValueType<byte>
     {
-        public SyncByte() : base() { }
+        public SyncValueByte() : base() { }
 
-        public SyncByte(object arg) : base(arg) { }
+        public SyncValueByte(object arg) : base(arg) { }
 
         public override void Serialize(BinaryWriter binaryWriter)
         {
@@ -334,11 +162,11 @@ namespace UTJ.UnityPlayerSyncEngine
     }
 
 
-    public class SyncChar : SyncValueType<char>
+    public class SyncValueChar : SyncValueType<char>
     {
-        public SyncChar() : base() { }
+        public SyncValueChar() : base() { }
 
-        public SyncChar(object arg) : base(arg) { }
+        public SyncValueChar(object arg) : base(arg) { }
 
         public override void Serialize(BinaryWriter binaryWriter)
         {
@@ -359,10 +187,80 @@ namespace UTJ.UnityPlayerSyncEngine
         }
     }
 
-    public class SyncInt16 : SyncValueType<short>
+
+    public class SyncValueEnum : SyncValueType<int>
     {
-        public SyncInt16() : base() { }
-        public SyncInt16(object arg) : base(arg) { }
+        public SyncValueEnum() : base() { }
+
+        public SyncValueEnum(object arg,System.Type type) : base(arg, type) { }
+
+        public SyncValueEnum(object arg) : base(arg,arg.GetType()) { }
+
+
+        public override void Serialize(BinaryWriter binaryWriter)
+        {
+            base.Serialize(binaryWriter);
+            for (var i = 0; i < m_Length; i++)
+            {
+                binaryWriter.Write(m_Values[i]);
+            }
+        }
+
+        public override void Deserialize(BinaryReader binaryReader)
+        {
+            base.Deserialize(binaryReader);
+            for (var i = 0; i < m_Length; i++)
+            {
+                m_Values[i] = binaryReader.ReadInt32();
+            }
+        }
+
+        public override object GetValue()
+        {
+            var t = SyncType.GetType(m_Type);
+            var listType = typeof(List<>);
+            var genericType = listType.MakeGenericType(t);
+            var list = Activator.CreateInstance(genericType);
+            var Add = list.GetType().GetMethod("Add");
+            for (var i = 0; i < m_Values.Length; i++)
+            {
+                Add.Invoke(list, new object[] { Enum.ToObject(t, m_Values[i]) });
+            }
+            var ToAttay = list.GetType().GetMethod("ToArray");
+
+            if (m_Type.IsArray)
+            {
+#if false
+                var arrayList = new ArrayList();
+                for (var i = 0; i < m_Values.Length; i++)
+                {
+                    arrayList.Add(Enum.ToObject(t, m_Values[i]));
+                }               
+                return arrayList.ToArray();                                                               
+#else
+                return ToAttay.Invoke(list,new object[] { });        
+#endif  
+
+
+            }
+            else if (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(List<>))
+            {
+                return list;   
+            }
+            else
+            {
+                return Enum.ToObject(t, m_Values[0]);
+            }
+        }
+
+
+
+    }
+
+    public class SyncValueInt16 : SyncValueType<short>
+    {
+        public SyncValueInt16() : base() { }
+        public SyncValueInt16(object arg) : base(arg) { }
 
         public override void Serialize(BinaryWriter binaryWriter)
         {
@@ -384,10 +282,10 @@ namespace UTJ.UnityPlayerSyncEngine
     }
 
 
-    public class SyncInt : SyncValueType<int>
+    public class SyncValueInt : SyncValueType<int>
     {
-        public SyncInt() : base() { }
-        public SyncInt(object arg) : base(arg) { }
+        public SyncValueInt() : base() { }
+        public SyncValueInt(object arg) : base(arg) { }
 
 
         public override void Serialize(BinaryWriter binaryWriter)
@@ -412,11 +310,11 @@ namespace UTJ.UnityPlayerSyncEngine
     
 
 
-    public class SyncInt64 : SyncValueType<long>
+    public class SyncValueInt64 : SyncValueType<long>
     {
-        public SyncInt64() : base() { }
+        public SyncValueInt64() : base() { }
 
-        public SyncInt64(object arg) : base(arg) { }
+        public SyncValueInt64(object arg) : base(arg) { }
 
         public override void Serialize(BinaryWriter binaryWriter)
         {
@@ -437,11 +335,11 @@ namespace UTJ.UnityPlayerSyncEngine
         }
     }
 
-    public class SyncSByte : SyncValueType<sbyte>
+    public class SyncValueSByte : SyncValueType<sbyte>
     {
-        public SyncSByte() : base() { }
+        public SyncValueSByte() : base() { }
 
-        public SyncSByte(object arg) : base(arg) { }
+        public SyncValueSByte(object arg) : base(arg) { }
 
         public override void Serialize(BinaryWriter binaryWriter)
         {
@@ -462,10 +360,10 @@ namespace UTJ.UnityPlayerSyncEngine
         }        
     }
 
-    public class SyncSingle : SyncValueType<float>
+    public class SyncValueSingle : SyncValueType<float>
     {
-        public SyncSingle() : base() { }
-        public SyncSingle(object arg) : base(arg) { }
+        public SyncValueSingle() : base() { }
+        public SyncValueSingle(object arg) : base(arg) { }
 
         public override void Serialize(BinaryWriter binaryWriter)
         {
@@ -486,10 +384,10 @@ namespace UTJ.UnityPlayerSyncEngine
         }
     }
 
-    public class SyncString : SyncValueType<string>
+    public class SyncValueString : SyncValueType<string>
     {
-        public SyncString() : base() { }
-        public SyncString(object arg) : base(arg) { }
+        public SyncValueString() : base() { }
+        public SyncValueString(object arg) : base(arg) { }
 
         public override void Serialize(BinaryWriter binaryWriter)
         {
@@ -510,10 +408,10 @@ namespace UTJ.UnityPlayerSyncEngine
         }
     }
 
-    public class SyncUInt16 : SyncValueType<ushort>
+    public class SyncValueUInt16 : SyncValueType<ushort>
     {
-        public SyncUInt16() : base() { }
-        public SyncUInt16(object arg) : base(arg) { }
+        public SyncValueUInt16() : base() { }
+        public SyncValueUInt16(object arg) : base(arg) { }
 
         public override void Serialize(BinaryWriter binaryWriter)
         {
@@ -535,10 +433,10 @@ namespace UTJ.UnityPlayerSyncEngine
     }
 
 
-    public class SyncUInt : SyncValueType<uint>
+    public class SyncValueUInt : SyncValueType<uint>
     {
-        public SyncUInt() : base() { }
-        public SyncUInt(object arg) : base(arg) { }
+        public SyncValueUInt() : base() { }
+        public SyncValueUInt(object arg) : base(arg) { }
 
 
         public override void Serialize(BinaryWriter binaryWriter)
@@ -561,10 +459,10 @@ namespace UTJ.UnityPlayerSyncEngine
     }
 
 
-    public class SyncUInt64 : SyncValueType<ulong>
+    public class SyncValueUInt64 : SyncValueType<ulong>
     {
-        public SyncUInt64() : base() { }
-        public SyncUInt64(object arg) : base(arg) { }
+        public SyncValueUInt64() : base() { }
+        public SyncValueUInt64(object arg) : base(arg) { }
 
         public override void Serialize(BinaryWriter binaryWriter)
         {
@@ -584,5 +482,42 @@ namespace UTJ.UnityPlayerSyncEngine
             }
         }
     }
+
+
+    public class SyncValueComponent : SyncValueType<Component>
+    {
+        private int[] m_TransformInstanceIDs;
+
+
+        public SyncValueComponent() : base() { }
+
+        public SyncValueComponent(object value):base(value)
+        {
+        }
+
+        public override void Serialize(BinaryWriter binaryWriter)
+        {
+            base.Serialize(binaryWriter);            
+            for(var i = 0; i < m_Values.Length; i++)
+            {                
+                binaryWriter.Write(m_Values[i].transform.GetInstanceID());
+            }
+        }
+
+        public override void Deserialize(BinaryReader binaryReader)
+        {
+            base.Deserialize(binaryReader);
+            var len = binaryReader.ReadInt32();
+            m_TransformInstanceIDs = new int[len];
+            for(var i = 0; i < len; i++)
+            {
+                m_TransformInstanceIDs[i] = binaryReader.ReadInt32();
+            }
+        }
+
+
+    }
+
+    
 
 }

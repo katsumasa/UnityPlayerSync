@@ -7,7 +7,7 @@ namespace UTJ.UnityPlayerSyncEngine
 {
     public abstract class Sync
     {
-        public virtual void Serialize(BinaryWriter binaryWriter) { }
-        public virtual void Deserialize(BinaryReader binaryReader) { }
+        public abstract void Serialize(BinaryWriter binaryWriter);
+        public abstract void Deserialize(BinaryReader binaryReader);
     }
 }

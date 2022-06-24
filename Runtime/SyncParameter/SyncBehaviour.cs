@@ -6,43 +6,22 @@ using UnityEngine;
 namespace UTJ.UnityPlayerSyncEngine
 {
     public class SyncBehaviour : SyncComponent
-    {
-        protected SyncBool m_Enabled;
-        private Behaviour m_Behaviour;
-
-        public bool enabled
-        {
-            get { return m_Enabled.value; }
-            set { m_Enabled.value = value; m_HasChanded = true; }
-        }
-
-        public SyncBehaviour(Behaviour behaviour):base(behaviour)        
-        {
-            m_Behaviour = behaviour;
-            m_Enabled = new SyncBool(behaviour.enabled);
-            
-        }
-
+    {        
+        public SyncBehaviour(object obj):base(obj) { }
+                            
         public override void Serialize(BinaryWriter binaryWriter)
         {
+            var behaviour = (Behaviour)m_object;
             base.Serialize(binaryWriter);
-            m_Enabled.Serialize(binaryWriter);
+            binaryWriter.Write(behaviour.enabled);            
         }
+
 
         public override void Deserialize(BinaryReader binaryReader)
         {
+            var behaviour = (Behaviour)m_object;
             base.Deserialize(binaryReader);
-            m_Enabled.Deserialize(binaryReader);
-        }
-
-        public override void WriteBack()
-        {
-            base.WriteBack();            
-            if (m_Enabled.hasChanged)
-            {
-                m_Behaviour.enabled = m_Enabled.value;
-            }
-        }
-
+            behaviour.enabled = binaryReader.ReadBoolean();
+        }                
     }
 }

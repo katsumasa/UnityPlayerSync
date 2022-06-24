@@ -46,7 +46,7 @@ namespace UTJ.UnityPlayerSyncEngine
         protected bool m_IsArray;
         protected MemberTypes m_MemberType;
         protected string m_Name;
-        public SyncAssembly m_Assembly;
+        protected SyncAssembly m_Assembly;
 
 
         public string FullName
