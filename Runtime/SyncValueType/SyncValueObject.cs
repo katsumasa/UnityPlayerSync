@@ -11,84 +11,116 @@ namespace UTJ.UnityPlayerSyncEngine
 
         public static SyncValueObject Allocater(System.Type objectType, System.Type comapreType,object obj = null)
         {
+            if (comapreType.IsGenericType)
+            {
+                comapreType = comapreType.GetGenericArguments()[0];
+            }
+            else if(comapreType.IsArray)
+            {
+                comapreType = comapreType.GetElementType();
+            }
+
+
             // --- ValuType ---
-            if (comapreType == typeof(bool) || comapreType == typeof(bool[]) || comapreType == typeof(List<bool>))
+            if (comapreType == typeof(bool))
             {
                 return new SyncValueBool(obj);
             }
-            if (comapreType == typeof(byte) || comapreType == typeof(byte[]) || comapreType == typeof(List<byte>))
+            if (comapreType == typeof(byte))
             {
                 return new SyncValueByte(obj);
             }
-            if (comapreType == typeof(char) || comapreType == typeof(char[]) || comapreType == typeof(List<char>))
+            if (comapreType == typeof(char))
             {
                 return new SyncValueChar(obj);
             }
-            if(comapreType == typeof(Enum) || comapreType == typeof(Enum[]) || comapreType == typeof(List<Enum>))
+            if(comapreType == typeof(Enum))
             {
                 return new SyncValueEnum(obj, objectType);
             }
-            if (comapreType == typeof(short) || comapreType == typeof(short[]) || comapreType == typeof(List<short>))
+            if (comapreType == typeof(short))
             {
                 return new SyncValueInt16(obj);
             }
-            if (comapreType == typeof(int) || comapreType == typeof(int[]) || comapreType == typeof(List<int>))
+            if (comapreType == typeof(int))
             {
                 return new SyncValueInt(obj);
             }
-            if (comapreType == typeof(long) || comapreType == typeof(long[]) || comapreType == typeof(List<int>))
+            if (comapreType == typeof(long))
             {
                 return new SyncValueInt64(obj);
             }
-            if (comapreType == typeof(sbyte) || comapreType == typeof(sbyte[]) || comapreType == typeof(List<sbyte>))
+            if (comapreType == typeof(sbyte))
             {
                 return new SyncValueSByte(obj);
             }
-            if (comapreType == typeof(float) || comapreType == typeof(float[]) || comapreType == typeof(List<float>))
+            if (comapreType == typeof(float))
             {
                 return new SyncValueSingle(obj);
             }
-            if (comapreType == typeof(string) || comapreType == typeof(string[]) || comapreType == typeof(List<string>))
+            if (comapreType == typeof(string))
             {
                 return new SyncValueString(obj);
             }
-            if (comapreType == typeof(ushort) || comapreType == typeof(ushort[]) || comapreType == typeof(List<ushort>))
+            if (comapreType == typeof(ushort))
             {
                 return new SyncValueUInt16(obj);
             }
-            if (comapreType == typeof(uint) || comapreType == typeof(uint[]) || comapreType == typeof(List<uint>))
+            if (comapreType == typeof(uint))
             {
                 return new SyncValueUInt(obj);
             }
-            if (comapreType == typeof(ulong) || comapreType == typeof(ulong[]) || comapreType == typeof(List<ulong>))
+            if (comapreType == typeof(ulong))
             {
                 return new SyncValueUInt64(obj);
             }
 
-            
-            if (comapreType == typeof(Vector2) || comapreType == typeof(Vector2[]) || comapreType == typeof(List<Vector2>))
+            // Unity Build-in
+
+            if(comapreType == typeof(AnimationCurve))
+            {
+                return new SyncAnimationCurve(obj);
+            }
+            if(comapreType == typeof(Bounds))
+            {
+                return new SyncBounds(obj);
+            }            
+            if (comapreType == typeof(Vector2))
             {
                 return new SyncVector2(obj);
             }
-            if (comapreType == typeof(Vector3) || comapreType == typeof(Vector3[]) || comapreType == typeof(List<Vector3>))
+            if (comapreType == typeof(Vector3))
             {
                 return new SyncVector3(obj);
             }
-            if (comapreType == typeof(Vector4) || comapreType == typeof(Vector4[]) || comapreType == typeof(List<Vector4>))
+            if (comapreType == typeof(Vector4))
             {
                 return new SyncVector4(obj);
             }
-            if (comapreType == typeof(Quaternion) || comapreType == typeof(Quaternion[]) || comapreType == typeof(List<Quaternion>))
+            if (comapreType == typeof(Quaternion))
             {
                 return new SyncQuaternion(obj);
             }
-            if (comapreType == typeof(Color) || comapreType == typeof(Color[]) || comapreType == typeof(List<Color>))
+            if (comapreType == typeof(Color))
             {
                 return new SyncColor(obj);
             }
-            if (comapreType == typeof(UnityEngine.Object) || comapreType == typeof(UnityEngine.Object[]) || comapreType == typeof(List<UnityEngine.Object>))
+            if(comapreType == typeof(Rect))
+            {
+                return new SyncRect(obj);
+            }
+            if(comapreType == typeof(Matrix4x4))
+            {
+                return new SyncMatrix4x4(obj);
+            }
+
+            if(comapreType == typeof(Component))
+            {
+                return new SyncReferenceComponent(obj, objectType);
+            }
+            if (comapreType == typeof(UnityEngine.Object))
             {                
-                return new SyncValuUnityEngineObject(obj, objectType);                
+                return new SyncReferenceAsset(obj, objectType);                
             }
             //throw new ArgumentException($"{type}is not avaiavle.");
 

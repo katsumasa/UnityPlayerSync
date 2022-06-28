@@ -21,29 +21,22 @@ public class NewTestScript
 
     public List<CameraType> cameraTypesList;
 
+    
+
+
     [Test]
     public void SandBox()
     {
-        var t = this.GetType();
-        var fi = t.GetField("cameraTypesList");
-        
-        List<System.Enum> list = new List<System.Enum>();
-        list.Add(CameraType.Game);
-        
+        int[] IntArray = new int[]{ 1, 2, 3 };
 
-        
+        var gt = typeof(List<>).MakeGenericType(typeof(int));
+        var list = Activator.CreateInstance(gt);
+        var Add = list.GetType().GetMethod("Add");
 
-
-        var otype = typeof(List<>);
-        var ctype = otype.MakeGenericType(typeof(CameraType));
-        var o = Activator.CreateInstance(ctype);
-
-        var t2 = o.GetType();
-        var add = t2.GetMethod("Add");
-        add.Invoke(o, new object[] { CameraType.Game });
-
-        fi.SetValue(this, o);
-
+        for(var i = 0; i < 3; i++)
+        {
+            Add.Invoke(list, new object[] { IntArray[i]});
+        }
 
     }
 
@@ -85,6 +78,12 @@ public class NewTestScript
             SyncValueObject.Allocater(obj.GetType(), obj.GetType(),obj);
             //Debug.Log(obj.GetType().Name);
         }
+
+        var go = new GameObject();
+        var camera = go.AddComponent(typeof(Camera));
+
+        SyncValueObject.Allocater(typeof(Camera), typeof(Camera),camera);
+
     }
 
     [Test]   
@@ -123,6 +122,35 @@ public class NewTestScript
         UnityEngine.Assertions.Assert.AreEqual(a, b);
     }
 
+    
+    [Test]
+    public void SyncRectTest()
+    {
+        var r1 = new Rect(0.1f, 0.2f, 0.3f, 0.4f);
+
+        var sync = new SyncRect(r1);
+        var memory = new MemoryStream();
+        var writer = new BinaryWriter(memory);
+        byte[] bytes;
+
+        sync.Serialize(writer);
+        bytes = memory.ToArray();
+
+        writer.Close();
+        memory.Close();
+
+        memory = new MemoryStream(bytes);
+        var reader = new BinaryReader(memory);
+
+        var r2 = new Rect();
+        sync = new SyncRect(r2);
+        sync.Deserialize(reader);
+        reader.Close();
+        memory.Close();
+
+        var o = sync.GetValue();
+
+    }
 
     T TestSyncValue<T>(T value)
     {

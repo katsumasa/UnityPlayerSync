@@ -12,18 +12,28 @@ namespace UTJ.UnityPlayerSyncEngine
     {
         static List<SyncGameObject> m_SyncGameObjects;
 
+        private static List<SyncGameObject> syncGameObjects
+        {
+            get
+            {
+                if(m_SyncGameObjects == null)
+                {
+                    m_SyncGameObjects = new List<SyncGameObject>();
+                }
+                return m_SyncGameObjects;
+            }
+        }
+
+
         public static void ClearList()
         {
-            if (m_SyncGameObjects != null)
-            {
-                m_SyncGameObjects.Clear();
-            }
+            syncGameObjects.Clear();            
         }
 
 
         public static UnityEngine.Object FintObject(int instanceID)
         {
-            foreach(var syncGameObject in m_SyncGameObjects)
+            foreach(var syncGameObject in syncGameObjects)
             {
                 if(syncGameObject.GetInstanceID() == instanceID)
                 {
@@ -78,17 +88,13 @@ namespace UTJ.UnityPlayerSyncEngine
                 m_ComponentTypes[i-1] = new SyncType(components[i].GetType());
                 m_Components[i-1] = new SyncComponent(components[i]);
             }
-
-            if(m_SyncGameObjects == null)
-            {
-                m_SyncGameObjects = new List<SyncGameObject>();
-            }
-            m_SyncGameObjects.Add(this);
+            
+            syncGameObjects.Add(this);
         }
 
         ~SyncGameObject()
         {
-            m_SyncGameObjects.Remove(this);
+            syncGameObjects.Remove(this);
         }
 
 

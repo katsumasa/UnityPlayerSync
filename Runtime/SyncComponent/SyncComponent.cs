@@ -189,7 +189,10 @@ namespace UTJ.UnityPlayerSyncEngine
                     continue;
                 }                                    
                 var o = m_Properties[i].GetValue();
-                prop.SetValue(component, o);                
+                if (o != null)
+                {
+                    prop.SetValue(component, o);
+                }
             }
 
             for(var i = 0; i < m_Fields.Length; i++)

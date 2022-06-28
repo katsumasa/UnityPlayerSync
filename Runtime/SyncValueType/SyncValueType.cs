@@ -63,15 +63,12 @@ namespace UTJ.UnityPlayerSyncEngine
             if(m_Values[0]==null)
             {
                 Debug.Log("");
-            }
-                
-
+            }                
         }
 
 
         public SyncValueType(object value) : this(value, typeof(T)) { }
-        
-                
+                        
 
         public override void Serialize(BinaryWriter binaryWriter)
         {
