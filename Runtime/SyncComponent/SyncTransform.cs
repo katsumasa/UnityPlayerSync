@@ -14,7 +14,46 @@ namespace UTJ.UnityPlayerSyncEngine
         
 
         static List<SyncTransform> m_SyncTransforms;
-        
+        static List<SyncTransform> syncTransforms
+        {
+            get
+            {
+                if(m_SyncTransforms == null)
+                {
+                    m_SyncTransforms = new List<SyncTransform>();
+                }
+                return m_SyncTransforms;
+            }
+        }
+
+
+        public static SyncTransform Find(Component component)
+        {
+            foreach(var sync in syncTransforms)
+            {
+                if (component.Equals(sync.Object))
+                {
+                    return sync;
+                }                
+            }
+            return null;
+        }
+
+
+        public static SyncTransform Find(int instanceID)
+        {
+            foreach (var sync in syncTransforms)
+            {
+                if(sync.GetInstanceID() == instanceID)
+                {
+                    return sync;
+                }
+                Debug.Log(sync.GetInstanceID());
+            }
+            return null;
+        }
+
+
         public static void Clear()
         {
             if (m_SyncTransforms != null)
@@ -22,7 +61,7 @@ namespace UTJ.UnityPlayerSyncEngine
                 m_SyncTransforms.Clear();
             }
         }
-
+        
 
         public Transform GetTransform()
         {
@@ -31,17 +70,13 @@ namespace UTJ.UnityPlayerSyncEngine
 
 
         public SyncTransform(object obj) : base(obj) 
-        { 
-            if(m_SyncTransforms == null)
-            {
-                m_SyncTransforms = new List<SyncTransform>();
-            }
-            m_SyncTransforms.Add(this);
+        {                         
+            syncTransforms.Add(this);
         }
 
         ~SyncTransform()
         {
-            m_SyncTransforms.Remove(this);
+            syncTransforms.Remove(this);
         }
 
 
@@ -53,8 +88,7 @@ namespace UTJ.UnityPlayerSyncEngine
             var localScale = new SyncVector3(transform.localScale);
             int parentInstanceID = (transform.parent != null) ? transform.parent.GetInstanceID() : -1;
                                                 
-            base.Serialize(binaryWriter);
-            binaryWriter.Write(transform.GetInstanceID());
+            base.Serialize(binaryWriter);         
             binaryWriter.Write(parentInstanceID);
             localPosition.Serialize(binaryWriter);
             localRotation.Serialize(binaryWriter);
@@ -69,15 +103,14 @@ namespace UTJ.UnityPlayerSyncEngine
             var localRotation = new SyncQuaternion(transform.localRotation);
             var localScale = new SyncVector3(transform.localScale);
                         
-            base.Deserialize(binaryReader);
-            m_InstanceID = binaryReader.ReadInt32();
+            base.Deserialize(binaryReader);           
             var parentInstanceID = binaryReader.ReadInt32();
             localPosition.Deserialize(binaryReader);
             localRotation.Deserialize(binaryReader);
             localScale.Deserialize(binaryReader);
             
-            
-            var parentSyncTransform = SyncTransform.GetSyncTransform((int)parentInstanceID);
+            // êeÇÃTransformÇÕç\ízçœÇ›
+            var parentSyncTransform = SyncTransform.GetSyncTransform(parentInstanceID);
             if (parentSyncTransform != null)
             {
                 transform.parent = (Transform)parentSyncTransform.m_object;
@@ -90,9 +123,9 @@ namespace UTJ.UnityPlayerSyncEngine
 
         static SyncTransform GetSyncTransform(int instanceID)
         {
-            foreach(var syncTransForm in m_SyncTransforms)
+            foreach(var syncTransForm in syncTransforms)
             {
-                if(syncTransForm.m_InstanceID == instanceID)
+                if(syncTransForm.GetInstanceID() == instanceID)
                 {
                     return syncTransForm;
                 }

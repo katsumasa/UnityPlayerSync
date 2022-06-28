@@ -10,5 +10,10 @@ namespace UTJ.UnityPlayerSyncEngine
         public static readonly System.Guid kMsgSendPlayerToEditor = new System.Guid("a673119d62c6482a967fce74b4ec12d8");
     }
         
-    
+    public enum MessageID
+    {
+        SyncScene,
+        SyncTransform,
+        SyncComponent,
+    };
 }

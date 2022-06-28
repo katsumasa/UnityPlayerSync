@@ -8,7 +8,45 @@ using UnityEngine;
 namespace UTJ.UnityPlayerSyncEngine
 {
     public class SyncComponent : SyncUnityEngineObject
-    {                                
+    {
+        static List<SyncComponent> m_SyncComponents;
+        static List<SyncComponent> syncComponents
+        {
+            get
+            {
+                if(m_SyncComponents == null)
+                {
+                    m_SyncComponents = new List<SyncComponent>();
+                }
+                return m_SyncComponents;
+            }
+        }
+
+        public static SyncComponent Find(Component component)
+        {
+            foreach(var sys in syncComponents)
+            {
+                if (component.Equals(sys.Object))
+                {
+                    return sys;
+                }
+            }
+            return null;
+        }
+
+        public static SyncComponent Find(int instanceID)
+        {
+            foreach (var sys in syncComponents)
+            {
+                if(sys.GetInstanceID() == instanceID)
+                {
+                    return sys;
+                }
+            }
+            return null;
+        }
+
+
         protected SyncValueObject[] m_Properties;
         protected SyncPropertyInfo[] m_PropertyInfos;
         protected SyncValueObject[] m_Fields;
@@ -21,6 +59,9 @@ namespace UTJ.UnityPlayerSyncEngine
         
         public SyncComponent(object obj,bool isPlayer = true) : base(obj)
         {
+            syncComponents.Add(this);
+
+
             if(isPlayer == false)
             {
                 return;
@@ -114,6 +155,11 @@ namespace UTJ.UnityPlayerSyncEngine
             m_FieldInfos = fiList.ToArray();            
         }
 
+        ~SyncComponent()
+        {
+            syncComponents.Remove(this);
+        }
+
 
         public override void Serialize(BinaryWriter binaryWriter)
         {
@@ -144,33 +190,37 @@ namespace UTJ.UnityPlayerSyncEngine
         public override void Deserialize(BinaryReader binaryReader)
         {
             base.Deserialize(binaryReader);
+
             var len = binaryReader.ReadInt32();
+            
             m_PropertyInfos = new SyncPropertyInfo[len];
+            
             for (var i = 0; i < m_PropertyInfos.Length; i++)
-            {
-                m_PropertyInfos[i] = new SyncPropertyInfo();
+            {             
+                m_PropertyInfos[i] = new SyncPropertyInfo();             
                 m_PropertyInfos[i].Deserialize(binaryReader);
             }
             
-            m_Properties = new SyncValueObject[len];
+            m_Properties = new SyncValueObject[len];            
             for (var i = 0; i < m_Properties.Length; i++)
-            {
-                m_Properties[i] = SyncValueObject.Allocater(SyncType.GetType(m_PropertyInfos[i].PropertyType), SyncType.GetType(m_PropertyInfos[i].PropertyType));
+            {                
+                m_Properties[i] = SyncValueObject.Allocater(SyncType.GetType(m_PropertyInfos[i].PropertyType), SyncType.GetType(m_PropertyInfos[i].PropertyType));                                
                 m_Properties[i].Deserialize(binaryReader);
             }
 
-            len = binaryReader.ReadInt32();
+            len = binaryReader.ReadInt32();            
             m_FieldInfos = new SyncFieldInfo[len];            
             for(var i = 0; i < len; i++)
-            {
-                m_FieldInfos[i] = new SyncFieldInfo();
+            {            
+                m_FieldInfos[i] = new SyncFieldInfo();           
                 m_FieldInfos[i].Deserialize(binaryReader);
             }
 
-            m_Fields = new SyncValueObject[len];
+            
+            m_Fields = new SyncValueObject[len];                      
             for(var i = 0; i < len; i++)
-            {
-                m_Fields[i] = SyncValueObject.Allocater(SyncType.GetType(m_FieldInfos[i].FieldType), SyncType.GetType(m_FieldInfos[i].FieldType));
+            {                
+                m_Fields[i] = SyncValueObject.Allocater(SyncType.GetType(m_FieldInfos[i].FieldType), SyncType.GetType(m_FieldInfos[i].FieldType));                
                 m_Fields[i].Deserialize(binaryReader);
             }
         }

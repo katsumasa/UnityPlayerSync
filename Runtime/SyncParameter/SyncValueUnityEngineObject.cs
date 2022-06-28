@@ -29,8 +29,17 @@ namespace UTJ.UnityPlayerSyncEngine
                 {
                     try
                     {
-                        binaryWriter.Write(m_Values[i].GetInstanceID());
-                        binaryWriter.Write(m_Values[i].name);
+                        if(m_Values[i] == null)
+                        {
+                            binaryWriter.Write(-1);
+                            binaryWriter.Write("null");                            
+                            //Debug.Log($"{m_Type.FullName} m_Values[{i}] is null.");
+                        }
+                        else
+                        {
+                            binaryWriter.Write(m_Values[i].GetInstanceID());
+                            binaryWriter.Write(m_Values[i].name);
+                        }                        
                     }
                     catch(Exception e)
                     {

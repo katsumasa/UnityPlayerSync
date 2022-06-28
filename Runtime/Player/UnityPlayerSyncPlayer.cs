@@ -23,25 +23,75 @@ namespace UTJ.UnityPlayerSyncEngine {
 
         void MessageReciveEventCB(byte[] bytes)
         {
-            var ms = new MemoryStream();
-            var bw = new BinaryWriter(ms);
+            var readerMemory = new MemoryStream(bytes);
+            var writerMemory = new MemoryStream();
+            var binaryReader = new BinaryReader(readerMemory);
+            var binaryWriter = new BinaryWriter(writerMemory);
 
             try
-            {
-                bw.Write(0);
-                var syncSceneManager = new SyncSceneManager(true);
-                syncSceneManager.Serialize(bw);
-                var vs = ms.ToArray();
+            {                
+                var messageID = (MessageID)binaryReader.ReadInt32();
+                switch (messageID)
+                {
+                    case MessageID.SyncScene:
+                        {
+                            binaryWriter.Write((int)MessageID.SyncScene);
+                            var syncSceneManager = new SyncSceneManager(true);
+                            syncSceneManager.Serialize(binaryWriter);
+                            var vs = writerMemory.ToArray();
+                            SendRemoteMessage(vs);
+                        }
+                        break;
 
-                SendRemoteMessage(vs);
+                    case MessageID.SyncTransform:
+                        {
+                            var instanceID = binaryReader.ReadInt32();
+                            //Debug.Log($"instanceID:{instanceID}");
+                            var sync = SyncTransform.Find(instanceID);
+                            if (sync != null)
+                            {
+                                sync.Deserialize(binaryReader);
+                            }
+                            else
+                            {
+                                Debug.LogWarning($"instanceID;{instanceID} is not found.");
+                            }
+                        }
+                        break;
+
+                    case MessageID.SyncComponent:
+                        {
+                            var instanceID = binaryReader.ReadInt32();
+                            var sync = SyncComponent.Find(instanceID);
+                            if (sync != null)
+                            {
+                                Debug.Log($"{sync.GetComponent().name}");
+
+                                sync.Deserialize(binaryReader);
+                                sync.WriteBack();
+                            }
+                            else
+                            {
+                                Debug.LogWarning($"instanceID;{instanceID} is not found.");
+                            }
+
+                        }
+                        break;
+                }
+
             }
 
             finally
             {
-                bw.Close();
-                ms.Close();
+                binaryReader.Close();
+                binaryWriter.Close();
+                readerMemory.Close();
+                writerMemory.Close();
             }
 
+
+            
+            
         }        
 
     }

@@ -74,6 +74,7 @@ namespace UTJ.UnityPlayerSyncEngine
                             
         public SyncGameObject(object obj):base(obj)
         {
+#if !UNITY_EDITOR
             var gameObject = (GameObject)m_object;
             m_Transform = new SyncTransform(gameObject.transform);
             var components = gameObject.GetComponents<Component>();
@@ -88,7 +89,7 @@ namespace UTJ.UnityPlayerSyncEngine
                 m_ComponentTypes[i-1] = new SyncType(components[i].GetType());
                 m_Components[i-1] = new SyncComponent(components[i]);
             }
-            
+#endif       
             syncGameObjects.Add(this);
         }
 
@@ -145,7 +146,7 @@ namespace UTJ.UnityPlayerSyncEngine
             for(var i = 0; i < len; i++)
             {
                 m_ComponentInstancIDs[i] = binaryReader.ReadInt32();
-            }
+            }                              
             
             for (var i = 0; i < len; i++)
             {                        

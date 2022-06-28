@@ -12,10 +12,23 @@ namespace UTJ.UnityPlayerSyncEditor
                
     public class UnityEditorSyncWindow : RemoteConnectEditorWindow
     {
+        static UnityEditorSyncWindow m_Instance;
+
+        public static void SendMessage(byte[] array)
+        {
+            if(m_Instance == null)
+            {
+                OpenWindow();
+            }
+            m_Instance.SendRemoteMessage(array);
+        }
+
+
+
         [MenuItem("Window/UTJ/UnityPlayerSync/Open")]
         static void OpenWindow()
         {
-            var window = (UnityEditorSyncWindow)EditorWindow.GetWindow(typeof(UnityEditorSyncWindow));
+            m_Instance = (UnityEditorSyncWindow)EditorWindow.GetWindow(typeof(UnityEditorSyncWindow));
         }
 
         protected override void OnEnable()
@@ -43,10 +56,7 @@ namespace UTJ.UnityPlayerSyncEditor
         }
 
 
-        void MessageReciveCB(UTJ.RemoteConnect.Message message)
-        {
-            Debug.Log(message.messageId);
-        }
+        
 
 
         void EventMessageReciveCB(byte[] vs)
@@ -90,10 +100,7 @@ namespace UTJ.UnityPlayerSyncEditor
                 }
             }
 
-            if(GUILayout.Button("Close"))
-            {
-
-            }
+            
 
         }
     }            
