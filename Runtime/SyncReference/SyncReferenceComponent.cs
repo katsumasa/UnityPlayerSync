@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace UTJ.UnityPlayerSyncEngine
+namespace UTJ.UnityPlayerSync.Runtime
 {
 
     public class SyncReferenceComponent : SyncValueUnityEngineObject

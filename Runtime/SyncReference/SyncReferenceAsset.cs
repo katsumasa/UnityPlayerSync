@@ -6,7 +6,7 @@ using UnityEditor;
 #endif
 
 
-namespace UTJ.UnityPlayerSyncEngine
+namespace UTJ.UnityPlayerSync.Runtime
 {
     public class SyncReferenceAsset : SyncValueUnityEngineObject
     {

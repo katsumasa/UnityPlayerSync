@@ -1,21 +1,23 @@
-using System.Collections;
-using System.Collections.Generic;
+//
+// Programed by Katsumasa Kimura
+//
 using System.IO;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
-namespace UTJ.UnityPlayerSyncEngine {
 
+namespace UTJ.UnityPlayerSync.Runtime 
+{
+    /// <summary>
+    /// Player‘¤‚Ì’†Šj
+    /// </summary>
     public class UnityPlayerSyncPlayer : UTJ.RemoteConnect.Player
     {
-
-        
-
+        [SerializeField] bool m_IsLogEnable;
 
         protected override void OnEnable()
         {
-            kMsgSendEditorToPlayer = UnityPlayerSyncRuntime.kMsgSendEditorToPlayer;
-            kMsgSendPlayerToEditor = UnityPlayerSyncRuntime.kMsgSendPlayerToEditor;           
+            kMsgSendEditorToPlayer = UnityPlayerSyncGuid.kMsgSendEditorToPlayer;
+            kMsgSendPlayerToEditor = UnityPlayerSyncGuid.kMsgSendPlayerToEditor;           
             messageEventCB = MessageReciveEventCB;
             base.OnEnable();
         }
@@ -46,7 +48,10 @@ namespace UTJ.UnityPlayerSyncEngine {
                     case MessageID.SyncTransform:
                         {
                             var instanceID = binaryReader.ReadInt32();
-                            //Debug.Log($"instanceID:{instanceID}");
+                            if (m_IsLogEnable)
+                            {
+                                Debug.Log($"instanceID:{instanceID}");
+                            }
                             var sync = SyncTransform.Find(instanceID);
                             if (sync != null)
                             {
@@ -65,8 +70,10 @@ namespace UTJ.UnityPlayerSyncEngine {
                             var sync = SyncComponent.Find(instanceID);
                             if (sync != null)
                             {
-                                Debug.Log($"{sync.GetComponent().name}");
-
+                                if (m_IsLogEnable)
+                                {
+                                    Debug.Log($"{sync.GetComponent().name}");
+                                }
                                 sync.Deserialize(binaryReader);
                                 sync.WriteBack();
                             }
@@ -78,7 +85,6 @@ namespace UTJ.UnityPlayerSyncEngine {
                         }
                         break;
                 }
-
             }
 
             finally

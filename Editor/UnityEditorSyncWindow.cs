@@ -1,19 +1,30 @@
-using System.Collections;
-using System.Collections.Generic;
+//
+// Programed by Katsumasa Kimura
+//
 using System.IO;
 using UnityEngine;
 using UnityEditor;
-using UnityEditor.SceneManagement;
 using UTJ.RemoteConnect.Editor;
-using UTJ.UnityPlayerSyncEngine;
+using UTJ.UnityPlayerSync.Runtime;
 
-namespace UTJ.UnityPlayerSyncEditor
+
+namespace UTJ.UnityPlayerSync.Editor
 {
-               
+    /// <summary>
+    /// UnityPlayerSyncのEditor側の中核
+    /// </summary>
     public class UnityEditorSyncWindow : RemoteConnectEditorWindow
     {
+        /// <summary>
+        /// シングルトン
+        /// </summary>
         static UnityEditorSyncWindow m_Instance;
 
+
+        /// <summary>
+        /// Player側にデータを送信する
+        /// </summary>
+        /// <param name="array">ストリームの配列</param>
         public static void SendMessage(byte[] array)
         {
             if(m_Instance == null)
@@ -24,22 +35,23 @@ namespace UTJ.UnityPlayerSyncEditor
         }
 
 
-
+        /// <summary>
+        /// Open
+        /// </summary>
         [MenuItem("Window/UTJ/UnityPlayerSync/Open")]
         static void OpenWindow()
         {
             m_Instance = (UnityEditorSyncWindow)EditorWindow.GetWindow(typeof(UnityEditorSyncWindow));
         }
 
+
         protected override void OnEnable()
-        {            
-            kMsgSendEditorToPlayer = UnityPlayerSyncRuntime.kMsgSendEditorToPlayer;
-            kMsgSendPlayerToEditor = UnityPlayerSyncRuntime.kMsgSendPlayerToEditor;
+        {
+            kMsgSendEditorToPlayer = UnityPlayerSync.UnityPlayerSyncGuid.kMsgSendEditorToPlayer;
+            kMsgSendPlayerToEditor = UnityPlayerSync.UnityPlayerSyncGuid.kMsgSendPlayerToEditor;
             eventMessageCB = EventMessageReciveCB;            
             base.OnEnable();
-
             EditorApplication.contextualPropertyMenu += OnPropertyContextMenu;
-
         }
 
         protected override void OnDisable()
@@ -49,16 +61,12 @@ namespace UTJ.UnityPlayerSyncEditor
             EditorApplication.contextualPropertyMenu -= OnPropertyContextMenu;
         }
 
-        void OnPropertyContextMenu(GenericMenu menu, SerializedProperty property)
+        private void OnPropertyContextMenu(GenericMenu menu, SerializedProperty property)
         {
             Debug.Log(menu);
             Debug.Log(property);
         }
-
-
         
-
-
         void EventMessageReciveCB(byte[] vs)
         {
             var ms = new MemoryStream(vs);
@@ -66,9 +74,7 @@ namespace UTJ.UnityPlayerSyncEditor
             try
             {
                 var id = br.ReadInt32();
-
-
-                //var newScene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+                //Debug.Log($"Message ID:{id}");
                 var sm = new SyncSceneManager(false);
                 sm.Deserialize(br);
                 sm.WriteBack();
@@ -90,7 +96,7 @@ namespace UTJ.UnityPlayerSyncEditor
                 var bw = new BinaryWriter(ms);
                 try
                 {
-                    bw.Write(0);
+                    bw.Write((int)MessageID.SyncScene);
                     SendRemoteMessage(ms.ToArray());
                 }
                 finally
@@ -98,10 +104,7 @@ namespace UTJ.UnityPlayerSyncEditor
                     bw.Close();
                     ms.Close();
                 }
-            }
-
-            
-
+            }            
         }
     }            
 }
