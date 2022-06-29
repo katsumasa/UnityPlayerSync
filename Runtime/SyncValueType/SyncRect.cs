@@ -25,7 +25,13 @@ namespace UTJ.UnityPlayerSyncEngine
             base.Deserialize(binaryReader);
             for (var i = 0; i < m_Length; i++)
             {
-                m_Values[i] = new Rect(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle());                
+                var x = binaryReader.ReadSingle();
+                var y = binaryReader.ReadSingle();
+                var w = binaryReader.ReadSingle();
+                var h = binaryReader.ReadSingle();                                
+                m_Values[i] = new Rect(x, y, w, h);
+                
+                //Debug.Log($"Rect({x},{y},{w},{h})");
             }
         }
     }

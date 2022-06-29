@@ -78,6 +78,7 @@ namespace UTJ.UnityPlayerSyncEditor
                     {                        
                         bw.Write((int)MessageID.SyncComponent);
                         bw.Write(sync.GetInstanceID());
+                        sync.Reset();
                         sync.Serialize(bw);
                         UnityEditorSyncWindow.SendMessage(ms.ToArray());
                     }

@@ -60,99 +60,10 @@ namespace UTJ.UnityPlayerSyncEngine
         public SyncComponent(object obj,bool isPlayer = true) : base(obj)
         {
             syncComponents.Add(this);
-
-
-            if(isPlayer == false)
+            if (isPlayer)
             {
-                return;
+                Init();
             }
-
-            var component = (Component)m_object;
-            var type = component.GetType();
-
-            
-
-            // プロパティの取得
-            var props = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);                
-            var list = new List<SyncValueObject>();
-            var propList = new List<SyncPropertyInfo>();
-            foreach(var prop in props)
-            {
-                
-                if(!prop.CanRead)
-                {
-                    continue;
-                }
-                // UnityではObsoleteになったgetterがNotSupportedExceptionをthrowしている為、キャッチしてスルーする必要があるが、
-                // TestRunnerがSystem.ExceptionでキャッチしているのでこちらもSystem.Exceptionでキャッチせざるを得ない
-                object o = null;
-                try
-                {
-                    if (!IsSkipGetValue(prop))
-                    {
-                        o = prop.GetValue(component);
-                    }
-                }
-                //catch(System.NotSupportedException)
-                catch(System.Exception e)
-                {                            
-                    continue;
-                }                    
-                var syncValueType = SyncValueObject.Allocater(prop.PropertyType, prop.PropertyType,o);
-                if(syncValueType == null)
-                {
-                    continue;
-                }
-                list.Add(syncValueType);
-                propList.Add(new SyncPropertyInfo(prop));                    
-            }
-            m_Properties = list.ToArray();
-            m_PropertyInfos = propList.ToArray();
-
-
-            // フィールド（変数)の取得
-            list.Clear();
-            var fiList = new List<SyncFieldInfo>();
-            var fis = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-            foreach(var fi in fis)
-            {                                
-                if(fi.IsInitOnly)
-                {
-                    continue;
-                }
-                if (fi.IsLiteral)
-                {
-                    continue;
-                }
-                if (fi.IsStatic)
-                {
-                    continue;
-                }
-                var at = Attribute.GetCustomAttribute(fi, typeof(SerializeField));
-                var IsSerializeField = at != null ? true : false;
-                if (fi.IsPrivate && !IsSerializeField)
-                {
-                    continue;
-                }                
-                object o = null;
-                try
-                {                    
-                     o = fi.GetValue(component);                    
-                }
-                catch(System.Exception)
-                {
-                    continue;
-                }
-                var syncValueType = SyncValueObject.Allocater(fi.FieldType, fi.FieldType,o);
-                if(syncValueType == null)
-                {
-                    continue;
-                }
-                list.Add(syncValueType);
-                fiList.Add(new SyncFieldInfo(fi));
-            }
-            m_Fields = list.ToArray();
-            m_FieldInfos = fiList.ToArray();            
         }
 
         ~SyncComponent()
@@ -162,7 +73,7 @@ namespace UTJ.UnityPlayerSyncEngine
 
 
         public override void Serialize(BinaryWriter binaryWriter)
-        {
+        {            
             base.Serialize(binaryWriter);
             
             binaryWriter.Write(m_Properties.Length);
@@ -237,11 +148,19 @@ namespace UTJ.UnityPlayerSyncEngine
                 if (!prop.CanWrite)
                 {
                     continue;
-                }                                    
+                }
+                if (IsSkipGetValue(prop))
+                {
+                    continue;
+                }
                 var o = m_Properties[i].GetValue();
                 if (o != null)
                 {
-                    prop.SetValue(component, o);
+                    var current = prop.GetValue(component);
+                    if(!object.Equals(current,o))                    
+                    {
+                        prop.SetValue(component, o);
+                    }
                 }
             }
 
@@ -253,7 +172,14 @@ namespace UTJ.UnityPlayerSyncEngine
                     continue;
                 }                
                 var o = m_Fields[i].GetValue();
-                fi.SetValue(component, o);                                
+                if (o != null)
+                {
+                    var current = fi.GetValue(component);
+                    if (!object.Equals(current, o))
+                    {
+                        fi.SetValue(component, o);
+                    }
+                }
             }
         }
 
@@ -261,6 +187,7 @@ namespace UTJ.UnityPlayerSyncEngine
         bool IsSkipGetValue(PropertyInfo info)
         {
 #if UNITY_EDITOR
+            // mesh/material/materialsはEditorモードではアクセス出来ない為、Skip
             if (info.DeclaringType == typeof(UnityEngine.MeshFilter))
             {
                 if (info.PropertyType == typeof(UnityEngine.Mesh) && info.Name == "mesh")
@@ -268,7 +195,6 @@ namespace UTJ.UnityPlayerSyncEngine
                     return true;
                 }
             }
-
             if(info.DeclaringType == typeof(UnityEngine.Renderer))
             {
                 if(info.PropertyType == typeof(UnityEngine.Material) && (info.Name == "material"))
@@ -281,7 +207,147 @@ namespace UTJ.UnityPlayerSyncEngine
                 }
             }
 #endif
+            // Runtime<->Editor間でpixelRectを触ると色々不具合が起きるので触らない
+            if(info.DeclaringType == typeof(Camera))
+            {
+                if(info.Name == "pixelRect")
+                {
+                    return true;
+                }
+            }
             return false;
         }       
+
+
+        public void Reset()
+        {
+            var component = (Component)m_object;
+            var type = component.GetType();                        
+            for (var i = 0; i < m_PropertyInfos.Length; i++)
+            {
+                var propInfo = m_PropertyInfos[i];
+                
+                var prop = type.GetProperty(propInfo.Name, BindingFlags.Public | BindingFlags.Instance);
+                if(prop == null)
+                {
+                    Debug.LogError($"{propInfo.Name} is not found.");
+                    continue;
+                }
+
+
+                if (!IsSkipGetValue(prop))
+                {
+                    try
+                    {
+                        var o = prop.GetValue(component);
+                        m_Properties[i].SetValue(o);
+                    }
+                    catch (System.Exception) { }
+                    
+                }
+            }
+
+            for(var i = 0; i < m_FieldInfos.Length; i++)
+            {
+                var fieldInfo = m_FieldInfos[i];                
+                var field = type.GetField(fieldInfo.Name);
+                if(field == null)
+                {
+                    Debug.LogError($"{fieldInfo.Name} is not found.");
+                    continue;
+                }
+                var o = field.GetValue(component);
+                m_Fields[i].SetValue(o);                                    
+            }
+        }
+
+
+
+        void Init()
+        {
+            var component = (Component)m_object;
+            var type = component.GetType();
+            // プロパティの取得
+            var props = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            var list = new List<SyncValueObject>();
+            var propList = new List<SyncPropertyInfo>();
+            foreach (var prop in props)
+            {
+
+                if (!prop.CanRead)
+                {
+                    continue;
+                }
+                // UnityではObsoleteになったgetterがNotSupportedExceptionをthrowしている為、キャッチしてスルーする必要があるが、
+                // TestRunnerがSystem.ExceptionでキャッチしているのでこちらもSystem.Exceptionでキャッチせざるを得ない
+                object o = null;
+                try
+                {
+                    if (!IsSkipGetValue(prop))
+                    {
+                        o = prop.GetValue(component);
+                    }
+                }
+                //catch(System.NotSupportedException)
+                catch (System.Exception e)
+                {
+                    continue;
+                }
+                var syncValueType = SyncValueObject.Allocater(prop.PropertyType, prop.PropertyType, o);
+                if (syncValueType == null)
+                {
+                    continue;
+                }
+                list.Add(syncValueType);
+                propList.Add(new SyncPropertyInfo(prop));
+            }
+            m_Properties = list.ToArray();
+            m_PropertyInfos = propList.ToArray();
+
+
+            // フィールド（変数)の取得
+            list.Clear();
+            var fiList = new List<SyncFieldInfo>();
+            var fis = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            foreach (var fi in fis)
+            {
+                if (fi.IsInitOnly)
+                {
+                    continue;
+                }
+                if (fi.IsLiteral)
+                {
+                    continue;
+                }
+                if (fi.IsStatic)
+                {
+                    continue;
+                }
+                var at = Attribute.GetCustomAttribute(fi, typeof(SerializeField));
+                var IsSerializeField = at != null ? true : false;
+                if (fi.IsPrivate && !IsSerializeField)
+                {
+                    continue;
+                }
+                object o = null;
+                try
+                {
+                    o = fi.GetValue(component);
+                }
+                catch (System.Exception)
+                {
+                    continue;
+                }
+                var syncValueType = SyncValueObject.Allocater(fi.FieldType, fi.FieldType, o);
+                if (syncValueType == null)
+                {
+                    continue;
+                }
+                list.Add(syncValueType);
+                fiList.Add(new SyncFieldInfo(fi));
+            }
+            m_Fields = list.ToArray();
+            m_FieldInfos = fiList.ToArray();
+        }
     }
 }

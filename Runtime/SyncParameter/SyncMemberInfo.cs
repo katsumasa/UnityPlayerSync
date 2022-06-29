@@ -11,6 +11,7 @@ namespace UTJ.UnityPlayerSyncEngine
         protected MemberTypes m_MemberTypes;
         protected string m_Name;
 
+        
 
         public MemberTypes MemberTypes
         {

@@ -174,10 +174,17 @@ namespace UTJ.UnityPlayerSyncEngine
             m_Type.Deserialize(binaryReader);                        
         }
 
+
         public virtual object GetValue()
         {
             return m_Value;
         }    
+
+
+        public virtual void SetValue(object o)
+        {
+            m_Value = o;
+        }
         
     }
 }

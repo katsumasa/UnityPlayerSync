@@ -105,6 +105,49 @@ namespace UTJ.UnityPlayerSyncEngine
                 return m_Values[0];
             }
         }
+
+        public override void SetValue(object value)
+        {
+            m_Length = 0;
+            m_Values = null;
+            if (value is UnityEngine.Object)
+            {
+                var obj = (UnityEngine.Object)value;
+                if (obj == null)
+                {
+                    return;
+                }
+            }
+            else if (value == null)
+            {
+                return;
+            }
+            var t = value.GetType();
+
+            if (t.IsArray)
+            {
+                var array = (T[])value;
+                m_Length = array.Length;
+                m_Values = new T[m_Length];
+                Array.Copy(array, m_Values, array.Length);
+            }
+            else if (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(List<>))
+            {
+                var list = (List<T>)value;
+                m_Length = list.Count;
+                m_Values = new T[m_Length];
+                for (var i = 0; i < m_Length; i++)
+                {
+                    m_Values[i] = list[i];
+                }
+            }
+            else
+            {
+                m_Length = 1;
+                m_Values = new T[1];
+                m_Values[0] = (T)value;
+            }
+        }
     }
 
 
