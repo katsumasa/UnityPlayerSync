@@ -10,30 +10,54 @@ namespace UTJ.UnityPlayerSync.Runtime
 
     public class SyncGameObject : SyncUnityEngineObject
     {
-        static List<SyncGameObject> m_SyncGameObjects;
+        static List<SyncGameObject> m_Caches;
 
-        private static List<SyncGameObject> syncGameObjects
+        private static List<SyncGameObject> Caches
         {
             get
             {
-                if(m_SyncGameObjects == null)
+                if(m_Caches == null)
                 {
-                    m_SyncGameObjects = new List<SyncGameObject>();
+                    m_Caches = new List<SyncGameObject>();
                 }
-                return m_SyncGameObjects;
+                return m_Caches;
             }
         }
 
 
         public static void ClearList()
         {
-            syncGameObjects.Clear();            
+            Caches.Clear();            
+        }
+
+        public static SyncGameObject Find(GameObject gameObject)
+        {
+            foreach (var sync in Caches)
+            {
+                if (GameObject.Equals(sync.gameObject, gameObject))
+                {
+                    return sync;
+                }                    
+            }
+            return null;
+        }
+
+        public static SyncGameObject Find(int instanceID)
+        {
+            foreach (var sync in Caches)
+            {
+                if(sync.GetInstanceID() == instanceID)
+                {
+                    return sync;
+                }
+            }
+            return null;
         }
 
 
         public static UnityEngine.Object FintObject(int instanceID)
         {
-            foreach(var syncGameObject in syncGameObjects)
+            foreach(var syncGameObject in Caches)
             {
                 if(syncGameObject.GetInstanceID() == instanceID)
                 {
@@ -50,6 +74,11 @@ namespace UTJ.UnityPlayerSync.Runtime
                 }                
             }
             return null;
+        }
+
+        public GameObject gameObject
+        {
+            get { return (GameObject)m_object; }
         }
 
 
@@ -90,12 +119,12 @@ namespace UTJ.UnityPlayerSync.Runtime
                 m_Components[i-1] = new SyncComponent(components[i]);
             }
 #endif       
-            syncGameObjects.Add(this);
+            Caches.Add(this);
         }
 
         ~SyncGameObject()
         {
-            syncGameObjects.Remove(this);
+            Caches.Remove(this);
         }
 
 
@@ -127,9 +156,7 @@ namespace UTJ.UnityPlayerSync.Runtime
         }
 
         public override void Deserialize(BinaryReader binaryReader)
-        {
-            var gameObject = (GameObject)m_object;
-
+        {            
             base.Deserialize(binaryReader);            
             gameObject.SetActive(binaryReader.ReadBoolean());
             gameObject.isStatic = binaryReader.ReadBoolean();
@@ -170,6 +197,14 @@ namespace UTJ.UnityPlayerSync.Runtime
             for (var i = 0; i < m_Components.Length; i++)
             {
                 m_Components[i].WriteBack();
+            }
+        }
+
+        public void Reset()
+        {
+            foreach(var component in m_Components)
+            {
+                component.Reset();
             }
         }
 

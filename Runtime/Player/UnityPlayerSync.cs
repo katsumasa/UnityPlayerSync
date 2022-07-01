@@ -21,6 +21,7 @@ namespace UTJ.UnityPlayerSync
     public enum MessageID
     {
         SyncScene,      // Scene‚Ì“¯Šú
+        SyncGameObject, // GameObject‚Ì“¯Šú
         SyncTransform,  // Transform‚Ì“¯Šú
         SyncComponent,  // Component‚Ì“¯Šú
     };

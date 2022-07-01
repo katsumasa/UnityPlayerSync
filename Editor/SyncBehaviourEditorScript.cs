@@ -38,6 +38,25 @@ namespace UTJ.UnityPlayerSync.Editor
             else
             {
                 // GameObjectÇÃìØä˙Çé¿çsÇ∑ÇÈ(from Editor To Player)
+                var sync = SyncGameObject.Find(go);
+                if(sync != null)
+                {                    
+                    var ms = new MemoryStream();
+                    var bw = new BinaryWriter(ms);
+                    try
+                    {
+                        bw.Write((int)MessageID.SyncGameObject);
+                        bw.Write(sync.GetInstanceID());
+                        sync.Reset();
+                        sync.Serialize(bw);
+                        UnityEditorSyncWindow.SendMessage(ms.ToArray());
+                    }
+                    finally
+                    {
+                        bw.Close();
+                        ms.Close();
+                    }
+                }                
             }
         }
     }

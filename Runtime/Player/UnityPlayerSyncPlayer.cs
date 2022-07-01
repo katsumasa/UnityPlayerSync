@@ -33,6 +33,11 @@ namespace UTJ.UnityPlayerSync.Runtime
             try
             {                
                 var messageID = (MessageID)binaryReader.ReadInt32();
+                if (m_IsLogEnable)
+                {
+                    Debug.Log($"messageID:{messageID}");
+                }
+
                 switch (messageID)
                 {
                     case MessageID.SyncScene:
@@ -42,6 +47,25 @@ namespace UTJ.UnityPlayerSync.Runtime
                             syncSceneManager.Serialize(binaryWriter);
                             var vs = writerMemory.ToArray();
                             SendRemoteMessage(vs);
+                        }
+                        break;
+
+                    case MessageID.SyncGameObject:
+                        {
+                            var instanceID = binaryReader.ReadInt32();
+                            if (m_IsLogEnable)
+                            {
+                                Debug.Log($"instanceID:{instanceID}");
+                            }
+                            var sync = SyncGameObject.Find(instanceID);
+                            if(sync != null)
+                            {
+                                sync.Deserialize(binaryReader);
+                            }
+                            else
+                            {
+                                Debug.LogWarning($"instanceID;{instanceID} is not found.");
+                            }
                         }
                         break;
 
