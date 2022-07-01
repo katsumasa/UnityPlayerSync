@@ -186,7 +186,11 @@ namespace UTJ.UnityPlayerSync.Runtime
             for (var i = 0; i < len; i++)
             {                                                
                 var componentType = SyncType.GetType(m_ComponentTypes[i]);
-                var component = gameObject.AddComponent(componentType);                
+                var component = gameObject.GetComponent(componentType);
+                if (component == null)
+                {
+                    component = gameObject.AddComponent(componentType);
+                }
                 m_Components[i] = new SyncComponent(component,false);
                 m_Components[i].Deserialize(binaryReader);
             }
