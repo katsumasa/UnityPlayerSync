@@ -14,6 +14,12 @@ namespace UTJ.UnityPlayerSync.Runtime
     /// </summary>
     public class SyncComponent : SyncUnityEngineObject
     {
+        enum DummyEnum
+        {
+            Dummy,
+        };
+
+
         /// <summary>
         /// 生成されたSyncComponentのキャッシュ
         /// </summary>
@@ -150,9 +156,11 @@ namespace UTJ.UnityPlayerSync.Runtime
                 if (t == null)
                 {
                     var typeName = $"{m_PropertyInfos[i].PropertyType.Name},{m_PropertyInfos[i].PropertyType.Assembly.FullName}";
-                    // 現状読み込めないBuild-In型は列挙型だけの筈なので４バイト進める
-                    var value = binaryReader.ReadInt32();
-                    Debug.Log($"{typeName} is not found. value is {value}");
+                    // 現状読み込めないBuild-In型は列挙型だけの筈なので、ダミーの列挙型で空読みを行う
+                    //Debug.Log($"{typeName} is not found.");
+                    var dummyEnum = DummyEnum.Dummy;
+                    var sync = new SyncValueEnum(dummyEnum);
+                    sync.Deserialize(binaryReader);                                        
                 }
                 else
                 {
@@ -177,9 +185,11 @@ namespace UTJ.UnityPlayerSync.Runtime
                 if (t == null)
                 {
                     var typeName = $"{m_FieldInfos[i].FieldType.Name},{m_FieldInfos[i].FieldType.Assembly.FullName}";
-                    // 現状読み込めないBuild-In型は列挙型だけの筈なので４バイト進める
-                    var value = binaryReader.ReadInt32();
-                    Debug.Log($"{typeName} is not found. value is {value}");
+                    // 現状読み込めないBuild-In型は列挙型だけの筈なので、ダミーの列挙型で空読みを行う
+                    //Debug.Log($"{typeName} is not found.");
+                    var dummyEnum = DummyEnum.Dummy;
+                    var sync = new SyncValueEnum(dummyEnum);
+                    sync.Deserialize(binaryReader);
                 }
                 else
                 {
