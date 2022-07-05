@@ -145,7 +145,13 @@ namespace UTJ.UnityPlayerSync.Runtime
             
             m_Properties = new SyncValueObject[len];            
             for (var i = 0; i < m_Properties.Length; i++)
-            {                
+            {
+                var t = SyncType.GetType(m_PropertyInfos[i].PropertyType);
+                if(t == null)
+                {
+                    var typeName = $"{m_PropertyInfos[i].PropertyType.Name},{m_PropertyInfos[i].PropertyType.Assembly.FullName}";
+                }
+
                 m_Properties[i] = SyncValueObject.Allocater(SyncType.GetType(m_PropertyInfos[i].PropertyType), SyncType.GetType(m_PropertyInfos[i].PropertyType));                                
                 m_Properties[i].Deserialize(binaryReader);
             }
@@ -269,7 +275,12 @@ namespace UTJ.UnityPlayerSync.Runtime
                     Debug.LogError($"{propInfo.Name} is not found.");
                     continue;
                 }
-
+                var at = Attribute.GetCustomAttribute(prop, typeof(ObsoleteAttribute));
+                if (at != null)
+                {
+                    //Debug.Log($"{prop.Name} is Obsolete.");
+                    continue;
+                }
                 if (IsSkipGetValue(prop))
                 {
                     continue;
@@ -290,7 +301,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                 {
                     Debug.LogError($"{fieldInfo.Name} is not found.");
                     continue;
-                }
+                }                
                 var o = field.GetValue(component);
                 m_Fields[i].SetValue(o);                                    
             }
@@ -311,7 +322,14 @@ namespace UTJ.UnityPlayerSync.Runtime
                 if (!prop.CanRead)
                 {
                     continue;
-                }                
+                }
+                // Obsoleteなフィールドは無視する
+                var at = Attribute.GetCustomAttribute(prop, typeof(ObsoleteAttribute));
+                if (at != null)
+                {
+                    //Debug.Log($"{prop.Name} is Obsolete.");
+                    continue;
+                }
                 // UnityではObsoleteになったgetterがNotSupportedExceptionをthrowしている為、キャッチしてスルーする必要があるが、
                 // TestRunnerがSystem.ExceptionでキャッチしているのでこちらもSystem.Exceptionでキャッチせざるを得ない
                 object o = null;
@@ -364,7 +382,8 @@ namespace UTJ.UnityPlayerSync.Runtime
                 if (isNonPublic && !IsSerializeField)
                 {
                     continue;
-                }
+                }                
+
                 object o = null;
                 try
                 {
