@@ -147,13 +147,18 @@ namespace UTJ.UnityPlayerSync.Runtime
             for (var i = 0; i < m_Properties.Length; i++)
             {
                 var t = SyncType.GetType(m_PropertyInfos[i].PropertyType);
-                if(t == null)
+                if (t == null)
                 {
                     var typeName = $"{m_PropertyInfos[i].PropertyType.Name},{m_PropertyInfos[i].PropertyType.Assembly.FullName}";
+                    // 現状読み込めないBuild-In型は列挙型だけの筈なので４バイト進める
+                    var value = binaryReader.ReadInt32();
+                    Debug.Log($"{typeName} is not found. value is {value}");
                 }
-
-                m_Properties[i] = SyncValueObject.Allocater(SyncType.GetType(m_PropertyInfos[i].PropertyType), SyncType.GetType(m_PropertyInfos[i].PropertyType));                                
-                m_Properties[i].Deserialize(binaryReader);
+                else
+                {
+                    m_Properties[i] = SyncValueObject.Allocater(t, t);
+                    m_Properties[i].Deserialize(binaryReader);
+                }
             }
 
             len = binaryReader.ReadInt32();            
@@ -167,9 +172,20 @@ namespace UTJ.UnityPlayerSync.Runtime
             
             m_Fields = new SyncValueObject[len];                      
             for(var i = 0; i < len; i++)
-            {                
-                m_Fields[i] = SyncValueObject.Allocater(SyncType.GetType(m_FieldInfos[i].FieldType), SyncType.GetType(m_FieldInfos[i].FieldType));                
-                m_Fields[i].Deserialize(binaryReader);
+            {
+                var t = SyncType.GetType(m_FieldInfos[i].FieldType);
+                if (t == null)
+                {
+                    var typeName = $"{m_FieldInfos[i].FieldType.Name},{m_FieldInfos[i].FieldType.Assembly.FullName}";
+                    // 現状読み込めないBuild-In型は列挙型だけの筈なので４バイト進める
+                    var value = binaryReader.ReadInt32();
+                    Debug.Log($"{typeName} is not found. value is {value}");
+                }
+                else
+                {
+                    m_Fields[i] = SyncValueObject.Allocater(t, t);
+                    m_Fields[i].Deserialize(binaryReader);
+                }
             }
         }
 
@@ -180,7 +196,13 @@ namespace UTJ.UnityPlayerSync.Runtime
 
             var type = component.GetType();                
             for(var i = 0; i < m_Properties.Length; i++)
-            {            
+            {
+                // デシリアライズ出来なかったプロパティはスキップ
+                if(m_Properties[i] == null)
+                {
+                    continue;
+                }
+
                 var prop = type.GetProperty(m_PropertyInfos[i].Name);
                 if (!prop.CanWrite)
                 {
@@ -203,6 +225,11 @@ namespace UTJ.UnityPlayerSync.Runtime
 
             for(var i = 0; i < m_Fields.Length; i++)
             {            
+                // デシリアライズ出来無かったフィールドはスキップ
+                if(m_Fields[i] == null)
+                {
+                    continue;
+                }
                 var fi = type.GetField(m_FieldInfos[i].Name, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
                 if (fi.IsInitOnly||fi.IsLiteral)
                 {

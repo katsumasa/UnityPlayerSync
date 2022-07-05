@@ -103,7 +103,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                             
         public SyncGameObject(object obj):base(obj)
         {
-#if !UNITY_EDITOR
+#if false
             var gameObject = (GameObject)m_object;
             m_Transform = new SyncTransform(gameObject.transform);
             var components = gameObject.GetComponents<Component>();
@@ -131,6 +131,21 @@ namespace UTJ.UnityPlayerSync.Runtime
         public override void Serialize(BinaryWriter binaryWriter)
         {
             var gameObject = (GameObject)m_object;
+
+            m_Transform = new SyncTransform(gameObject.transform);
+            var components = gameObject.GetComponents<Component>();
+            m_ComponentInstancIDs = new int[components.Length - 1];
+            m_ComponentTypes = new SyncType[components.Length - 1];
+            m_Components = new SyncComponent[components.Length - 1];
+
+            // 0î‘ñ⁄ÇÕTransformÇ≈Ç†ÇÈà◊ÅA1î‘ñ⁄Ç©ÇÁèàóùÇ∑ÇÈ
+            for (var i = 1; i < components.Length; i++)
+            {
+                m_ComponentInstancIDs[i - 1] = components[i].GetInstanceID();
+                m_ComponentTypes[i - 1] = new SyncType(components[i].GetType());
+                m_Components[i - 1] = new SyncComponent(components[i]);
+            }
+
 
             base.Serialize(binaryWriter);            
             binaryWriter.Write(gameObject.activeSelf);
