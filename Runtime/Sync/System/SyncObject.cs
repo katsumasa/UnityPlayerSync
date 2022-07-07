@@ -1,7 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
-using UnityEngine;
+
 
 namespace UTJ.UnityPlayerSync.Runtime
 {
@@ -14,13 +12,13 @@ namespace UTJ.UnityPlayerSync.Runtime
         {
             m_object = obj;
         }
-
+        
 
         public override void Serialize(BinaryWriter binaryWriter) { }
         
 
         public override void Deserialize(BinaryReader binaryReader) { }        
 
-        
+       
     }
 }
