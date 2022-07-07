@@ -1,4 +1,4 @@
-//
+ï»¿//
 // Programed by Katsumasa Kimura
 //
 using System.IO;
@@ -10,7 +10,7 @@ using UTJ.UnityPlayerSync.Runtime;
 namespace UTJ.UnityPlayerSync.Editor
 {
     /// <summary>
-    /// Hierarchy Window‚Å‚ÌƒRƒ“ƒeƒLƒXƒgƒƒjƒ…[‚ğˆ—‚·‚éƒNƒ‰ƒX
+    /// Hierarchy Windowã§ã®ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‚’å‡¦ç†ã™ã‚‹ã‚¯ãƒ©ã‚¹
     /// </summary>
     public static class SyncHierarchyScript
     {
@@ -20,7 +20,7 @@ namespace UTJ.UnityPlayerSync.Editor
             var go = menuCommand.context as GameObject;
             if(go == null)
             {
-                // Scene‚Ì“¯Šú‚ğÀs‚·‚é(from Player to Editor)
+                // Sceneã®åŒæœŸã‚’å®Ÿè¡Œã™ã‚‹(from Player to Editor)
                 var ms = new MemoryStream();
                 var bw = new BinaryWriter(ms);
                 try
@@ -36,7 +36,7 @@ namespace UTJ.UnityPlayerSync.Editor
             }
             else
             {
-                // GameObject‚Ì“¯Šú‚ğÀs‚·‚é(from Editor To Player)                
+                // GameObjectã®åŒæœŸã‚’å®Ÿè¡Œã™ã‚‹(from Editor To Player)                
                 if(go.transform.parent != null)
                 {
                     var sync = SyncGameObject.Find(go.transform.parent.gameObject);
@@ -103,23 +103,23 @@ namespace UTJ.UnityPlayerSync.Editor
    
 
 
-    // Component‚ÌƒRƒ“ƒeƒLƒXƒgƒƒjƒ…[‚ğˆ—‚·‚éƒNƒ‰ƒX
+    // Componentã®ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‚’å‡¦ç†ã™ã‚‹ã‚¯ãƒ©ã‚¹
     [CustomEditor(typeof(Component))]
 
     public class SyncComponentScript : UnityEditor.Editor
     {
         /// <summary>
-        /// ƒRƒ“ƒeƒLƒXƒgƒƒjƒ…[‚©‚çSync‚ğ‘I‘ğ‚³‚ê‚½‚Ìˆ—
+        /// ã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆãƒ¡ãƒ‹ãƒ¥ãƒ¼ã‹ã‚‰Syncã‚’é¸æŠã•ã‚ŒãŸæ™‚ã®å‡¦ç†
         /// </summary>
-        /// <param name="menuCommand">‘I‘ğ‚³‚ê‚½component</param>
+        /// <param name="menuCommand">é¸æŠã•ã‚ŒãŸcomponent</param>
         [MenuItem("CONTEXT/Component/Sync")]
         private static void ContextMenu(MenuCommand menuCommand)
         {
-            // MenuCommand.context‚ÉƒRƒ“ƒ|[ƒlƒ“ƒg‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ª“ü‚Á‚Ä‚­‚é
+            // MenuCommand.contextã«ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ãŒå…¥ã£ã¦ãã‚‹
             var component = menuCommand.context as Component;
 
 
-            // Transform‚Ì‚İ“Á•Êˆ—
+            // Transformã®ã¿ç‰¹åˆ¥å‡¦ç†
             if (component is Transform)
             {
                 var ms = new MemoryStream();

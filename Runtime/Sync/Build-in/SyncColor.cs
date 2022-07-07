@@ -1,4 +1,4 @@
-//
+﻿//
 // Programed by Katsumasa Kimura
 //
 using System.IO;

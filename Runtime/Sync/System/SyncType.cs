@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.IO;
 using System.Reflection;
 
@@ -36,7 +36,7 @@ namespace UTJ.UnityPlayerSync.Runtime
 
         public static System.Type GetType(SyncType type)
         {
-            // Œ^‚ÆAssembly‚Ìƒtƒ‹ƒl[ƒ€‚©‚çŒ^‚ğæ“¾‚·‚é
+            // å‹ã¨Assemblyã®ãƒ•ãƒ«ãƒãƒ¼ãƒ ã‹ã‚‰å‹ã‚’å–å¾—ã™ã‚‹
             var typeName = $"{type.FullName},{type.Assembly.FullName}";
             return System.Type.GetType(typeName);
         }

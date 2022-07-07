@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -20,7 +20,7 @@ namespace UTJ.UnityPlayerSync.Runtime
             }
             for (var i = 0; i < m_Values.Length; i++)
             {
-                // Hierarchy‚©‚çObject‚ðŒŸõ‚·‚é
+                // Hierarchyã‹ã‚‰Objectã‚’æ¤œç´¢ã™ã‚‹
                 m_Values[i] = SyncGameObject.FintObject(m_InstanceIDs[i]);
             }
 

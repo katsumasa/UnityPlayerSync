@@ -1,4 +1,4 @@
-//
+ï»¿//
 // Programed by Katsumasa Kimura
 //
 using System.IO;
@@ -7,7 +7,7 @@ using UnityEngine;
 namespace UTJ.UnityPlayerSync.Runtime
 {
     /// <summary>
-    /// Behaviour‚ğ“¯Šú‚³‚¹‚éˆ×‚ÌƒNƒ‰ƒX
+    /// Behaviourã‚’åŒæœŸã•ã›ã‚‹ç‚ºã®ã‚¯ãƒ©ã‚¹
     /// </summary>
     public class SyncBehaviour : SyncComponent
     {        

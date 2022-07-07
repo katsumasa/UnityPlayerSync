@@ -1,4 +1,4 @@
-//
+ï»¿//
 // Programed by Katsumasa Kimura
 //
 using System.IO;
@@ -8,17 +8,17 @@ using System.Reflection;
 namespace UTJ.UnityPlayerSync.Runtime
 {
     /// <summary>
-    /// System.Assembly‚ğ“¯Šú‚·‚éˆ×‚ÌƒNƒ‰ƒX
+    /// System.Assemblyã‚’åŒæœŸã™ã‚‹ç‚ºã®ã‚¯ãƒ©ã‚¹
     /// </summary>
     public class SyncAssembly : Sync
     {
         /// <summary>
-        /// ƒtƒ‹ƒl[ƒ€
+        /// ãƒ•ãƒ«ãƒãƒ¼ãƒ 
         /// </summary>
         protected string m_FullName = "";
 
         /// <summary>
-        /// ƒtƒ‹ƒl[ƒ€
+        /// ãƒ•ãƒ«ãƒãƒ¼ãƒ 
         /// </summary>
         public string FullName
         {
@@ -27,13 +27,13 @@ namespace UTJ.UnityPlayerSync.Runtime
 
 
         /// <summary>
-        /// ƒRƒ“ƒXƒgƒ‰ƒNƒ^[
+        /// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãƒ¼
         /// </summary>
         public SyncAssembly() { }
 
 
         /// <summary>
-        /// ƒRƒ“ƒXƒgƒ‰ƒNƒ^[
+        /// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãƒ¼
         /// </summary>
         /// <param name="assembly"></param>
         public SyncAssembly(Assembly assembly)
@@ -43,7 +43,7 @@ namespace UTJ.UnityPlayerSync.Runtime
 
 
         /// <summary>
-        /// ƒVƒŠƒAƒ‰ƒCƒY
+        /// ã‚·ãƒªã‚¢ãƒ©ã‚¤ã‚º
         /// </summary>
         /// <param name="binaryWriter">BinaryWriter</param>
         public override void Serialize(BinaryWriter binaryWriter)
@@ -53,7 +53,7 @@ namespace UTJ.UnityPlayerSync.Runtime
 
 
         /// <summary>
-        /// ƒfƒVƒŠƒAƒ‰ƒCƒY
+        /// ãƒ‡ã‚·ãƒªã‚¢ãƒ©ã‚¤ã‚º
         /// </summary>
         /// <param name="binaryReader">BinaryReader</param>
         public override void Deserialize(BinaryReader binaryReader)

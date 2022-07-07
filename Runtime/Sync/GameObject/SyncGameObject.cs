@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -86,7 +86,7 @@ namespace UTJ.UnityPlayerSync.Runtime
 
 
         protected SyncTransform m_Transform;
-        // Transform‚Æ‚»‚êˆÈŠO‚ÌƒRƒ“ƒ|[ƒlƒ“ƒg‚Å•ª‚¯‚Ü‚·        
+        // Transformã¨ãã‚Œä»¥å¤–ã®ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã§åˆ†ã‘ã¾ã™        
         protected int[] m_ComponentInstancIDs;
         protected SyncType[] m_ComponentTypes;
         protected SyncComponent[] m_Components;
@@ -114,7 +114,7 @@ namespace UTJ.UnityPlayerSync.Runtime
             m_ComponentTypes = new SyncType[components.Length - 1];
             m_Components = new SyncComponent[components.Length - 1];
             
-            // 0”Ô–Ú‚ÍTransform‚Å‚ ‚éˆ×A1”Ô–Ú‚©‚çˆ—‚·‚é
+            // 0ç•ªç›®ã¯Transformã§ã‚ã‚‹ç‚ºã€1ç•ªç›®ã‹ã‚‰å‡¦ç†ã™ã‚‹
             for(var i= 1; i < components.Length; i++)
             {
                 m_ComponentInstancIDs[i - 1] = components[i].GetInstanceID();
@@ -141,7 +141,7 @@ namespace UTJ.UnityPlayerSync.Runtime
             m_ComponentTypes = new SyncType[components.Length - 1];
             m_Components = new SyncComponent[components.Length - 1];
 
-            // 0”Ô–Ú‚ÍTransform‚Å‚ ‚éˆ×A1”Ô–Ú‚©‚çˆ—‚·‚é
+            // 0ç•ªç›®ã¯Transformã§ã‚ã‚‹ç‚ºã€1ç•ªç›®ã‹ã‚‰å‡¦ç†ã™ã‚‹
             for (var i = 1; i < components.Length; i++)
             {
                 m_ComponentInstancIDs[i - 1] = components[i].GetInstanceID();
@@ -199,7 +199,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                 m_ComponentTypes[i].Deserialize(binaryReader);
             }                
 
-            // Component‚ÌƒfƒVƒŠƒAƒ‰ƒCƒY
+            // Componentã®ãƒ‡ã‚·ãƒªã‚¢ãƒ©ã‚¤ã‚º
             var components = gameObject.GetComponents<Component>();
             for (var i = 0; i < len; i++)
             {                                                

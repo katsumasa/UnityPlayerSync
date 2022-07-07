@@ -1,4 +1,4 @@
-
+ï»¿
 using System.IO;
 using UnityEngine.SceneManagement;
 #if UNITY_EDITOR
@@ -64,7 +64,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                     scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Additive);
                 }
 #else
-                // Runtimeã‚ÅDeserialize‚ª‘–‚é‚±‚Æ‚Í‘z’è‚µ‚Ä‚¢‚È‚¢ˆ×A‚±‚±‚ªÀs‚³‚ê‚é‚±‚Æ‚ÍŒ»“_‚Å‚Í‘z’èŠO
+                // Runtimeä¸Šã§DeserializeãŒèµ°ã‚‹ã“ã¨ã¯æƒ³å®šã—ã¦ã„ãªã„ç‚ºã€ã“ã“ãŒå®Ÿè¡Œã•ã‚Œã‚‹ã“ã¨ã¯ç¾æ™‚ç‚¹ã§ã¯æƒ³å®šå¤–
                 scene = new Scene();
 #endif
                 m_Scenes[i] = new SyncScene(scene);

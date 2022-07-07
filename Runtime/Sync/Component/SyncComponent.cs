@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 //
 // Programed by Katsumasa Kimura
 //
@@ -10,7 +10,7 @@ using UnityEngine;
 namespace UTJ.UnityPlayerSync.Runtime
 {
     /// <summary>
-    /// Component‚ğ“¯Šú‚³‚¹‚éˆ×‚ÌƒNƒ‰ƒX
+    /// Componentã‚’åŒæœŸã•ã›ã‚‹ç‚ºã®ã‚¯ãƒ©ã‚¹
     /// </summary>
     public class SyncComponent : SyncUnityEngineObject
     {
@@ -21,7 +21,7 @@ namespace UTJ.UnityPlayerSync.Runtime
 
 
         /// <summary>
-        /// ¶¬‚³‚ê‚½SyncComponent‚ÌƒLƒƒƒbƒVƒ…
+        /// ç”Ÿæˆã•ã‚ŒãŸSyncComponentã®ã‚­ãƒ£ãƒƒã‚·ãƒ¥
         /// </summary>
         static List<SyncComponent> m_Caches;
         static List<SyncComponent> Caches
@@ -38,9 +38,9 @@ namespace UTJ.UnityPlayerSync.Runtime
 
 
         /// <summary>
-        /// Component‚ğƒL[‚É‚µ‚ÄSyncComponent‚ğŒŸõ‚·‚é
+        /// Componentã‚’ã‚­ãƒ¼ã«ã—ã¦SyncComponentã‚’æ¤œç´¢ã™ã‚‹
         /// </summary>
-        /// <param name="component">ƒL[‚Æ‚·‚éComponent</param>
+        /// <param name="component">ã‚­ãƒ¼ã¨ã™ã‚‹Component</param>
         /// <returns>SyncComponent</returns>
         public static SyncComponent Find(Component component)
         {
@@ -61,9 +61,9 @@ namespace UTJ.UnityPlayerSync.Runtime
 
 
         /// <summary>
-        /// instanceID‚ğƒL[‚É‚µ‚ÄSyncComponent‚ğŒŸõ‚·‚é
+        /// instanceIDã‚’ã‚­ãƒ¼ã«ã—ã¦SyncComponentã‚’æ¤œç´¢ã™ã‚‹
         /// </summary>
-        /// <param name="instanceID">ƒL[‚Æ‚·‚éinstanceID</param>
+        /// <param name="instanceID">ã‚­ãƒ¼ã¨ã™ã‚‹instanceID</param>
         /// <returns>SyncComponent</returns>
         public static SyncComponent Find(int instanceID)
         {
@@ -90,7 +90,7 @@ namespace UTJ.UnityPlayerSync.Runtime
         
 
         /// <summary>
-        /// ‘Î‰‚·‚éComponent‚ğæ“¾‚·‚é
+        /// å¯¾å¿œã™ã‚‹Componentã‚’å–å¾—ã™ã‚‹
         /// </summary>
         /// <returns></returns>
         public Component GetComponent()
@@ -100,7 +100,7 @@ namespace UTJ.UnityPlayerSync.Runtime
         
 
         /// <summary>
-        /// ƒRƒ“ƒXƒgƒ‰ƒNƒ^[
+        /// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãƒ¼
         /// </summary>
         /// <param name="obj">Component</param>
         /// <param name="isPlayer"></param>
@@ -166,7 +166,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                 if (t == null)
                 {
                     var typeName = $"{m_PropertyInfos[i].PropertyType.Name},{m_PropertyInfos[i].PropertyType.Assembly.FullName}";
-                    // Œ»ó“Ç‚İ‚ß‚È‚¢Build-InŒ^‚Í—ñ‹“Œ^‚¾‚¯‚Ì”¤‚È‚Ì‚ÅAƒ_ƒ~[‚Ì—ñ‹“Œ^‚Å‹ó“Ç‚İ‚ğs‚¤
+                    // ç¾çŠ¶èª­ã¿è¾¼ã‚ãªã„Build-Inå‹ã¯åˆ—æŒ™å‹ã ã‘ã®ç­ˆãªã®ã§ã€ãƒ€ãƒŸãƒ¼ã®åˆ—æŒ™å‹ã§ç©ºèª­ã¿ã‚’è¡Œã†
                     //Debug.Log($"{typeName} is not found.");
                     var dummyEnum = DummyEnum.Dummy;
                     var sync = new SyncValueEnum(dummyEnum);
@@ -195,7 +195,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                 if (t == null)
                 {
                     var typeName = $"{m_FieldInfos[i].FieldType.Name},{m_FieldInfos[i].FieldType.Assembly.FullName}";
-                    // Œ»ó“Ç‚İ‚ß‚È‚¢Build-InŒ^‚Í—ñ‹“Œ^‚¾‚¯‚Ì”¤‚È‚Ì‚ÅAƒ_ƒ~[‚Ì—ñ‹“Œ^‚Å‹ó“Ç‚İ‚ğs‚¤
+                    // ç¾çŠ¶èª­ã¿è¾¼ã‚ãªã„Build-Inå‹ã¯åˆ—æŒ™å‹ã ã‘ã®ç­ˆãªã®ã§ã€ãƒ€ãƒŸãƒ¼ã®åˆ—æŒ™å‹ã§ç©ºèª­ã¿ã‚’è¡Œã†
                     //Debug.Log($"{typeName} is not found.");
                     var dummyEnum = DummyEnum.Dummy;
                     var sync = new SyncValueEnum(dummyEnum);
@@ -217,7 +217,7 @@ namespace UTJ.UnityPlayerSync.Runtime
             var type = component.GetType();                
             for(var i = 0; i < m_Properties.Length; i++)
             {
-                // ƒfƒVƒŠƒAƒ‰ƒCƒYo—ˆ‚È‚©‚Á‚½ƒvƒƒpƒeƒB‚ÍƒXƒLƒbƒv
+                // ãƒ‡ã‚·ãƒªã‚¢ãƒ©ã‚¤ã‚ºå‡ºæ¥ãªã‹ã£ãŸãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã¯ã‚¹ã‚­ãƒƒãƒ—
                 if(m_Properties[i] == null)
                 {
                     continue;
@@ -245,7 +245,7 @@ namespace UTJ.UnityPlayerSync.Runtime
 
             for(var i = 0; i < m_Fields.Length; i++)
             {            
-                // ƒfƒVƒŠƒAƒ‰ƒCƒYo—ˆ–³‚©‚Á‚½ƒtƒB[ƒ‹ƒh‚ÍƒXƒLƒbƒv
+                // ãƒ‡ã‚·ãƒªã‚¢ãƒ©ã‚¤ã‚ºå‡ºæ¥ç„¡ã‹ã£ãŸãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ã¯ã‚¹ã‚­ãƒƒãƒ—
                 if(m_Fields[i] == null)
                 {
                     continue;
@@ -269,14 +269,14 @@ namespace UTJ.UnityPlayerSync.Runtime
 
 
         /// <summary>
-        /// g‚¤‚Æ–â‘è‚Ì‚ ‚éƒvƒƒpƒeƒB‚ğ”»’è‚·‚é
+        /// ä½¿ã†ã¨å•é¡Œã®ã‚ã‚‹ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã‚’åˆ¤å®šã™ã‚‹
         /// </summary>
-        /// <param name="info">ƒvƒƒpƒeƒB–¼</param>
-        /// <returns>true:–â‘è‚ ‚è</returns>
+        /// <param name="info">ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£å</param>
+        /// <returns>true:å•é¡Œã‚ã‚Š</returns>
         bool IsSkipGetValue(PropertyInfo info)
         {
 #if UNITY_EDITOR
-            // mesh/material/materials‚ÍEditorƒ‚[ƒh‚Å‚ÍƒAƒNƒZƒXo—ˆ‚È‚¢ˆ×ASkip
+            // mesh/material/materialsã¯Editorãƒ¢ãƒ¼ãƒ‰ã§ã¯ã‚¢ã‚¯ã‚»ã‚¹å‡ºæ¥ãªã„ç‚ºã€Skip
             if (info.DeclaringType == typeof(UnityEngine.MeshFilter))
             {
                 if (info.PropertyType == typeof(UnityEngine.Mesh) && info.Name == "mesh")
@@ -296,7 +296,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                 }
             }
 #endif
-            // Runtime<->EditorŠÔ‚ÅpixelRect‚ğG‚é‚ÆFX•s‹ï‡‚ª‹N‚«‚é‚Ì‚ÅG‚ç‚È‚¢
+            // Runtime<->Editoré–“ã§pixelRectã‚’è§¦ã‚‹ã¨è‰²ã€…ä¸å…·åˆãŒèµ·ãã‚‹ã®ã§è§¦ã‚‰ãªã„
             if(info.DeclaringType == typeof(Camera))
             {
                 if(info.Name == "pixelRect")
@@ -362,7 +362,7 @@ namespace UTJ.UnityPlayerSync.Runtime
         {
             var component = (Component)m_object;
             var type = component.GetType();
-            // ƒvƒƒpƒeƒB‚Ìæ“¾
+            // ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã®å–å¾—
             var props = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
             var list = new List<SyncValueObject>();
             var propList = new List<SyncPropertyInfo>();
@@ -372,15 +372,15 @@ namespace UTJ.UnityPlayerSync.Runtime
                 {
                     continue;
                 }
-                // Obsolete‚ÈƒtƒB[ƒ‹ƒh‚Í–³‹‚·‚é
+                // Obsoleteãªãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ã¯ç„¡è¦–ã™ã‚‹
                 var at = Attribute.GetCustomAttribute(prop, typeof(ObsoleteAttribute));
                 if (at != null)
                 {
                     //Debug.Log($"{prop.Name} is Obsolete.");
                     continue;
                 }
-                // Unity‚Å‚ÍObsolete‚É‚È‚Á‚½getter‚ªNotSupportedException‚ğthrow‚µ‚Ä‚¢‚éˆ×AƒLƒƒƒbƒ`‚µ‚ÄƒXƒ‹[‚·‚é•K—v‚ª‚ ‚é‚ªA
-                // TestRunner‚ªSystem.Exception‚ÅƒLƒƒƒbƒ`‚µ‚Ä‚¢‚é‚Ì‚Å‚±‚¿‚ç‚àSystem.Exception‚ÅƒLƒƒƒbƒ`‚¹‚´‚é‚ğ“¾‚È‚¢
+                // Unityã§ã¯Obsoleteã«ãªã£ãŸgetterãŒNotSupportedExceptionã‚’throwã—ã¦ã„ã‚‹ç‚ºã€ã‚­ãƒ£ãƒƒãƒã—ã¦ã‚¹ãƒ«ãƒ¼ã™ã‚‹å¿…è¦ãŒã‚ã‚‹ãŒã€
+                // TestRunnerãŒSystem.Exceptionã§ã‚­ãƒ£ãƒƒãƒã—ã¦ã„ã‚‹ã®ã§ã“ã¡ã‚‰ã‚‚System.Exceptionã§ã‚­ãƒ£ãƒƒãƒã›ã–ã‚‹ã‚’å¾—ãªã„
                 object o = null;
                 try
                 {
@@ -406,10 +406,10 @@ namespace UTJ.UnityPlayerSync.Runtime
             m_PropertyInfos = propList.ToArray();
 
 
-            // ƒtƒB[ƒ‹ƒhi•Ï”)‚Ìæ“¾
+            // ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ï¼ˆå¤‰æ•°)ã®å–å¾—
             list.Clear();
             var fiList = new List<SyncFieldInfo>();
-            // SerializeƒAƒgƒŠƒrƒ…[ƒg‚ª•t‚¢‚½ƒtƒB[ƒ‹ƒh‚àİ’èo—ˆ‚é•K—v‚ª‚ ‚éˆ×ANonPublicƒtƒ‰ƒO‚à—LŒø‚É‚·‚é
+            // Serializeã‚¢ãƒˆãƒªãƒ“ãƒ¥ãƒ¼ãƒˆãŒä»˜ã„ãŸãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ã‚‚è¨­å®šå‡ºæ¥ã‚‹å¿…è¦ãŒã‚ã‚‹ç‚ºã€NonPublicãƒ•ãƒ©ã‚°ã‚‚æœ‰åŠ¹ã«ã™ã‚‹
             var fis = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             foreach (var fi in fis)
             {

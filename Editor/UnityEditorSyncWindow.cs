@@ -1,4 +1,4 @@
-//
+ï»¿//
 // Programed by Katsumasa Kimura
 //
 using System.Collections.Generic;
@@ -13,20 +13,20 @@ using UTJ.UnityPlayerSync.Runtime;
 namespace UTJ.UnityPlayerSync.Editor
 {
     /// <summary>
-    /// UnityPlayerSync‚ÌEditor‘¤‚Ì’†Šj
+    /// UnityPlayerSyncã®Editorå´ã®ä¸­æ ¸
     /// </summary>
     public class UnityEditorSyncWindow : RemoteConnectEditorWindow
     {
         /// <summary>
-        /// ƒVƒ“ƒOƒ‹ƒgƒ“
+        /// ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³
         /// </summary>
         static UnityEditorSyncWindow m_Instance;
 
 
         /// <summary>
-        /// Player‘¤‚Éƒf[ƒ^‚ğ‘—M‚·‚é
+        /// Playerå´ã«ãƒ‡ãƒ¼ã‚¿ã‚’é€ä¿¡ã™ã‚‹
         /// </summary>
-        /// <param name="array">ƒXƒgƒŠ[ƒ€‚Ì”z—ñ</param>
+        /// <param name="array">ã‚¹ãƒˆãƒªãƒ¼ãƒ ã®é…åˆ—</param>
         public static void SendMessage(byte[] array)
         {
             if(m_Instance == null)

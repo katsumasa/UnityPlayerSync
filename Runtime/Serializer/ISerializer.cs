@@ -1,4 +1,4 @@
-//
+ï»¿//
 // Programed by Katsumasa.Kimura
 //
 using System.IO;
@@ -7,19 +7,19 @@ using System.IO;
 namespace UTJ.UnityPlayerSync.Runtime
 {
     /// <summary>
-    /// Serialize/Deserialize‚ğs‚¤ƒNƒ‰ƒX‚ÌƒCƒ“ƒ^[ƒtƒF[ƒX
+    /// Serialize/Deserializeã‚’è¡Œã†ã‚¯ãƒ©ã‚¹ã®ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
     /// </summary>
     public interface ISerializer
     {
         /// <summary>
-        /// Serialize‚ğs‚¤
+        /// Serializeã‚’è¡Œã†
         /// </summary>
         /// <param name="binaryWriter">BinaryWriter</param>
         public void Serialize(BinaryWriter binaryWriter);
 
 
         /// <summary>
-        /// Deserialize‚ğs‚¤
+        /// Deserializeã‚’è¡Œã†
         /// </summary>
         /// <param name="binaryReader"></param>
         public void Deserialize(BinaryReader binaryReader);

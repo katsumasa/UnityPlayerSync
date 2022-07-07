@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 #if UNITY_EDITOR
@@ -31,10 +31,10 @@ namespace UTJ.UnityPlayerSync.Runtime
 
 
 #if UNITY_EDITOR
-            // AssetDataBase“à‚ÌAsset‚ğŒŸõ‚·‚é
+            // AssetDataBaseå†…ã®Assetã‚’æ¤œç´¢ã™ã‚‹
             for (var i = 0; i < m_Values.Length; i++)
             {
-                // Project“à‚©‚çAsset‚ğŒŸõ‚·‚é
+                // Projectå†…ã‹ã‚‰Assetã‚’æ¤œç´¢ã™ã‚‹
                 var name = ReplaceInstanceName(type,m_Names[i]);
                 var filter = $"{name} t:{type.Name}";
 
@@ -46,7 +46,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                 }
             }
 #else
-            // Hierarchy“à‚ÌAsset‚ğŒŸõ‚·‚é
+            // Hierarchyå†…ã®Assetã‚’æ¤œç´¢ã™ã‚‹
             var objects = Resources.FindObjectsOfTypeAll(type);
             for (var i = 0; i < m_Values.Length; i++)
             {
@@ -65,20 +65,20 @@ namespace UTJ.UnityPlayerSync.Runtime
 
 
 #if UNITY_EDITOR
-        // Runtime‚Å‚ÍInstance‰»‚³‚ê‚½ƒIƒuƒWƒFƒNƒg–¼‚ÉInstance‚Æ‚Â‚­‚Ì‚Åæ‚èœ‚­•K—v‚ª‚ ‚é
+        // Runtimeã§ã¯InstanceåŒ–ã•ã‚ŒãŸã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆåã«Instanceã¨ã¤ãã®ã§å–ã‚Šé™¤ãå¿…è¦ãŒã‚ã‚‹
         string ReplaceInstanceName(System.Type type,string name)
         {
             if (type == typeof(Material) || type == typeof(Material[]) || type == typeof(List<Material>))
             {
-                // Material‚Ìê‡
+                // Materialã®å ´åˆ
                 name = name.Replace(" (Instance)", "");
             }
             if(type == typeof(Mesh) || type == typeof(Mesh[]) || type == typeof(List<Mesh>))
             {
-                // Mesh‚Ìê‡
+                // Meshã®å ´åˆ
                 name = name.Replace(" Instance", "");
             }
-            // Shader‚Ìê‡
+            // Shaderã®å ´åˆ
             if(type == typeof(Shader) || type == typeof(Shader[]) || type == typeof(List<Shader>))
             {
                 name = System.IO.Path.GetFileName(name);

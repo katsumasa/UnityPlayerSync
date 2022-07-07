@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
@@ -103,14 +103,14 @@ namespace UTJ.UnityPlayerSync.Runtime
             localRotation.Deserialize(binaryReader);
             localScale.Deserialize(binaryReader);
             
-            // e‚ÌTransform‚Í\’zÏ‚İ
+            // è¦ªã®Transformã¯æ§‹ç¯‰æ¸ˆã¿
             // From Player To Editor
             // 
             // 
             //
             // From Editor To Player
             //
-            // parentInstanceID‚É‚ÍEditorã‚ÌInstanceID‚ª“ü‚Á‚Ä‚¢‚é
+            // parentInstanceIDã«ã¯Editorä¸Šã®InstanceIDãŒå…¥ã£ã¦ã„ã‚‹
             // 
 
             var parentSyncTransform = SyncTransform.GetSyncTransform(parentInstanceID);

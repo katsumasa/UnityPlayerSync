@@ -1,4 +1,4 @@
-//
+ï»¿//
 // Programed by Katsumasa Kimura
 //
 using System;
@@ -12,7 +12,7 @@ namespace UTJ.UnityPlayerSync.Runtime
     {
         // 
         /// <summary>
-        /// Component‚Ìƒpƒ‰ƒ[ƒ^—p‚ÌƒNƒ‰ƒX‚ğƒAƒƒP[ƒVƒ‡ƒ“‚·‚é
+        /// Componentã®ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ç”¨ã®ã‚¯ãƒ©ã‚¹ã‚’ã‚¢ãƒ­ã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã™ã‚‹
         /// </summary>
         /// <param name="objectType"></param>
         /// <param name="comapreType"></param>
@@ -20,7 +20,7 @@ namespace UTJ.UnityPlayerSync.Runtime
         /// <returns></returns>
         public static SyncValueObject Allocater(System.Type objectType, System.Type comapreType,object obj = null)
         {
-            // Œ^‚ğ•ÏŠ·‚µ‚ÄƒVƒ“ƒvƒ‹‚ÈŒ`‚ÖEEE
+            // å‹ã‚’å¤‰æ›ã—ã¦ã‚·ãƒ³ãƒ—ãƒ«ãªå½¢ã¸ãƒ»ãƒ»ãƒ»
             if (comapreType.IsGenericType)
             {
                 comapreType = comapreType.GetGenericArguments()[0];
@@ -133,7 +133,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                 return new SyncMatrix4x4(obj);
             }
 
-            // UnityEngine.Object‚Ö‚ÌQÆ
+            // UnityEngine.Objectã¸ã®å‚ç…§
 
             if(comapreType == typeof(Component))
             {
@@ -145,7 +145,7 @@ namespace UTJ.UnityPlayerSync.Runtime
             }
             
 
-            // Ä‹AEEE            
+            // å†å¸°ãƒ»ãƒ»ãƒ»            
             if (comapreType.BaseType != null)
             {
                 return Allocater(objectType, comapreType.BaseType, obj);
@@ -161,7 +161,7 @@ namespace UTJ.UnityPlayerSync.Runtime
         protected SyncType m_Type;
         
         /// <summary>
-        /// ‚±‚ÌƒNƒ‰ƒX‚ªŠÇ—‚·‚é’l‚ÌType
+        /// ã“ã®ã‚¯ãƒ©ã‚¹ãŒç®¡ç†ã™ã‚‹å€¤ã®Type
         /// </summary>
         public SyncType Type
         {
@@ -169,7 +169,7 @@ namespace UTJ.UnityPlayerSync.Runtime
         }
 
         /// <summary>
-        /// ‚±‚ÌƒNƒ‰ƒX‚ªŠÇ—‚·‚é’l
+        /// ã“ã®ã‚¯ãƒ©ã‚¹ãŒç®¡ç†ã™ã‚‹å€¤
         /// </summary>
         private object m_Value;
         
@@ -182,10 +182,10 @@ namespace UTJ.UnityPlayerSync.Runtime
 
 
         /// <summary>
-        /// ƒRƒ“ƒXƒgƒ‰ƒNƒ^[
+        /// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãƒ¼
         /// </summary>
-        /// <param name="o">“¯Šú‚·‚é’l</param>
-        /// <param name="type">“¯Šú‚·‚é’l‚ÌŒ^</param>
+        /// <param name="o">åŒæœŸã™ã‚‹å€¤</param>
+        /// <param name="type">åŒæœŸã™ã‚‹å€¤ã®å‹</param>
         public SyncValueObject(object o,Type type)
         {
             if (o == null)
@@ -201,7 +201,7 @@ namespace UTJ.UnityPlayerSync.Runtime
 
 
         /// <summary>
-        /// ƒVƒŠƒAƒ‰ƒCƒY
+        /// ã‚·ãƒªã‚¢ãƒ©ã‚¤ã‚º
         /// </summary>
         /// <param name="binaryWriter"></param>
         public override void Serialize(BinaryWriter binaryWriter)
@@ -211,7 +211,7 @@ namespace UTJ.UnityPlayerSync.Runtime
 
 
         /// <summary>
-        /// ƒfƒVƒŠƒAƒ‰ƒCƒY
+        /// ãƒ‡ã‚·ãƒªã‚¢ãƒ©ã‚¤ã‚º
         /// </summary>
         /// <param name="binaryReader"></param>
         public override void Deserialize(BinaryReader binaryReader)
@@ -221,7 +221,7 @@ namespace UTJ.UnityPlayerSync.Runtime
 
 
         /// <summary>
-        /// ’l‚ğæ“¾‚·‚é
+        /// å€¤ã‚’å–å¾—ã™ã‚‹
         /// </summary>
         /// <returns></returns>
         public virtual object GetValue()

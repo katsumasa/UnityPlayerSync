@@ -1,4 +1,4 @@
-//
+ï»¿//
 // Programed by Katsumasa Kimura
 //
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ using UnityEngine;
 namespace UTJ.UnityPlayerSync.Runtime 
 {
     /// <summary>
-    /// Player‘¤‚Ì’†Šj
+    /// Playerå´ã®ä¸­æ ¸
     /// </summary>
     public class UnityPlayerSyncPlayer : UTJ.RemoteConnect.Player
     {
@@ -98,7 +98,7 @@ namespace UTJ.UnityPlayerSync.Runtime
 
 
 
-                            // Player‘¤‚Ìî•ñ‚ÅEditor‘¤‚É‘—M‚µ’¼‚·
+                            // Playerå´ã®æƒ…å ±ã§Editorå´ã«é€ä¿¡ã—ç›´ã™
                             foreach (var sync in syncs)
                             {
                                 sync.Reset();

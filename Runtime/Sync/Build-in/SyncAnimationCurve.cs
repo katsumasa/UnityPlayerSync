@@ -1,4 +1,4 @@
-//
+ï»¿//
 // Programed by Katsumasa Kimuta
 //
 using System.IO;
@@ -8,12 +8,12 @@ using UnityEngine;
 namespace UTJ.UnityPlayerSync.Runtime
 {
     /// <summary>
-    /// AnimationCurve‚ğ“¯Šú‚·‚éˆ×‚ÌƒNƒ‰ƒX
+    /// AnimationCurveã‚’åŒæœŸã™ã‚‹ç‚ºã®ã‚¯ãƒ©ã‚¹
     /// </summary>
     public class SyncAnimationCurve : SyncValueType<AnimationCurve>
     {
         /// <summary>
-        /// ƒRƒ“ƒXƒgƒ‰ƒNƒ^[
+        /// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ãƒ¼
         /// </summary>
         /// <param name="anim">AnimationCurve</param>
         public SyncAnimationCurve(object anim) : base(anim) { }
@@ -47,7 +47,7 @@ namespace UTJ.UnityPlayerSync.Runtime
 
 
         /// <summary>
-        /// ƒfƒVƒŠƒAƒ‰ƒCƒY
+        /// ãƒ‡ã‚·ãƒªã‚¢ãƒ©ã‚¤ã‚º
         /// </summary>
         /// <param name="binaryReader">BinaryReader</param>
         public override void Deserialize(BinaryReader binaryReader)
