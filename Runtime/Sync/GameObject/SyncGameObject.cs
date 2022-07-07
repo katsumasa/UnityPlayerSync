@@ -222,8 +222,9 @@ namespace UTJ.UnityPlayerSync.Runtime
             }
         }
 
-        public void Reset()
+        public override void Reset()
         {
+            base.Reset();
             foreach(var component in m_Components)
             {
                 component.Reset();

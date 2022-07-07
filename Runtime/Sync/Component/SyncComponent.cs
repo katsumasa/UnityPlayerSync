@@ -46,6 +46,11 @@ namespace UTJ.UnityPlayerSync.Runtime
         {
             foreach(var sys in Caches)
             {
+                if(sys.Object == null)
+                {
+                    Caches.Remove(sys);
+                    continue;
+                }
                 if (component.Equals(sys.Object))
                 {
                     return sys;
@@ -64,7 +69,12 @@ namespace UTJ.UnityPlayerSync.Runtime
         {
             foreach (var sys in Caches)
             {
-                if(sys.GetInstanceID() == instanceID)
+                if (sys.Object == null)
+                {
+                    Caches.Remove(sys);
+                    continue;
+                }
+                if (sys.GetInstanceID() == instanceID)
                 {
                     return sys;
                 }
@@ -298,8 +308,10 @@ namespace UTJ.UnityPlayerSync.Runtime
         }       
 
 
-        public void Reset()
+        public override void Reset()
         {
+            base.Reset();
+
             var component = (Component)m_object;
             var type = component.GetType();                        
             for (var i = 0; i < m_PropertyInfos.Length; i++)

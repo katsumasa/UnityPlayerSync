@@ -1,10 +1,12 @@
 //
 // Programed by Katsumasa Kimura
 //
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEditor;
 using UTJ.RemoteConnect.Editor;
+using UTJ.UnityPlayerSync;
 using UTJ.UnityPlayerSync.Runtime;
 
 
@@ -70,18 +72,50 @@ namespace UTJ.UnityPlayerSync.Editor
         void EventMessageReciveCB(byte[] vs)
         {
             var ms = new MemoryStream(vs);
-            var br = new BinaryReader(ms);
+            var binaryReader = new BinaryReader(ms);
             try
             {
-                var id = br.ReadInt32();
+                var messageID = (MessageID)binaryReader.ReadInt32();
                 //Debug.Log($"Message ID:{id}");
-                var sm = new SyncSceneManager(false);
-                sm.Deserialize(br);
-                sm.WriteBack();
+                switch (messageID)
+                {
+                    case MessageID.SyncScene:
+                        {
+                            var sm = new SyncSceneManager(false);
+                            sm.Deserialize(binaryReader);
+                            sm.WriteBack();
+                        }
+                        break;
+
+                    case MessageID.SyncGameObject:
+                        {
+                            var syncs = new List<SyncGameObject>();
+                            var count = binaryReader.ReadInt32();
+                            for (var i = 0; i < count; i++)
+                            {
+                                var instanceID = binaryReader.ReadInt32();                                
+                                //Debug.Log($"instanceID:{instanceID}");
+                                var sync = SyncGameObject.Find(instanceID);                                
+                                if (sync == null)
+                                {
+                                    Debug.LogError($"{instanceID} is not found.");
+                                    sync = new SyncGameObject(new GameObject());
+                                }
+                                sync.Deserialize(binaryReader);
+                                syncs.Add(sync);
+                            }
+                            foreach (var sync in syncs)
+                            {
+                                sync.WriteBack();
+                            }
+                        }
+                        break;
+                }
+                
             }
             finally
             {
-                br.Close();
+                binaryReader.Close();
                 ms.Close();
             }
         }

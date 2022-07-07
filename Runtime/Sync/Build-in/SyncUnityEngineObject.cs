@@ -1,10 +1,11 @@
+using System;
 using System.Reflection;
 using System.IO;
 using UnityEngine;
 
 namespace UTJ.UnityPlayerSync.Runtime
 {
-    public class SyncUnityEngineObject : SyncObject
+    public class SyncUnityEngineObject : SyncObject,IDisposable
     {
 
         public static readonly int InstanceID_None = 0;
@@ -17,15 +18,15 @@ namespace UTJ.UnityPlayerSync.Runtime
                 var type = typeof(UnityEngine.Object);
                 var flags = BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.InvokeMethod;
                 var ret = type.InvokeMember("FindObjectFromInstanceID", flags, null, null, new object[] { instanceId });
-                return (Object)ret;
+                return (UnityEngine.Object)ret;
             }            
             return null;
         }
 
 
 
-        private int m_InstanceID;
-        private int m_InstanceEditorID;
+        private int m_InstanceID = InstanceID_None;
+        private int m_InstanceEditorID = InstanceID_None;
 
 
 
@@ -43,11 +44,18 @@ namespace UTJ.UnityPlayerSync.Runtime
         public SyncUnityEngineObject(object obj) : base(obj) 
         {
 #if UNITY_EDITOR
-            m_InstanceEditorID = m_Object.GetInstanceID();
-            m_InstanceID = InstanceID_None;
+            m_InstanceEditorID = m_Object.GetInstanceID();            
 #else
-            m_InstanceID = m_Object.GetInstanceID();
-            m_InstanceEditorID  = InstanceID_None;
+            m_InstanceID = m_Object.GetInstanceID();            
+#endif
+        }
+
+        public virtual void Reset()
+        {            
+#if UNITY_EDITOR
+            m_InstanceEditorID = m_Object.GetInstanceID();
+#else
+            m_InstanceID = m_Object.GetInstanceID();            
 #endif
         }
 
@@ -89,6 +97,11 @@ namespace UTJ.UnityPlayerSync.Runtime
         public int GetInstanceEditorID()
         {
             return m_InstanceEditorID;
+        }
+
+        public virtual void Dispose()
+        {
+
         }
     }
 }

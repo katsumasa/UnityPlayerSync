@@ -7,7 +7,6 @@ using UnityEditor;
 using UTJ.UnityPlayerSync.Runtime;
 
 
-
 namespace UTJ.UnityPlayerSync.Editor
 {
     /// <summary>
@@ -38,7 +37,17 @@ namespace UTJ.UnityPlayerSync.Editor
             else
             {
                 // GameObjectÇÃìØä˙Çé¿çsÇ∑ÇÈ(from Editor To Player)                
-                
+                if(go.transform.parent != null)
+                {
+                    var sync = SyncGameObject.Find(go.transform.parent.gameObject);
+                    if(sync == null || sync.GetInstanceID() == SyncUnityEngineObject.InstanceID_None)
+                    {
+                        Debug.LogWarning($"{go.name} is not synced. Berore you should sync parent gameObject.");
+                        return;
+                    }
+                }
+
+
                 var ms = new MemoryStream();
                 var bw = new BinaryWriter(ms);
                 try
@@ -46,7 +55,7 @@ namespace UTJ.UnityPlayerSync.Editor
                     int count = 0;
                     GetGameObjectCount(go, ref count);
 
-                    Debug.Log($"count : {count}");
+                    //Debug.Log($"count : {count}");
                     
                     bw.Write((int)MessageID.SyncGameObject);
                     bw.Write(count);

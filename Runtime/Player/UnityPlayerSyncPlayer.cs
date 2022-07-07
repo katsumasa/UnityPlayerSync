@@ -53,8 +53,7 @@ namespace UTJ.UnityPlayerSync.Runtime
 
                     case MessageID.SyncGameObject:
                         {
-                            var syncs = new List<SyncGameObject>();
-
+                            var syncs = new List<SyncGameObject>();                            
                             var count = binaryReader.ReadInt32();
                             for(var i = 0; i < count; i++)
                             {
@@ -96,6 +95,32 @@ namespace UTJ.UnityPlayerSync.Runtime
                             {
                                 sync.WriteBack();
                             }
+
+
+
+                            // Player‘¤‚Ìî•ñ‚ÅEditor‘¤‚É‘—M‚µ’¼‚·
+                            foreach (var sync in syncs)
+                            {
+                                sync.Reset();
+                            }
+                            binaryWriter.Write((int)MessageID.SyncGameObject);
+                            binaryWriter.Write(count);
+                            foreach (var sync in syncs)
+                            {
+                                binaryWriter.Write(sync.GetInstanceEditorID());
+                                sync.Serialize(binaryWriter);
+
+                            }
+#if false
+                            var root = syncs[0].gameObject;
+                            count = 0;
+                            GetGameObjectCount(root, ref count);
+                            binaryWriter.Write((int)MessageID.SyncGameObject);
+                            binaryWriter.Write(count);
+                            SerializeGameObject(root, binaryWriter);
+#endif
+                            SendRemoteMessage(writerMemory.ToArray());
+
                         }
                         break;
 
@@ -147,12 +172,39 @@ namespace UTJ.UnityPlayerSync.Runtime
                 binaryWriter.Close();
                 readerMemory.Close();
                 writerMemory.Close();
+            }                      
+        }
+
+
+        private static void GetGameObjectCount(GameObject go, ref int count)
+        {
+            count++;
+            for (var i = 0; i < go.transform.childCount; i++)
+            {
+                var child = go.transform.GetChild(i);
+                GetGameObjectCount(child.gameObject, ref count);
             }
+        }
 
+        private static void SerializeGameObject(GameObject go, BinaryWriter binaryWriter)
+        {
+            var sync = SyncGameObject.Find(go);
+            if (sync != null)
+            {
+                sync.Reset();
+            }
+            else
+            {
+                sync = new SyncGameObject(go);
+            }
+            binaryWriter.Write(sync.GetInstanceID());
+            sync.Serialize(binaryWriter);
 
-            
-            
-        }        
-
+            for (var i = 0; i < go.transform.childCount; i++)
+            {
+                var child = go.transform.GetChild(i);
+                SerializeGameObject(child.gameObject, binaryWriter);
+            }
+        }
     }
 }
