@@ -80,7 +80,7 @@ namespace UTJ.UnityPlayerSync.Runtime
             var localPosition = new SyncVector3(transform.localPosition);
             var localRotation = new SyncQuaternion(transform.localRotation);
             var localScale = new SyncVector3(transform.localScale);
-            int parentInstanceID = (transform.parent != null) ? transform.parent.GetInstanceID() : -1;
+            int parentInstanceID = (transform.parent != null) ? transform.parent.GetInstanceID() : SyncUnityEngineObject.InstanceID_None;
                                                 
             base.Serialize(binaryWriter);         
             binaryWriter.Write(parentInstanceID);
@@ -104,6 +104,15 @@ namespace UTJ.UnityPlayerSync.Runtime
             localScale.Deserialize(binaryReader);
             
             // êeÇÃTransformÇÕç\ízçœÇ›
+            // From Player To Editor
+            // 
+            // 
+            //
+            // From Editor To Player
+            //
+            // parentInstanceIDÇ…ÇÕEditorè„ÇÃInstanceIDÇ™ì¸Ç¡ÇƒÇ¢ÇÈ
+            // 
+
             var parentSyncTransform = SyncTransform.GetSyncTransform(parentInstanceID);
             if (parentSyncTransform != null)
             {
@@ -117,9 +126,17 @@ namespace UTJ.UnityPlayerSync.Runtime
 
         static SyncTransform GetSyncTransform(int instanceID)
         {
+            if(instanceID == SyncUnityEngineObject.InstanceID_None)
+            {
+                return null;
+            }
+
             foreach(var syncTransForm in syncTransforms)
             {
-                if(syncTransForm.GetInstanceID() == instanceID)
+                if(
+                    (syncTransForm.GetInstanceID() == instanceID) ||
+                    (syncTransForm.GetInstanceEditorID() == instanceID)
+                    )
                 {
                     return syncTransForm;
                 }

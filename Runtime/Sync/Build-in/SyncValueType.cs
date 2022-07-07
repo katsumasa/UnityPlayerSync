@@ -58,12 +58,11 @@ namespace UTJ.UnityPlayerSync.Runtime
                 m_Length = 1;
                 m_Values = new T[1];
                 m_Values[0] = (T)value;
-            }
-
-            if(m_Values[0]==null)
+            }            
+            if(m_Values == null)
             {
-                Debug.Log("");
-            }                
+                Debug.Log($"{type.Name}: m_Values is null.");
+            }
         }
 
 

@@ -59,14 +59,17 @@ namespace UTJ.UnityPlayerSync.Runtime
         {
             foreach(var syncGameObject in Caches)
             {
-                if(syncGameObject.GetInstanceID() == instanceID)
+                if((syncGameObject.GetInstanceID() == instanceID)||
+                   (syncGameObject.GetInstanceEditorID() == instanceID))
                 {
                     return (UnityEngine.Object)syncGameObject.m_object;
                 }
-                if(syncGameObject.m_Transform.GetInstanceID() == instanceID)
+                if((syncGameObject.m_Transform.GetInstanceID() == instanceID)||
+                    (syncGameObject.m_Transform.GetInstanceEditorID() == instanceID))
                 {
                     return syncGameObject.m_Transform.GetTransform();
                 }
+
                 var component = syncGameObject.GetComponent(instanceID);
                 if(component != null)
                 {

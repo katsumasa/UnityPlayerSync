@@ -17,7 +17,9 @@ public class NewTestScript
 
     public CameraType[] cameraTypes;
     Camera camera;
+    
 
+    [Obsolete()]
 
     public List<CameraType> cameraTypesList;
 
@@ -27,6 +29,9 @@ public class NewTestScript
     [Test]
     public void SandBox()
     {
+
+        
+
 
         var t = this.GetType();
         var fis = t.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);

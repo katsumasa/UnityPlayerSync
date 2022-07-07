@@ -37,29 +37,61 @@ namespace UTJ.UnityPlayerSync.Editor
             }
             else
             {
-                // GameObjectの同期を実行する(from Editor To Player)
-                var sync = SyncGameObject.Find(go);
-                if(sync != null)
-                {                    
-                    var ms = new MemoryStream();
-                    var bw = new BinaryWriter(ms);
-                    try
-                    {
-                        bw.Write((int)MessageID.SyncGameObject);
-                        bw.Write(sync.GetInstanceID());
-                        sync.Reset();
-                        sync.Serialize(bw);
-                        UnityEditorSyncWindow.SendMessage(ms.ToArray());
-                    }
-                    finally
-                    {
-                        bw.Close();
-                        ms.Close();
-                    }
-                }                
+                // GameObjectの同期を実行する(from Editor To Player)                
+                
+                var ms = new MemoryStream();
+                var bw = new BinaryWriter(ms);
+                try
+                {
+                    int count = 0;
+                    GetGameObjectCount(go, ref count);
+
+                    Debug.Log($"count : {count}");
+                    
+                    bw.Write((int)MessageID.SyncGameObject);
+                    bw.Write(count);
+                    SerializeGameObject(go, bw);                    
+                    UnityEditorSyncWindow.SendMessage(ms.ToArray());
+                }
+                finally
+                {
+                    bw.Close();
+                    ms.Close();
+                }
+                
+            }
+        }
+
+        private static void GetGameObjectCount(GameObject go, ref int count)
+        {
+            count++;
+            for (var i = 0; i < go.transform.childCount; i++)
+            {
+                var child = go.transform.GetChild(i);
+                GetGameObjectCount(child.gameObject, ref count);
+            }
+        }
+
+        private static void SerializeGameObject(GameObject go,BinaryWriter binaryWriter)
+        {
+            var sync = SyncGameObject.Find(go);
+            if(sync == null)
+            {
+                sync = new SyncGameObject(go);
+            }
+            binaryWriter.Write(sync.GetInstanceID());
+            sync.Serialize(binaryWriter);
+
+            for(var i = 0; i < go.transform.childCount; i++)
+            {
+                var child = go.transform.GetChild(i);
+                SerializeGameObject(child.gameObject, binaryWriter);
             }
         }
     }
+
+
+   
 
 
     // Componentのコンテキストメニューを処理するクラス

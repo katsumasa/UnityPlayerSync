@@ -1,6 +1,7 @@
 //
 // Programed by Katsumasa Kimura
 //
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
@@ -52,19 +53,48 @@ namespace UTJ.UnityPlayerSync.Runtime
 
                     case MessageID.SyncGameObject:
                         {
-                            var instanceID = binaryReader.ReadInt32();
-                            if (m_IsLogEnable)
+                            var syncs = new List<SyncGameObject>();
+
+                            var count = binaryReader.ReadInt32();
+                            for(var i = 0; i < count; i++)
                             {
-                                Debug.Log($"instanceID:{instanceID}");
-                            }
-                            var sync = SyncGameObject.Find(instanceID);
-                            if(sync != null)
-                            {
+                                var instanceID = binaryReader.ReadInt32();
+                                if (m_IsLogEnable)
+                                {
+                                    Debug.Log($"instanceID:{instanceID}");
+                                }
+
+                                var go = SyncUnityEngineObject.FindObjectFromInstanceID(instanceID) as GameObject;
+                                SyncGameObject sync = null;
+                                if (go != null)
+                                {
+                                    sync = SyncGameObject.Find(go);
+                                    if(sync == null)
+                                    {
+                                        if (m_IsLogEnable)
+                                        {
+                                            Debug.Log($"{go.name}'s sync is not found.");
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    if (m_IsLogEnable)
+                                    {
+                                        Debug.Log($"{instanceID} is new GameObject.");
+                                    }
+                                    go = new GameObject();                                    
+                                }
+                                if(sync == null)
+                                {
+                                    sync = new SyncGameObject(go);
+                                }
                                 sync.Deserialize(binaryReader);
+                                syncs.Add(sync);
                             }
-                            else
+                            foreach(var sync in syncs)
                             {
-                                Debug.LogWarning($"instanceID;{instanceID} is not found.");
+                                sync.WriteBack();
                             }
                         }
                         break;
