@@ -46,7 +46,8 @@ namespace UTJ.UnityPlayerSync.Runtime
         {
             foreach (var sync in Caches)
             {
-                if(sync.GetInstanceID() == instanceID)
+                if((sync.GetInstanceID() == instanceID)||
+                   (sync.GetInstanceEditorID() == instanceID))
                 {
                     return sync;
                 }
@@ -106,24 +107,9 @@ namespace UTJ.UnityPlayerSync.Runtime
                             
         public SyncGameObject(object obj):base(obj)
         {
-#if false
-            var gameObject = (GameObject)m_object;
-            m_Transform = new SyncTransform(gameObject.transform);
-            var components = gameObject.GetComponents<Component>();
-            m_ComponentInstancIDs = new int[components.Length - 1];
-            m_ComponentTypes = new SyncType[components.Length - 1];
-            m_Components = new SyncComponent[components.Length - 1];
-            
-            // 0番目はTransformである為、1番目から処理する
-            for(var i= 1; i < components.Length; i++)
-            {
-                m_ComponentInstancIDs[i - 1] = components[i].GetInstanceID();
-                m_ComponentTypes[i-1] = new SyncType(components[i].GetType());
-                m_Components[i-1] = new SyncComponent(components[i]);
-            }
-#endif       
             Caches.Add(this);
         }
+
 
         ~SyncGameObject()
         {
@@ -200,7 +186,7 @@ namespace UTJ.UnityPlayerSync.Runtime
             }                
 
             // Componentのデシリアライズ
-            var components = gameObject.GetComponents<Component>();
+            
             for (var i = 0; i < len; i++)
             {                                                
                 var componentType = SyncType.GetType(m_ComponentTypes[i]);
@@ -211,6 +197,37 @@ namespace UTJ.UnityPlayerSync.Runtime
                 }
                 m_Components[i] = new SyncComponent(component,false);
                 m_Components[i].Deserialize(binaryReader);
+            }
+
+            // 相手側で削除されたコンポーネントをこちらでも削除する
+            var components = gameObject.GetComponents<Component>();
+            foreach (var component in components)
+            {
+                // Transformは除く
+                var t = component.GetType();
+                if(t == typeof(Transform))
+                {
+                    continue;
+                }
+                var isDelete = true;
+                for (var i = 0; i < len; i++)
+                {
+                    var componentType = SyncType.GetType(m_ComponentTypes[i]);
+                    if(t == componentType)
+                    {
+                        isDelete = false;
+                        break;
+                    }
+                }
+                if (isDelete)
+                {
+                    //Debug.Log($"{gameObject.name}:{t.Name} is destoyed.");
+#if UNITY_EDITOR
+                    Object.DestroyImmediate(component);
+#else
+                    Component.Destroy(component);
+#endif
+                }
             }
         }
 
@@ -229,21 +246,7 @@ namespace UTJ.UnityPlayerSync.Runtime
             {
                 component.Reset();
             }
-        }
-
-
-        Component GetComponent(Component[] components,int instanceID)
-        {
-            foreach(var c in components)
-            {
-                if(c.GetInstanceID() == instanceID)
-                {
-                    return c;
-                }
-            }
-            return null;
-        }
-
+        }        
     }
 
 }

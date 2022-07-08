@@ -96,8 +96,6 @@ namespace UTJ.UnityPlayerSync.Runtime
                                 sync.WriteBack();
                             }
 
-
-
                             // Player側の情報でEditor側に送信し直す
                             foreach (var sync in syncs)
                             {
@@ -107,18 +105,11 @@ namespace UTJ.UnityPlayerSync.Runtime
                             binaryWriter.Write(count);
                             foreach (var sync in syncs)
                             {
+                                // Editor側のInstanceIDを使用
+                                // Debug.Log(sync.GetInstanceEditorID());
                                 binaryWriter.Write(sync.GetInstanceEditorID());
                                 sync.Serialize(binaryWriter);
-
                             }
-#if false
-                            var root = syncs[0].gameObject;
-                            count = 0;
-                            GetGameObjectCount(root, ref count);
-                            binaryWriter.Write((int)MessageID.SyncGameObject);
-                            binaryWriter.Write(count);
-                            SerializeGameObject(root, binaryWriter);
-#endif
                             SendRemoteMessage(writerMemory.ToArray());
 
                         }
