@@ -110,6 +110,18 @@ namespace UTJ.UnityPlayerSync.Editor
                             }
                         }
                         break;
+
+                    case MessageID.SyncDelete:
+                        {
+                            var instanceID = binaryReader.ReadInt32();
+                            var sync = SyncGameObject.Find(instanceID);
+                            if(sync != null)
+                            {
+                                GameObject.DestroyImmediate(sync.gameObject);
+                                sync.Dispose();
+                            }
+                        }
+                        break;
                 }
                 
             }

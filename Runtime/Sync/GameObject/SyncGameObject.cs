@@ -246,7 +246,16 @@ namespace UTJ.UnityPlayerSync.Runtime
             {
                 component.Reset();
             }
-        }        
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            if (Caches.Contains(this))
+            {
+                Caches.Remove(this);
+            }
+        }
     }
 
 }

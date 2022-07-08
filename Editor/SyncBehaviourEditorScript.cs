@@ -15,7 +15,7 @@ namespace UTJ.UnityPlayerSync.Editor
     public static class SyncHierarchyScript
     {
         [MenuItem("GameObject/Sync")]
-        private static void ContextMenu(MenuCommand menuCommand)
+        private static void ContextMenuSync(MenuCommand menuCommand)
         {
             var go = menuCommand.context as GameObject;
             if(go == null)
@@ -46,8 +46,6 @@ namespace UTJ.UnityPlayerSync.Editor
                         return;
                     }
                 }
-
-
                 var ms = new MemoryStream();
                 var bw = new BinaryWriter(ms);
                 try
@@ -66,10 +64,38 @@ namespace UTJ.UnityPlayerSync.Editor
                 {
                     bw.Close();
                     ms.Close();
-                }
-                
+                }                
             }
         }
+
+        [MenuItem("GameObject/Sync Delete")]
+        private static void ContextMenuDelete(MenuCommand menuCommand)
+        {
+            var go = menuCommand.context as GameObject;            
+            if(go != null)
+            {
+                var sync = SyncGameObject.Find(go);
+                if(sync != null)
+                {
+                    var ms = new MemoryStream();
+                    var bw = new BinaryWriter(ms);
+
+                    try
+                    {
+                        bw.Write((int)MessageID.SyncDelete);
+                        bw.Write(sync.GetInstanceID());
+                        UnityEditorSyncWindow.SendMessage(ms.ToArray());
+                    }
+                    finally
+                    {
+                        bw.Close();
+                        ms.Close();
+                    }
+                }
+            }
+        }
+
+
 
         private static void GetGameObjectCount(GameObject go, ref int count)
         {

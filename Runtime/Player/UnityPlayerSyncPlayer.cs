@@ -154,6 +154,21 @@ namespace UTJ.UnityPlayerSync.Runtime
 
                         }
                         break;
+
+                    case MessageID.SyncDelete:
+                        {
+                            var instanceID = binaryReader.ReadInt32();
+                            var sync = SyncGameObject.Find(instanceID);
+                            if(sync != null)
+                            {                                                                                       
+                                GameObject.Destroy(sync.gameObject);
+                                sync.Dispose();
+                                binaryWriter.Write((int)MessageID.SyncDelete);
+                                binaryWriter.Write(instanceID);
+                                SendRemoteMessage(writerMemory.ToArray());
+                            }
+                        }
+                        break;
                 }
             }
 

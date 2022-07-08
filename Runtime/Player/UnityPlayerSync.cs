@@ -24,5 +24,6 @@ namespace UTJ.UnityPlayerSync
         SyncGameObject, // GameObjectの同期
         SyncTransform,  // Transformの同期
         SyncComponent,  // Componentの同期
+        SyncDelete,     // GameObjectのDelete
     };
 }
