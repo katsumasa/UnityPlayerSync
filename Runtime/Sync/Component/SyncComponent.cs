@@ -345,7 +345,7 @@ namespace UTJ.UnityPlayerSync.Runtime
             for(var i = 0; i < m_FieldInfos.Length; i++)
             {
                 var fieldInfo = m_FieldInfos[i];                
-                var field = type.GetField(fieldInfo.Name);
+                var field = type.GetField(fieldInfo.Name, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
                 if(field == null)
                 {
                     Debug.LogError($"{fieldInfo.Name} is not found.");
