@@ -14,7 +14,7 @@ namespace UTJ.UnityPlayerSync.Editor
     /// </summary>
     public static class SyncHierarchyScript
     {
-        [MenuItem("GameObject/Sync")]
+        [MenuItem("GameObject/Sync",false,-10000)]
         private static void ContextMenuSync(MenuCommand menuCommand)
         {
             var go = menuCommand.context as GameObject;
