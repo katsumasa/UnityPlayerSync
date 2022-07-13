@@ -14,7 +14,7 @@ namespace UTJ.UnityPlayerSync.Editor
     /// </summary>
     public static class SyncHierarchyScript
     {
-        [MenuItem("GameObject/Sync",false,-10000)]
+        [MenuItem("GameObject/Sync",priority = 100)]
         private static void ContextMenuSync(MenuCommand menuCommand)
         {
             var go = menuCommand.context as GameObject;
@@ -68,7 +68,7 @@ namespace UTJ.UnityPlayerSync.Editor
             }
         }
 
-        [MenuItem("GameObject/Sync Delete")]
+        [MenuItem("GameObject/Sync Delete", priority = 101)]
         private static void ContextMenuDelete(MenuCommand menuCommand)
         {
             var go = menuCommand.context as GameObject;            
