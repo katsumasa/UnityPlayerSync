@@ -30,19 +30,32 @@ namespace UTJ.UnityPlayerSync.Runtime
             }
 
 
-#if UNITY_EDITOR
-            // AssetDataBase内のAssetを検索する
+#if UNITY_EDITOR            
             for (var i = 0; i < m_Values.Length; i++)
             {
-                // Project内からAssetを検索する
+                // AssetDataBase内のAssetを検索する
                 var name = ReplaceInstanceName(type,m_Names[i]);
                 var filter = $"{name} t:{type.Name}";
-
                 var guids = AssetDatabase.FindAssets(filter);
-                if (guids.Length > 0)
+                foreach(var guid in guids) 
                 {
-                    var path = AssetDatabase.GUIDToAssetPath(guids[0]);
-                    m_Values[i] = AssetDatabase.LoadAssetAtPath(path, type);
+                    var path = AssetDatabase.GUIDToAssetPath(guid);                    
+                    var objs = AssetDatabase.LoadAllAssetsAtPath(path);
+                    foreach(var obj in objs)
+                    {
+                        if((obj.GetType() == type) && (obj.name == name))
+                        {
+                            m_Values[i] = obj;
+                            break;
+                        }
+                    }
+                    if(m_Values[i] != null)
+                    {
+                        break;
+                    }
+                }
+                if (m_Values[i] == null){
+                    Debug.LogWarning($"{filter} is not found.");
                 }
             }
 #else
