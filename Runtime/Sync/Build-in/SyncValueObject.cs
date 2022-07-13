@@ -2,6 +2,7 @@
 // Programed by Katsumasa Kimura
 //
 using System;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
@@ -28,6 +29,18 @@ namespace UTJ.UnityPlayerSync.Runtime
             else if(comapreType.IsArray)
             {
                 comapreType = comapreType.GetElementType();
+            }
+
+            if(comapreType.IsGenericType)
+            {
+                var d = comapreType.GetGenericTypeDefinition();
+                // List以外のGeneric型はサポートしない
+                //if(d == typepf(Dicttionary<,>))
+                if (d != typeof(List<>))
+                {
+                    Debug.Log($"GenericType{d} is not supported.");
+                    return null;
+                }
             }
 
 

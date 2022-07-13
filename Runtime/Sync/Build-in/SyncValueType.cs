@@ -43,21 +43,41 @@ namespace UTJ.UnityPlayerSync.Runtime
                 m_Values = new T[m_Length];
                 Array.Copy(array, m_Values, array.Length);
             }
-            else if (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(List<>))
+            else if (t.IsGenericType)
             {
-                var list = (List<T>)value;
-                m_Length = list.Count;
-                m_Values = new T[m_Length];
-                for (var i = 0; i < m_Length; i++)
+                // 現時点ではSyncValuObject.AllocateでList型以外のGenericを弾いているので
+                // Generic型 = List<>である。
+                if (t.GetGenericTypeDefinition() == typeof(List<>))
                 {
-                    m_Values[i] = list[i];
+                    var list = (List<T>)value;
+                    m_Length = list.Count;
+                    m_Values = new T[m_Length];
+                    for (var i = 0; i < m_Length; i++)
+                    {
+                        m_Values[i] = list[i];
+                    }
+                }
+                else if(t.GetGenericTypeDefinition() == typeof(Dictionary<,>))
+                {
+
+                }
+                else
+                {
+
                 }
             }
             else
             {
                 m_Length = 1;
-                m_Values = new T[1];
-                m_Values[0] = (T)value;
+                try
+                {
+                    m_Values = new T[1];
+                    m_Values[0] = (T)value;
+                }
+                catch(System.Exception e)
+                {
+                    Debug.LogException(e);
+                }
             }            
             if(m_Values == null)
             {
