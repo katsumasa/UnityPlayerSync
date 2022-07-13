@@ -96,6 +96,10 @@ namespace UTJ.UnityPlayerSync.Runtime
             {
                 return new SyncAnimationCurve(obj);
             }
+            if(comapreType == typeof(AnimatorControllerParameter))
+            {
+                return new SyncAnimatorControllerParameter(obj);
+            }
             if(comapreType == typeof(Bounds))
             {
                 return new SyncBounds(obj);
