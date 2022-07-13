@@ -7,7 +7,7 @@ UnityPlayerSyncはUnityEditorでビルドしたアプリケーション(UnityPla
 2. UnityEditor上でSceneの内容を編集する
 3. 編集した内容をアプリケーションにリアルタイムで反映する
 
-https://user-images.githubusercontent.com/29646672/177088255-24accd44-5e35-4e97-85bc-5c154905566e.mp4
+<https://user-images.githubusercontent.com/29646672/177088255-24accd44-5e35-4e97-85bc-5c154905566e.mp4>
 
 ## 使い方
 
@@ -27,7 +27,7 @@ UnityPlayerからUnityEditor上にSceneを取り込む手順は下記の通り�
 
 ### GameObjectの同期
 
-<img width="400" alt="Scene" src="https://user-images.githubusercontent.com/29646672/177096715-b2b47b6d-9200-4ff8-83cd-8f8138793ea7.png">
+<img width="400" alt="GameObject" src="https://user-images.githubusercontent.com/29646672/177096715-b2b47b6d-9200-4ff8-83cd-8f8138793ea7.png">
 
 UnityEditor上で編集したGameObjectをUnityPlayer側にフィードバックする手順は下記の通りです。
 
@@ -39,7 +39,7 @@ UnityEditor上で編集したGameObjectをUnityPlayer側にフィードバック
 
 ### Componentの同期
 
-<img width="800" alt="Scene" src="https://user-images.githubusercontent.com/29646672/177094157-dcfced8b-dd36-4f4a-ac09-47da3c3b12c0.png">
+<img width="800" alt="Component" src="https://user-images.githubusercontent.com/29646672/177094157-dcfced8b-dd36-4f4a-ac09-47da3c3b12c0.png">
 
 Component単体で同期を行うことで、GameObjectの同期と比較して素早くUnityPlayerと同期を行うことが可能です。
 
@@ -108,10 +108,13 @@ Developmemt Build及びAutoconnect Profilerにチェックを入れてBuld( And 
 
 ## Q&A
 
-Q. Sceneの同期が出来ません
+Q. Sceneの同期が出来ません  
+A. Profilerでプロファイルが出来ているか確認して下さい。プロファイルが出来ている場合は、セットアップの章で記載されている通りであるか見直して下さい。プロファイルが出来ていない場合、UnityEditorとデバイスの接続が正しく行われていない可能性があります。[こちら](https://docs.unity3d.com/ja/current/Manual/profiler-profiling-applications.html)を参考に、UnityEditorとデバイスの接続を行って下さい。
+  
+Q. UnityEditor上で編集したGameObjectがPlayerに反映されません  
+A. Sceneの同期後、UnityEditor上でScriptのコンパイルが走ると同期情報が失われます。コンパイルが発生した場合は、Sceneの同期からやり直して下さい。
 
-A. Profilerでプロファイルが出来ているか確認して下さい。プロファイルが出来ている場合は、セットアップの章で記載されている通りであるか見直して下さい。プロファイルが出来ていない場合、[こちら](https://docs.unity3d.com/ja/current/Manual/profiler-profiling-applications.html)をご確認下さい。
+## その他
 
-Q. UnityEditor上で編集したGameObjectがPlayerに反映されません。
-
-A. Sceneの同期後、UnityEditor上でコンパイルが走ると同期情報が失われます。コンパイルが発生した場合は、Sceneの同期からやり直して下さい。
+- 要望や不具合報告はIssueからお願いします。約束は出来ませんが可能な限り対応します。
+- 不具合報告に関してはそれを再現する為のプロジェクトの添付及び再現手順の記述をお願いします。こちらで再現が取れない場合、対応出来ない場合があります。
