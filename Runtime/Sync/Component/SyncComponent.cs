@@ -224,6 +224,10 @@ namespace UTJ.UnityPlayerSync.Runtime
                 }
 
                 var prop = type.GetProperty(m_PropertyInfos[i].Name);
+                if(prop == null)
+                {
+                    continue;
+                }
                 if (!prop.CanWrite)
                 {
                     continue;
@@ -251,6 +255,10 @@ namespace UTJ.UnityPlayerSync.Runtime
                     continue;
                 }
                 var fi = type.GetField(m_FieldInfos[i].Name, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                if(fi == null)
+                {
+                    continue;
+                }
                 if (fi.IsInitOnly||fi.IsLiteral)
                 {
                     continue;
