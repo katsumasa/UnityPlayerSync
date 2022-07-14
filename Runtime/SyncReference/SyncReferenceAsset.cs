@@ -43,10 +43,22 @@ namespace UTJ.UnityPlayerSync.Runtime
                     var objs = AssetDatabase.LoadAllAssetsAtPath(path);
                     foreach(var obj in objs)
                     {
-                        if((obj.GetType() == type) && (obj.name == name))
+                        // nullの場合もあると・・・
+                        if(obj == null)
                         {
-                            m_Values[i] = obj;
-                            break;
+                            continue;
+                        }
+                        try
+                        {
+                            if ((obj.GetType() == type) && (obj.name == name))
+                            {
+                                m_Values[i] = obj;
+                                break;
+                            }
+                        }
+                        catch (System.Exception e)
+                        {
+                            Debug.LogException(e);
                         }
                     }
                     if(m_Values[i] != null)
