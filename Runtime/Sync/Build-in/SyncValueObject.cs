@@ -149,13 +149,21 @@ namespace UTJ.UnityPlayerSync.Runtime
             {
                 return new SyncColor(obj);
             }
-            if(comapreType == typeof(Rect))
+            if (comapreType == typeof(Color32))
+            {
+                return new SyncColor32(obj);
+            }
+            if (comapreType == typeof(Rect))
             {
                 return new SyncRect(obj);
             }
             if(comapreType == typeof(Matrix4x4))
             {
                 return new SyncMatrix4x4(obj);
+            }
+            if(comapreType == typeof(LayerMask))
+            {
+                return new SyncLayerMask(obj);
             }
 
             // UnityEngine.Objectへの参照
