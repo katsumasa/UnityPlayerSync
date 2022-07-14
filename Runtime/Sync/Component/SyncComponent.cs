@@ -312,14 +312,20 @@ namespace UTJ.UnityPlayerSync.Runtime
                 }
             }
 
-            // Setting and getting Body Position/Rotation, IK Goals, Lookat and BoneLocalRotation should only be done in OnAnimatorIK or OnStateIK
+            
             if (info.DeclaringType == typeof(Animator))
             {
-                if(
+                // Setting and getting Body Position/Rotation, IK Goals, Lookat and BoneLocalRotation should only be done in OnAnimatorIK or OnStateIK
+                if (
                     (info.Name == "bodyPosition") ||
                     (info.Name == "bodyRotation")) 
                 {
                     return true; 
+                }
+                // Can't call GetPlaybackTime while not in playback mode. You must call StartPlayback before.
+                if (info.Name == "playbackTime")
+                {
+                    return true;
                 }
             }
 
