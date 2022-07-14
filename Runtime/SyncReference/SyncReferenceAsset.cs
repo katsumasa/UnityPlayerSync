@@ -65,8 +65,39 @@ namespace UTJ.UnityPlayerSync.Runtime
                     {
                         break;
                     }
+                }                
+                
+
+                if (m_Values[i] == null)
+                {
+                    // Resourecesから検索する
+                    var objs = Resources.FindObjectsOfTypeAll(type);
+                    foreach (var obj in objs)
+                    {
+                        if (obj == null)
+                        {
+                            continue;
+                        }
+                        try
+                        {
+                            if ((obj.GetType() == type) && (obj.name == name))
+                            {
+                                m_Values[i] = obj;
+                                break;
+                            }
+                        }
+                        catch (System.Exception e)
+                        {
+                            Debug.LogException(e);
+                        }
+                    }
+                    if (m_Values[i] != null)
+                    {
+                        break;
+                    }
                 }
-                if (m_Values[i] == null){
+                if (m_Values[i] == null)
+                {
                     Debug.LogWarning($"{filter} is not found.");
                 }
             }
