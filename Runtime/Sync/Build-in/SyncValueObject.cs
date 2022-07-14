@@ -52,6 +52,12 @@ namespace UTJ.UnityPlayerSync.Runtime
                 return null;
             }
 
+            // ScriptableObjectは現在未対応
+            if (comapreType == typeof(ScriptableObject))
+            {
+                return null;
+            }
+
             // --- ValuType ---
             if (comapreType == typeof(bool))
             {

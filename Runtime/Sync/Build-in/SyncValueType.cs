@@ -49,14 +49,27 @@ namespace UTJ.UnityPlayerSync.Runtime
                 // Generic型 = List<>である。
                 if (t.GetGenericTypeDefinition() == typeof(List<>))
                 {
-                    var list = (List<T>)value;
-                    m_Length = list.Count;
-                    m_Values = new T[m_Length];
-                    for (var i = 0; i < m_Length; i++)
+                    List<T> list;
+
+                    try
                     {
-                        m_Values[i] = list[i];
+                        list = (List<T>)value;
+                        m_Length = list.Count;
+                        m_Values = new T[m_Length];
+                        for (var i = 0; i < m_Length; i++)
+                        {
+                            m_Values[i] = list[i];
+                        }
+
                     }
-                }
+                    catch (System.Exception e)
+                    {
+                        Debug.LogException(e);
+                        Debug.LogWarning(value);
+                        Debug.LogWarning(type);
+                    }
+
+                 }
                 else if(t.GetGenericTypeDefinition() == typeof(Dictionary<,>))
                 {
 

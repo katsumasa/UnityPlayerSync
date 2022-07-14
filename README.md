@@ -112,11 +112,15 @@ Componentのプロパティやフィールドの値に関しては下記の制�
 - メジャーなUnity Build-in struct(Color,Vector3,etc...)
 - Asset(Texture,Mesh,Material,Shader,etc...)に関しては、Editor側で復元する場合は、Assetフォルダに存在する、Player側で復元する場合は[Resources.FindObjectsOfTypeAll](https://docs.unity3d.com/ja/current/ScriptReference/Resources.FindObjectsOfTypeAll.html)で検索可能なAssetに限定されます。（RenderTextureなど、Runtime上で生成されたAssetは同期出来ません。）
 
-同期出来ないobjectの代表例は下記の通りです。
+### 同期出来ないobject
+
+同期出来ないオブジェクトの例は以下の通りです。
 
 - LightmapやSkyboxのようなHierarchy上に存在しないデータ-
 - Componentを継承しないClassや構造体(Unity Build-inのオブジェクトに関しては可能な限り対応しますが、packageで提供されているオブジェクトに関しては対応する予定はありません。)
 - Runtime及びEditorどちらか一方にしか存在しないAsset
+- ScriptableObject
+- delegateやUnityEvent
 
 ## Q&A
 

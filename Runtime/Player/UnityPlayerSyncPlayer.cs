@@ -17,7 +17,7 @@ namespace UTJ.UnityPlayerSync.Runtime
 
         private void Start()
         {
-            DontDestroyOnLoad(this);
+            DontDestroyOnLoad(this.gameObject);
         }
 
         protected override void OnEnable()
