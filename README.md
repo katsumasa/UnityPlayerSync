@@ -9,6 +9,8 @@ UnityPlayerSyncはUnityEditorでビルドしたアプリケーション(UnityPla
 
 <https://user-images.githubusercontent.com/29646672/177088255-24accd44-5e35-4e97-85bc-5c154905566e.mp4>
 
+Note:同期と謳っていますが、正確には復元である為、復元出来ないケースも多々あります。
+
 ## 使い方
 
 ### Sceneの同期
@@ -101,14 +103,20 @@ Developmemt Build及びAutoconnect Profilerにチェックを入れてBuld( And 
 
 - Hierarchy内のGameObject
 - GameObjectにAddされているComponent
-- Component内でpublicなプロパティ及びSerializeアトリビュートを持つフィールドの値(Inspecter上で表示されているものと同義)
-  
+- Component内でpublicなプロパティ及びSerializeアトリビュートを持つフィールドの値(Inspecter上で表示されているものと同義) 
+
 Componentのプロパティやフィールドの値に関しては下記の制限があります。
 
 - System.ValuType(int,float,etc..)型と列挙型
 - Componentへの参照
 - メジャーなUnity Build-in struct(Color,Vector3,etc...)
 - Asset(Texture,Mesh,Material,Shader,etc...)に関しては、Editor側で復元する場合は、Assetフォルダに存在する、Player側で復元する場合は[Resources.FindObjectsOfTypeAll](https://docs.unity3d.com/ja/current/ScriptReference/Resources.FindObjectsOfTypeAll.html)で検索可能なAssetに限定されます。（RenderTextureなど、Runtime上で生成されたAssetは同期出来ません。）
+
+同期出来ないobjectの代表例は下記の通りです。
+
+- LightmapやSkyboxのようなHierarchy上に存在しないデータ-
+- Componentを継承しないClassや構造体(Unity Build-inのオブジェクトに関しては可能な限り対応しますが、packageで提供されているオブジェクトに関しては対応する予定はありません。)
+- Runtime及びEditorどちらか一方にしか存在しないAsset
 
 ## Q&A
 
@@ -120,5 +128,5 @@ A. Sceneの同期後、UnityEditor上でScriptのコンパイルが走ると同�
 
 ## その他
 
-- 要望や不具合報告はIssueからお願いします。約束は出来ませんが可能な限り対応します。
-- 不具合報告に関してはそれを再現する為のプロジェクトの添付及び再現手順の記述をお願いします。こちらで再現が取れない場合、対応出来ない場合があります。
+- 要望・ご意見・不具合に関してはIssueから報告をお願いします。約束は出来ませんが可能な限り対応します。
+- 不具合報告に関してはそれを再現する為のプロジェクトの添付及び再現手順などの記述をお願いします。こちらで再現が取れない場合、対応出来ない場合があります。
