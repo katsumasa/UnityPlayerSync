@@ -234,7 +234,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                 }
                 var o = m_Properties[i].GetValue();
                 if (o != null)
-                {
+                {                   
                     var current = prop.GetValue(component);
                     if(!object.Equals(current,o))                    
                     {
@@ -311,6 +311,18 @@ namespace UTJ.UnityPlayerSync.Runtime
                     return true;
                 }
             }
+
+            // Setting and getting Body Position/Rotation, IK Goals, Lookat and BoneLocalRotation should only be done in OnAnimatorIK or OnStateIK
+            if (info.DeclaringType == typeof(Animator))
+            {
+                if(
+                    (info.Name == "bodyPosition") ||
+                    (info.Name == "bodyRotation")) 
+                {
+                    return true; 
+                }
+            }
+
             return false;
         }       
 
