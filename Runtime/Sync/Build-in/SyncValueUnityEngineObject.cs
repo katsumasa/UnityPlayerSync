@@ -102,8 +102,20 @@ namespace UTJ.UnityPlayerSync.Runtime
             }
             else
             {
-                var items = (object[])array;
-                return items[0];
+                try
+                {
+                    var items = (object[])array;
+                    if (items.Length > 0)
+                    {
+                        return items[0];
+                    }
+                    return null;
+                }
+                catch(System.Exception e)
+                {
+                    Debug.LogException(e);
+                    return null;
+                }
             }
         }
     }

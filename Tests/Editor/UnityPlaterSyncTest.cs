@@ -33,21 +33,18 @@ public class NewTestScript
     [Test]
     public void SandBox()
     {
-        //var t = task.GetType();
-        var t = typeof(Task);
-        Debug.Log(t);
+     
+        int[][] jag = new int[2][];
+        var t2 = jag.GetType();
+        var r2 = t2.GetArrayRank();
 
-
-        UnityEngine.Events.UnityEvent unityEvent = null;
-
-        t = typeof(UnityEngine.Events.UnityEvent);
-        Debug.Log(t);
-        t = typeof(UnityEngine.Events.UnityAction);
-        Debug.Log(t);
-        t = typeof(UnityEngine.Events.UnityAction<>);
-        Debug.Log(t);
-
+        var e2 = t2.GetElementType();
+        var a3 = e2.IsArray;
+        
+     
     }
+
+
 
 
     [Test]

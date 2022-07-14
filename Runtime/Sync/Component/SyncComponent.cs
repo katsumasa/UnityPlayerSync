@@ -261,7 +261,14 @@ namespace UTJ.UnityPlayerSync.Runtime
                     var current = fi.GetValue(component);
                     if (!object.Equals(current, o))
                     {
-                        fi.SetValue(component, o);
+                        try
+                        {
+                            fi.SetValue(component, o);
+                        }
+                        catch(System.Exception e)
+                        {
+                            Debug.LogException(e);
+                        }
                     }
                 }
             }

@@ -37,7 +37,21 @@ namespace UTJ.UnityPlayerSync.Runtime
             }
             else if(comapreType.IsArray)
             {
+                // 多次元配列は未サポート
+                var rank = comapreType.GetArrayRank();
+                if(rank > 1)
+                {
+                    return null;
+                }
+                // 配列で管理している要素の型を取得
                 comapreType = comapreType.GetElementType();
+                
+                // 要素の型が配列ということはジャグ配列である
+                if (comapreType.IsArray)
+                {
+                    // ジャグ配列は未サポート
+                    return null;
+                }
             }            
             if(comapreType == typeof(MulticastDelegate))
             {

@@ -37,10 +37,10 @@ namespace UTJ.UnityPlayerSync.Runtime
             var t = value.GetType();
             
             if (t.IsArray)
-            {
+            {                
                 var array = (T[])value;
                 m_Length = array.Length;
-                m_Values = new T[m_Length];
+                m_Values = new T[m_Length];                
                 Array.Copy(array, m_Values, array.Length);
             }
             else if (t.IsGenericType)
@@ -72,11 +72,9 @@ namespace UTJ.UnityPlayerSync.Runtime
                  }
                 else if(t.GetGenericTypeDefinition() == typeof(Dictionary<,>))
                 {
-
                 }
                 else
                 {
-
                 }
             }
             else
@@ -112,7 +110,11 @@ namespace UTJ.UnityPlayerSync.Runtime
         {
             base.Deserialize(binaryReader);
             m_Length = binaryReader.ReadInt32();
-            if (m_Length > 0)
+            if(m_Length == 0)
+            {
+                m_Values = new T[0];
+            }
+            else if (m_Length > 0)
             {
                 m_Values = new T[m_Length];
             }            
@@ -290,6 +292,11 @@ namespace UTJ.UnityPlayerSync.Runtime
         public override object GetValue()
         {
             var t = SyncType.GetType(m_Type);
+            // 配列の場合は要素とする
+            if (t.IsArray)
+            {
+                t = t.GetElementType();
+            }
             var listType = typeof(List<>);
             var genericType = listType.MakeGenericType(t);
             var list = Activator.CreateInstance(genericType);

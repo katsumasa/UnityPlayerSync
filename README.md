@@ -121,6 +121,7 @@ Componentのプロパティやフィールドの値に関しては下記の制�
 - Runtime及びEditorどちらか一方にしか存在しないAsset
 - ScriptableObject
 - delegateやUnityEvent
+- 多次元配列・ジャグ配列
 
 ## Q&A
 
