@@ -131,6 +131,12 @@ A. Profilerでプロファイルが出来ているか確認して下さい。プ
 Q. UnityEditor上で編集したGameObjectがPlayerに反映されません  
 A. Sceneの同期後、UnityEditor上でScriptのコンパイルが走ると同期情報が失われます。コンパイルが発生した場合は、Sceneの同期からやり直して下さい。
 
+Q. Textコンポーネントのフォントの表示が壊れています。  
+A. 気になるようであれな、InspecterからTextフィールドを編集すれば治ります。多分[この](https://helpdesk.unity3d.co.jp/hc/ja/articles/115003102887-%E3%83%80%E3%82%A4%E3%83%8A%E3%83%9F%E3%83%83%E3%82%AF%E3%83%95%E3%82%A9%E3%83%B3%E3%83%88-uGUI%E3%81%A7%E3%81%AE%E6%96%87%E5%AD%97%E5%8C%96%E3%81%91)不具合を踏んでいると思われます。
+
+Q. Editor上でUIを変更するとPlayer側の表示がおかしくなります。
+A. デバイスのスクリーンサイズとEditor上のスクリーンサイズが一致していないのが原因だと思われます。Editor上のGameViewのサイズをCanvas ScalerのReference Resolutionの値に合わせてみて下さい。
+
 ## その他
 
 - 要望・ご意見・不具合に関してはIssueから報告をお願いします。約束は出来ませんが可能な限り対応します。
