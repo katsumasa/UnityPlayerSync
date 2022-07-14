@@ -29,7 +29,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                 //if(d == typepf(Dicttionary<,>))
                 if (d != typeof(List<>))
                 {
-                    Debug.Log($"GenericType{d} is not supported.");
+                    //Debug.Log($"GenericType{d} is not supported.");
                     return null;
                 }
                 // Generic型で管理している値を比較する
@@ -41,14 +41,14 @@ namespace UTJ.UnityPlayerSync.Runtime
             }            
             if(comapreType == typeof(MulticastDelegate))
             {
-                Debug.Log($"MulticastDelegate({comapreType.Name}) is not supported.");
+                //Debug.Log($"MulticastDelegate({comapreType.Name}) is not supported.");
                 return null;
             }
             if(
                 (comapreType == typeof(UnityEngine.Events.UnityEvent)) ||
                 (comapreType == typeof(UnityEngine.Events.UnityEvent<>)))                                
             {
-                Debug.Log("UnityEvent is not supported.");
+                //Debug.Log("UnityEvent is not supported.");
                 return null;
             }
 
@@ -191,7 +191,7 @@ namespace UTJ.UnityPlayerSync.Runtime
             }
 
 
-            Debug.LogWarning($"{objectType} is not avaiavle.");
+            //Debug.LogWarning($"{objectType} is not avaiavle.");
             
             return null;
         }
