@@ -24,15 +24,6 @@ namespace UTJ.UnityPlayerSync.Runtime
             // 型を変換してシンプルな形へ・・・
             if (comapreType.IsGenericType)
             {
-                comapreType = comapreType.GetGenericArguments()[0];
-            }
-            else if(comapreType.IsArray)
-            {
-                comapreType = comapreType.GetElementType();
-            }
-
-            if(comapreType.IsGenericType)
-            {
                 var d = comapreType.GetGenericTypeDefinition();
                 // List以外のGeneric型はサポートしない
                 //if(d == typepf(Dicttionary<,>))
@@ -41,8 +32,25 @@ namespace UTJ.UnityPlayerSync.Runtime
                     Debug.Log($"GenericType{d} is not supported.");
                     return null;
                 }
+                // Generic型で管理している値を比較する
+                comapreType = comapreType.GetGenericArguments()[0];
             }
-
+            else if(comapreType.IsArray)
+            {
+                comapreType = comapreType.GetElementType();
+            }            
+            if(comapreType == typeof(MulticastDelegate))
+            {
+                Debug.Log($"MulticastDelegate({comapreType.Name}) is not supported.");
+                return null;
+            }
+            if(
+                (comapreType == typeof(UnityEngine.Events.UnityEvent)) ||
+                (comapreType == typeof(UnityEngine.Events.UnityEvent<>)))                                
+            {
+                Debug.Log("UnityEvent is not supported.");
+                return null;
+            }
 
             // --- ValuType ---
             if (comapreType == typeof(bool))

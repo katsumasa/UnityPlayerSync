@@ -121,7 +121,17 @@ namespace UTJ.UnityPlayerSync.Runtime
         {
             var gameObject = (GameObject)m_object;
 
-            m_Transform = new SyncTransform(gameObject.transform);
+            var rectTransform = gameObject.transform as RectTransform;
+            if (rectTransform == null)
+            {
+                m_Transform = new SyncTransform(gameObject.transform);
+            }
+            else
+            {
+                m_Transform = new SyncRectTransform(gameObject.transform as RectTransform);
+            }
+            
+            
             var components = gameObject.GetComponents<Component>();
             m_ComponentInstancIDs = new int[components.Length - 1];
             m_ComponentTypes = new SyncType[components.Length - 1];
@@ -140,7 +150,16 @@ namespace UTJ.UnityPlayerSync.Runtime
             binaryWriter.Write(gameObject.activeSelf);
             binaryWriter.Write(gameObject.isStatic);
             binaryWriter.Write(gameObject.layer);
-            binaryWriter.Write(gameObject.tag);            
+            binaryWriter.Write(gameObject.tag); 
+            
+            if(rectTransform == null)
+            {
+                binaryWriter.Write(0);
+            }
+            else
+            {
+                binaryWriter.Write(1);
+            }
             m_Transform.Serialize(binaryWriter);
             
             var len = m_Components.Length;
@@ -165,8 +184,26 @@ namespace UTJ.UnityPlayerSync.Runtime
             gameObject.SetActive(binaryReader.ReadBoolean());
             gameObject.isStatic = binaryReader.ReadBoolean();
             gameObject.layer = binaryReader.ReadInt32();
-            gameObject.tag = binaryReader.ReadString();            
-            m_Transform = new SyncTransform(gameObject.transform);
+            gameObject.tag = binaryReader.ReadString();
+            int rectMode = binaryReader.ReadInt32();
+            if (rectMode == 0)
+            {
+                var rectTransform = gameObject.transform as RectTransform;
+                if (rectTransform != null)
+                {
+                    gameObject.AddComponent<Transform>();
+                }
+                m_Transform = new SyncTransform(gameObject.transform);
+            }
+            else
+            {
+                var rectTransform = gameObject.transform as RectTransform;
+                if(rectTransform == null)
+                {
+                    gameObject.AddComponent<RectTransform>();
+                }
+                m_Transform = new SyncRectTransform(gameObject.transform as RectTransform);
+            }
             m_Transform.Deserialize(binaryReader);
             
             
@@ -205,7 +242,7 @@ namespace UTJ.UnityPlayerSync.Runtime
             {
                 // Transformは除く
                 var t = component.GetType();
-                if(t == typeof(Transform))
+                if((t == typeof(Transform)) || (t == typeof(RectTransform)))
                 {
                     continue;
                 }

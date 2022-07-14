@@ -32,7 +32,10 @@ namespace UTJ.UnityPlayerSync.Runtime
             {
                 var name = binaryReader.ReadString();
                 var hash = binaryReader.ReadInt32();
-#if UNITY_EDITOR                
+
+
+                m_Values[i] = new AnimatorControllerParameter();
+#if UNITY_EDITOR
                 m_Values[i].name = name;
 #endif
                 m_Values[i].defaultBool = binaryReader.ReadBoolean();

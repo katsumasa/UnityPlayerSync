@@ -15,6 +15,11 @@ namespace UTJ.UnityPlayerSync.Runtime
     {
         [SerializeField] bool m_IsLogEnable;
 
+        private void Start()
+        {
+            DontDestroyOnLoad(this);
+        }
+
         protected override void OnEnable()
         {
             kMsgSendEditorToPlayer = UnityPlayerSyncGuid.kMsgSendEditorToPlayer;

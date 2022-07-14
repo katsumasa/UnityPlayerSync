@@ -5,7 +5,7 @@ UnityPlayerSyncはUnityEditorでビルドしたアプリケーション(UnityPla
 
 1. アプリケーションのSceneをUnityEditorに転送する
 2. UnityEditor上でSceneの内容を編集する
-3. 編集した内容をアプリケーションにリアルタイムで反映する
+3. 編集した内容をアプリケーションへリアルタイムに反映させる
 
 <https://user-images.githubusercontent.com/29646672/177088255-24accd44-5e35-4e97-85bc-5c154905566e.mp4>
 
@@ -17,13 +17,17 @@ UnityPlayerSyncはUnityEditorでビルドしたアプリケーション(UnityPla
 
 UnityPlayerからUnityEditor上にSceneを取り込む手順は下記の通りです。
 
-1. Hierarchy Window上でSceneを選択
-2. 右クリック
-3. コンテキストメニューからSyncを選択
+1. File > New Sceneを選択して新しいSceneを作成する
+2. Hierarchy Window上でScene(New Sceneを作成した直後はUntitled)を選択
+3. 右クリック
+4. コンテキストメニューからSyncを選択
 
 これによってアプリケーションで実行されているScene(Hierarchy)をUnity Editor上に展開します。
 
-*Note*:複雑なSceneは取り込み完了迄に時間が掛かる場合があります。
+*Note*:
+
+- Sceneの規模に応じて取り込み完了迄に時間が掛かる場合があります。
+- 必ずしも新しいSceneを作る必要はありませんが、既存のSceneの変更内容は保存されず閉じられることに注意して下さい。
 
 ### GameObjectの同期
 
@@ -99,12 +103,12 @@ Developmemt Build及びAutoconnect Profilerにチェックを入れてBuld( And 
 - GameObjectにAddされているComponent
 - Component内でpublicなプロパティ及びSerializeアトリビュートを持つフィールドの値(Inspecter上で表示されているものと同義)
   
-*Note*:Componentのプロパティやフィールドの値に関しては下記の制限があります。
+Componentのプロパティやフィールドの値に関しては下記の制限があります。
 
 - System.ValuType(int,float,etc..)型と列挙型
 - Componentへの参照
 - メジャーなUnity Build-in struct(Color,Vector3,etc...)
-- Asset(Texture,Mesh,Material,Shader,etc...)に関しては、Editor側で復元する場合は、Assetフォルダに存在する、Player側で復元する場合は[Resources.FindObjectsOfTypeAll](https://docs.unity3d.com/ja/current/ScriptReference/Resources.FindObjectsOfTypeAll.html)で検索可能なAssetに限定されます。
+- Asset(Texture,Mesh,Material,Shader,etc...)に関しては、Editor側で復元する場合は、Assetフォルダに存在する、Player側で復元する場合は[Resources.FindObjectsOfTypeAll](https://docs.unity3d.com/ja/current/ScriptReference/Resources.FindObjectsOfTypeAll.html)で検索可能なAssetに限定されます。（RenderTextureなど、Runtime上で生成されたAssetは同期出来ません。）
 
 ## Q&A
 

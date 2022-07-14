@@ -15,9 +15,13 @@ using System.Runtime.Serialization;
 public class NewTestScript
 {
 
+    delegate void Task();
+
     public CameraType[] cameraTypes;
     Camera camera;
-    
+
+    Task task;
+
 
     [Obsolete()]
 
@@ -29,16 +33,20 @@ public class NewTestScript
     [Test]
     public void SandBox()
     {
+        //var t = task.GetType();
+        var t = typeof(Task);
+        Debug.Log(t);
 
-        
 
+        UnityEngine.Events.UnityEvent unityEvent = null;
 
-        var t = this.GetType();
-        var fis = t.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-        foreach(var fi in fis)
-        {
-            
-        }
+        t = typeof(UnityEngine.Events.UnityEvent);
+        Debug.Log(t);
+        t = typeof(UnityEngine.Events.UnityAction);
+        Debug.Log(t);
+        t = typeof(UnityEngine.Events.UnityAction<>);
+        Debug.Log(t);
+
     }
 
 
