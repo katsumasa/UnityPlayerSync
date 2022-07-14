@@ -116,7 +116,19 @@ namespace UTJ.UnityPlayerSync.Runtime
             var parentSyncTransform = SyncTransform.GetSyncTransform(parentInstanceID);
             if (parentSyncTransform != null)
             {
-                transform.parent = (Transform)parentSyncTransform.m_object;
+                var rectTransform = transform as Transform;
+                if (rectTransform == null)
+                {                    
+                    transform.SetParent((Transform)parentSyncTransform.m_object);
+                }
+                else
+                {
+                    // ワーニング対応
+                    // Parent of RectTransform is being set with parent property.
+                    // Consider using the SetParent method instead, with the worldPositionStays argument set to false.
+                    // This will retain local orientation and scale rather than world orientation and scale, which can prevent common UI scaling issues.
+                    rectTransform.SetParent((Transform)parentSyncTransform.m_object, false);
+                }
             }
             transform.localPosition = (Vector3)localPosition.GetValue();
             transform.localRotation = (Quaternion)localRotation.GetValue();
