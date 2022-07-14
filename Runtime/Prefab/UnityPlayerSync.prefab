@@ -44,3 +44,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_IsLogEnable: 0
+  m_IsDontDestroyOnLoadEnabled: 1

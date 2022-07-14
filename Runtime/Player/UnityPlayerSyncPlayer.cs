@@ -14,10 +14,15 @@ namespace UTJ.UnityPlayerSync.Runtime
     public class UnityPlayerSyncPlayer : UTJ.RemoteConnect.Player
     {
         [SerializeField] bool m_IsLogEnable;
+        [SerializeField] bool m_IsDontDestroyOnLoadEnabled;
+
 
         private void Start()
         {
-            DontDestroyOnLoad(this.gameObject);
+            if (m_IsDontDestroyOnLoadEnabled)
+            {
+                DontDestroyOnLoad(this.gameObject);
+            }
         }
 
         protected override void OnEnable()
