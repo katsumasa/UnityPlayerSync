@@ -24,14 +24,23 @@ namespace UTJ.UnityPlayerSync.Runtime
             new SyncVector2(rectTransform.offsetMin).Serialize(binaryWriter);
             new SyncVector2(rectTransform.pivot).Serialize(binaryWriter);            
             new SyncVector2(rectTransform.sizeDelta).Serialize(binaryWriter);
+
+            
         }
 
         public override void Deserialize(BinaryReader binaryReader)
-        {
+        {            
             base.Deserialize(binaryReader);
-            
+
             var rectTransform = m_object as RectTransform;
-            
+
+            var pos = rectTransform.localPosition;
+            var rote = rectTransform.localRotation;
+            var scale = rectTransform.localScale;
+            rectTransform.localPosition = Vector3.zero;
+            rectTransform.localRotation = Quaternion.identity;
+            rectTransform.localScale = Vector3.one;
+
             var v2 = new SyncVector2(rectTransform.anchoredPosition);
             v2.Deserialize(binaryReader);
             rectTransform.anchoredPosition = (Vector2)v2.GetValue();
@@ -64,6 +73,10 @@ namespace UTJ.UnityPlayerSync.Runtime
             v2.Deserialize(binaryReader);
             rectTransform.sizeDelta = (Vector2)v2.GetValue();
 
+
+            rectTransform.localPosition = pos;
+            rectTransform.localRotation = rote;
+            rectTransform.localScale = scale;
         }
     }
 }

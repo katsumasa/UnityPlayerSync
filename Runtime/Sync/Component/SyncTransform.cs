@@ -102,7 +102,7 @@ namespace UTJ.UnityPlayerSync.Runtime
             localPosition.Deserialize(binaryReader);
             localRotation.Deserialize(binaryReader);
             localScale.Deserialize(binaryReader);
-            
+
             // 親のTransformは構築済み
             // From Player To Editor
             // 
@@ -113,13 +113,15 @@ namespace UTJ.UnityPlayerSync.Runtime
             // parentInstanceIDにはEditor上のInstanceIDが入っている
             // 
 
+
+
             var parentSyncTransform = SyncTransform.GetSyncTransform(parentInstanceID);
             if (parentSyncTransform != null)
             {
                 var rectTransform = transform as Transform;
                 if (rectTransform == null)
                 {                    
-                    transform.SetParent((Transform)parentSyncTransform.m_object);
+                    transform.SetParent((Transform)parentSyncTransform.m_object,false);
                 }
                 else
                 {
@@ -133,6 +135,7 @@ namespace UTJ.UnityPlayerSync.Runtime
             transform.localPosition = (Vector3)localPosition.GetValue();
             transform.localRotation = (Quaternion)localRotation.GetValue();
             transform.localScale = (Vector3)localScale.GetValue();
+
         }
 
 
