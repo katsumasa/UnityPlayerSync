@@ -80,6 +80,7 @@ namespace UTJ.UnityPlayerSync.Runtime
             return null;
         }
 
+
         public GameObject gameObject
         {
             get { return (GameObject)m_object; }
@@ -91,6 +92,7 @@ namespace UTJ.UnityPlayerSync.Runtime
         protected int[] m_ComponentInstancIDs;
         protected SyncType[] m_ComponentTypes;
         protected SyncComponent[] m_Components;
+
 
         public Component GetComponent(int instanceID)
         {
@@ -111,16 +113,11 @@ namespace UTJ.UnityPlayerSync.Runtime
         }
 
 
-        ~SyncGameObject()
-        {
-            Caches.Remove(this);
-        }
-
-
         public override void Serialize(BinaryWriter binaryWriter)
         {
             var gameObject = (GameObject)m_object;
 
+            // Transform/RecTransform
             var rectTransform = gameObject.transform as RectTransform;
             if (rectTransform == null)
             {
@@ -131,7 +128,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                 m_Transform = new SyncRectTransform(gameObject.transform as RectTransform);
             }
             
-            
+            // Transformの分を抜いておく
             var components = gameObject.GetComponents<Component>();
             m_ComponentInstancIDs = new int[components.Length - 1];
             m_ComponentTypes = new SyncType[components.Length - 1];
@@ -147,12 +144,13 @@ namespace UTJ.UnityPlayerSync.Runtime
 
 
             base.Serialize(binaryWriter);            
+            // GameObject固有
             binaryWriter.Write(gameObject.activeSelf);
             binaryWriter.Write(gameObject.isStatic);
             binaryWriter.Write(gameObject.layer);
             binaryWriter.Write(gameObject.tag); 
-            
-            if(rectTransform == null)
+            // Transform / RecTransform識別子
+            if (rectTransform == null)
             {
                 binaryWriter.Write(0);
             }
@@ -160,6 +158,7 @@ namespace UTJ.UnityPlayerSync.Runtime
             {
                 binaryWriter.Write(1);
             }
+           
             m_Transform.Serialize(binaryWriter);
             
             var len = m_Components.Length;
@@ -258,7 +257,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                 }
                 if (isDelete)
                 {
-                    //Debug.Log($"{gameObject.name}:{t.Name} is destoyed.");
+                    Debug.Log($"(GameObject:{gameObject.name} Component{t.Name}) is destoyed.");
 #if UNITY_EDITOR
                     Object.DestroyImmediate(component);
 #else

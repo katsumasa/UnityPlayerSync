@@ -59,6 +59,10 @@ namespace UTJ.UnityPlayerSync.Runtime
             return null;
         }
 
+        public static void Clear()
+        {
+            Caches.Clear();
+        }
 
         /// <summary>
         /// instanceIDをキーにしてSyncComponentを検索する
@@ -112,12 +116,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                 Init();
             }
         }
-
-        ~SyncComponent()
-        {
-            Caches.Remove(this);
-        }
-
+        
 
         public override void Serialize(BinaryWriter binaryWriter)
         {            
@@ -354,7 +353,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                 var prop = type.GetProperty(propInfo.Name, BindingFlags.Public | BindingFlags.Instance);
                 if(prop == null)
                 {
-                    Debug.LogError($"{propInfo.Name} is not found.");
+                    Debug.LogWarning($"component:{component.name} property:{propInfo.Name} is not found.");
                     continue;
                 }
                 var at = Attribute.GetCustomAttribute(prop, typeof(ObsoleteAttribute));
@@ -381,7 +380,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                 var field = type.GetField(fieldInfo.Name, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
                 if(field == null)
                 {
-                    Debug.LogError($"{fieldInfo.Name} is not found.");
+                    Debug.LogWarning($"component : {component.name} field: {fieldInfo.Name} is not found.");
                     continue;
                 }                
                 var o = field.GetValue(component);

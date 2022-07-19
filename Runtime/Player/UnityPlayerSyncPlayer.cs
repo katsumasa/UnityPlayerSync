@@ -42,7 +42,12 @@ namespace UTJ.UnityPlayerSync.Runtime
             var binaryWriter = new BinaryWriter(writerMemory);
 
             try
-            {                
+            {
+                SyncGameObject.ClearList();
+                SyncTransform.Clear();
+                SyncComponent.Clear();
+
+
                 var messageID = (MessageID)binaryReader.ReadInt32();
                 if (m_IsLogEnable)
                 {
@@ -65,7 +70,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                         {
                             var syncs = new List<SyncGameObject>();                            
                             var count = binaryReader.ReadInt32();
-                            for(var i = 0; i < count; i++)
+                            for (var i = 0; i < count; i++)
                             {
                                 var instanceID = binaryReader.ReadInt32();
                                 if (m_IsLogEnable)
@@ -74,38 +79,22 @@ namespace UTJ.UnityPlayerSync.Runtime
                                 }
 
                                 var go = SyncUnityEngineObject.FindObjectFromInstanceID(instanceID) as GameObject;
-                                SyncGameObject sync = null;
-                                if (go != null)
-                                {
-                                    sync = SyncGameObject.Find(go);
-                                    if(sync == null)
-                                    {
-                                        if (m_IsLogEnable)
-                                        {
-                                            Debug.Log($"{go.name}'s sync is not found.");
-                                        }
-                                    }
-                                }
-                                else
+                                if (go == null)
                                 {
                                     if (m_IsLogEnable)
                                     {
                                         Debug.Log($"{instanceID} is new GameObject.");
                                     }
-                                    go = new GameObject();                                    
+                                    go = new GameObject();
                                 }
-                                if(sync == null)
-                                {
-                                    sync = new SyncGameObject(go);
-                                }
+                                SyncGameObject sync = new SyncGameObject(go);
                                 sync.Deserialize(binaryReader);
                                 syncs.Add(sync);
-                            }
+                            }                                
                             foreach(var sync in syncs)
                             {
                                 sync.WriteBack();
                             }
-
                             // Player側の情報でEditor側に送信し直す
                             foreach (var sync in syncs)
                             {
@@ -132,51 +121,60 @@ namespace UTJ.UnityPlayerSync.Runtime
                             {
                                 Debug.Log($"instanceID:{instanceID}");
                             }
-                            var sync = SyncTransform.Find(instanceID);
-                            if (sync != null)
-                            {
-                                sync.Deserialize(binaryReader);
-                            }
-                            else
+                            var transform = SyncUnityEngineObject.FindObjectFromInstanceID(instanceID) as Transform;
+                            if(transform == null)
                             {
                                 Debug.LogWarning($"instanceID;{instanceID} is not found.");
                             }
+                            else
+                            {
+                                var sync = new SyncTransform(transform);
+                                sync.Deserialize(binaryReader);
+                            }                                                           
                         }
                         break;
 
                     case MessageID.SyncComponent:
                         {
                             var instanceID = binaryReader.ReadInt32();
-                            var sync = SyncComponent.Find(instanceID);
-                            if (sync != null)
+                            if (m_IsLogEnable)
                             {
-                                if (m_IsLogEnable)
-                                {
-                                    Debug.Log($"{sync.GetComponent().name}");
-                                }
-                                sync.Deserialize(binaryReader);
-                                sync.WriteBack();
+                                Debug.Log($"instanceID:{instanceID}");
                             }
-                            else
+                            var component = SyncUnityEngineObject.FindObjectFromInstanceID(instanceID) as Component;
+                            if(component == null)
                             {
                                 Debug.LogWarning($"instanceID;{instanceID} is not found.");
                             }
-
+                            else
+                            {
+                                var sync = new SyncComponent(component);
+                                sync.Deserialize(binaryReader);
+                                sync.WriteBack();
+                            }                                                        
                         }
                         break;
 
                     case MessageID.SyncDelete:
                         {
                             var instanceID = binaryReader.ReadInt32();
-                            var sync = SyncGameObject.Find(instanceID);
-                            if(sync != null)
-                            {                                                                                       
-                                GameObject.Destroy(sync.gameObject);
-                                sync.Dispose();
+                            if (m_IsLogEnable)
+                            {
+                                Debug.Log($"instanceID:{instanceID}");
+                            }
+                            var gameObject = SyncUnityEngineObject.FindObjectFromInstanceID(instanceID) as GameObject;
+                            if(gameObject == null)
+                            {
+                                Debug.LogWarning($"instanceID;{instanceID} is not found.");
+                            }
+                            else
+                            {
+                                GameObject.Destroy(gameObject);
                                 binaryWriter.Write((int)MessageID.SyncDelete);
                                 binaryWriter.Write(instanceID);
                                 SendRemoteMessage(writerMemory.ToArray());
-                            }
+                            }                            
+                            
                         }
                         break;
                 }
@@ -188,6 +186,10 @@ namespace UTJ.UnityPlayerSync.Runtime
                 binaryWriter.Close();
                 readerMemory.Close();
                 writerMemory.Close();
+
+                SyncGameObject.ClearList();
+                SyncTransform.Clear();
+                SyncComponent.Clear();
             }                      
         }
 

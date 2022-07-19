@@ -6,24 +6,24 @@ using UnityEngine;
 namespace UTJ.UnityPlayerSync.Runtime
 {
     public class SyncTransform : SyncUnityEngineObject
-    {        
-        static List<SyncTransform> m_SyncTransforms;
-        static List<SyncTransform> syncTransforms
+    {
+        static List<SyncTransform> m_Caches;
+        static List<SyncTransform> caches
         {
             get
             {
-                if(m_SyncTransforms == null)
+                if(m_Caches == null)
                 {
-                    m_SyncTransforms = new List<SyncTransform>();
+                    m_Caches = new List<SyncTransform>();
                 }
-                return m_SyncTransforms;
+                return m_Caches;
             }
         }
 
 
         public static SyncTransform Find(Component component)
         {
-            foreach(var sync in syncTransforms)
+            foreach(var sync in caches)
             {
                 if (component.Equals(sync.Object))
                 {
@@ -36,7 +36,7 @@ namespace UTJ.UnityPlayerSync.Runtime
 
         public static SyncTransform Find(int instanceID)
         {
-            foreach (var sync in syncTransforms)
+            foreach (var sync in caches)
             {
                 if(sync.GetInstanceID() == instanceID)
                 {
@@ -50,12 +50,32 @@ namespace UTJ.UnityPlayerSync.Runtime
 
         public static void Clear()
         {
-            if (m_SyncTransforms != null)
+            if (m_Caches != null)
             {
-                m_SyncTransforms.Clear();
+                m_Caches.Clear();
             }
         }
-        
+
+        private static SyncTransform GetSyncTransform(int instanceID)
+        {
+            if (instanceID == SyncUnityEngineObject.InstanceID_None)
+            {
+                return null;
+            }
+
+            foreach (var syncTransForm in caches)
+            {
+                if (
+                    (syncTransForm.GetInstanceID() == instanceID) ||
+                    (syncTransForm.GetInstanceEditorID() == instanceID)
+                    )
+                {
+                    return syncTransForm;
+                }
+            }
+            return null;
+        }
+
 
         public Transform GetTransform()
         {
@@ -65,13 +85,8 @@ namespace UTJ.UnityPlayerSync.Runtime
 
         public SyncTransform(object obj) : base(obj) 
         {                         
-            syncTransforms.Add(this);
-        }
-
-        ~SyncTransform()
-        {
-            syncTransforms.Remove(this);
-        }
+            caches.Add(this);
+        }        
 
 
         public override void Serialize(BinaryWriter binaryWriter)
@@ -112,9 +127,6 @@ namespace UTJ.UnityPlayerSync.Runtime
             //
             // parentInstanceIDにはEditor上のInstanceIDが入っている
             // 
-
-
-
             var parentSyncTransform = SyncTransform.GetSyncTransform(parentInstanceID);
             if (parentSyncTransform != null)
             {
@@ -132,50 +144,11 @@ namespace UTJ.UnityPlayerSync.Runtime
                     rectTransform.SetParent((Transform)parentSyncTransform.m_object, false);
                 }
             }
+            // loacl座標系なのでSetParentの後の設定する
             transform.localPosition = (Vector3)localPosition.GetValue();
             transform.localRotation = (Quaternion)localRotation.GetValue();
             transform.localScale = (Vector3)localScale.GetValue();
 
         }
-
-
-        static SyncTransform GetSyncTransform(int instanceID)
-        {
-            if(instanceID == SyncUnityEngineObject.InstanceID_None)
-            {
-                return null;
-            }
-
-            foreach(var syncTransForm in syncTransforms)
-            {
-                if(
-                    (syncTransForm.GetInstanceID() == instanceID) ||
-                    (syncTransForm.GetInstanceEditorID() == instanceID)
-                    )
-                {
-                    return syncTransForm;
-                }
-            }
-            return null;
-        }
-        
-
-
-        public static Transform GetTransform(int instanceID)
-        {
-            var ts = Transform.FindObjectsOfType<Transform>();
-            foreach(var t in ts)
-            {
-                if(t.GetInstanceID() == instanceID)
-                {
-                    return t;
-                }
-            }
-            return null;
-            //var transform = Transform.FindObjectsOfType<Transform>().FirstOrDefault(q => q.GetInstanceID() == instanceID);
-            //return transform;
-
-        }
-
     }
 }

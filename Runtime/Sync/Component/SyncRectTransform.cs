@@ -8,9 +8,7 @@ namespace UTJ.UnityPlayerSync.Runtime
 {
     public class SyncRectTransform : SyncTransform
     {
-        public SyncRectTransform(object obj) : base(obj)
-        {            
-        }
+        public SyncRectTransform(object obj) : base(obj) { }        
 
         public override void Serialize(BinaryWriter binaryWriter)
         {

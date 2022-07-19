@@ -45,6 +45,7 @@ namespace UTJ.UnityPlayerSync.Runtime
 
             SyncGameObject.ClearList();
             SyncTransform.Clear();
+            SyncComponent.Clear();
 
 
 
