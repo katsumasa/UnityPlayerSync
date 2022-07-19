@@ -84,6 +84,8 @@ namespace UTJ.UnityPlayerSync.Editor
                             var sm = new SyncSceneManager(false);
                             sm.Deserialize(binaryReader);
                             sm.WriteBack();
+
+                            UpdateFonts();
                         }
                         break;
 
@@ -151,6 +153,36 @@ namespace UTJ.UnityPlayerSync.Editor
                     ms.Close();
                 }
             }            
+        }
+
+
+        private void UpdateFonts()
+        {
+            // TextMeshPro
+            {
+                var type = System.Type.GetType("TMPro.TextMeshProUGUI,Unity.TextMeshPro");
+                if (type != null)
+                {
+                    var method = type.GetMethod("UpdateFontAsset", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public);
+                    if (method != null)
+                    {
+                        var objects = Resources.FindObjectsOfTypeAll(type);
+                        foreach (var obj in objects)
+                        {
+                            method.Invoke(obj, null);
+                        }
+                    }
+
+                }
+            }
+            // UI.Text
+            {
+                var objects = Resources.FindObjectsOfTypeAll(typeof(UnityEngine.UI.Text)) as UnityEngine.UI.Text[];
+                foreach (var obj in objects)
+                {
+                    obj.FontTextureChanged();
+                }
+            }
         }
     }            
 }
