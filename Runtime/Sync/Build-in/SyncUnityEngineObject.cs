@@ -82,8 +82,14 @@ namespace UTJ.UnityPlayerSync.Runtime
         public override void Deserialize(BinaryReader binaryReader)
         {
             base.Deserialize(binaryReader);
+            // それぞれのInstanceIDは維持する為に空読みする
+#if UNITY_EDITOR
             m_InstanceID = binaryReader.ReadInt32();
+            binaryReader.ReadInt32();
+#else
+            binaryReader.ReadInt32();
             m_InstanceEditorID = binaryReader.ReadInt32();
+#endif
             m_Object.hideFlags = (HideFlags)binaryReader.ReadInt32();
             m_Object.name = binaryReader.ReadString();
             //Debug.Log($"instanceID:{m_InstanceID}");

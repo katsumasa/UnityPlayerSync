@@ -44,6 +44,11 @@ namespace UTJ.UnityPlayerSync.Runtime
 
         public static SyncGameObject Find(int instanceID)
         {
+            if(instanceID == SyncUnityEngineObject.InstanceID_None)
+            {
+                return null;
+            }
+
             foreach (var sync in Caches)
             {
                 if((sync.GetInstanceID() == instanceID)||
@@ -58,7 +63,12 @@ namespace UTJ.UnityPlayerSync.Runtime
 
         public static UnityEngine.Object FintObject(int instanceID)
         {
-            foreach(var syncGameObject in Caches)
+            if (instanceID == SyncUnityEngineObject.InstanceID_None)
+            {
+                return null;
+            }
+
+            foreach (var syncGameObject in Caches)
             {
                 if((syncGameObject.GetInstanceID() == instanceID)||
                    (syncGameObject.GetInstanceEditorID() == instanceID))
@@ -96,7 +106,12 @@ namespace UTJ.UnityPlayerSync.Runtime
 
         public Component GetComponent(int instanceID)
         {
-            for(var i = 0; i < m_ComponentInstancIDs.Length; i++)
+            if (instanceID == SyncUnityEngineObject.InstanceID_None)
+            {
+                return null;
+            }
+
+            for (var i = 0; i < m_ComponentInstancIDs.Length; i++)
             {
                 if(m_ComponentInstancIDs[i] == instanceID)
                 {

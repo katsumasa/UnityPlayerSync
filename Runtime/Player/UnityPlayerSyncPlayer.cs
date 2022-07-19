@@ -105,7 +105,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                             foreach (var sync in syncs)
                             {
                                 // Editor側のInstanceIDを使用
-                                // Debug.Log(sync.GetInstanceEditorID());
+                                //Debug.Log(sync.GetInstanceEditorID());
                                 binaryWriter.Write(sync.GetInstanceEditorID());
                                 sync.Serialize(binaryWriter);
                             }
