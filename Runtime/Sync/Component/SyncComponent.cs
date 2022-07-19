@@ -165,6 +165,9 @@ namespace UTJ.UnityPlayerSync.Runtime
                 if (t == null)
                 {
                     var typeName = $"{m_PropertyInfos[i].PropertyType.Name},{m_PropertyInfos[i].PropertyType.Assembly.FullName}";
+                    Debug.LogError($"{typeName} is not GetTyped.");
+
+
                     // 現状読み込めないBuild-In型は列挙型だけの筈なので、ダミーの列挙型で空読みを行う
                     //Debug.Log($"{typeName} is not found.");
                     var dummyEnum = DummyEnum.Dummy;
@@ -194,6 +197,8 @@ namespace UTJ.UnityPlayerSync.Runtime
                 if (t == null)
                 {
                     var typeName = $"{m_FieldInfos[i].FieldType.Name},{m_FieldInfos[i].FieldType.Assembly.FullName}";
+                    Debug.LogError($"{typeName} is not GetTyped.");
+
                     // 現状読み込めないBuild-In型は列挙型だけの筈なので、ダミーの列挙型で空読みを行う
                     //Debug.Log($"{typeName} is not found.");
                     var dummyEnum = DummyEnum.Dummy;
@@ -336,6 +341,20 @@ namespace UTJ.UnityPlayerSync.Runtime
                 }
             }
 
+            if(info.DeclaringType == typeof(Light))
+            {
+                if(
+                    (info.Name == "shadowRadius ")||
+                    (info.Name == "shadowAngle")  ||
+                    (info.Name == "areaSize") ||
+                    (info.Name == "lightmapBakeType")
+                    )
+                {
+                    return true;
+                }
+            }
+            
+
             return false;
         }       
 
@@ -353,7 +372,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                 var prop = type.GetProperty(propInfo.Name, BindingFlags.Public | BindingFlags.Instance);
                 if(prop == null)
                 {
-                    Debug.LogWarning($"component:{component.name} property:{propInfo.Name} is not found.");
+                    //Debug.LogWarning($"component:{component.name} property:{propInfo.Name} is not found.");
                     continue;
                 }
                 var at = Attribute.GetCustomAttribute(prop, typeof(ObsoleteAttribute));
@@ -361,7 +380,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                 {
                     //Debug.Log($"{prop.Name} is Obsolete.");
                     continue;
-                }
+                }                
                 if (IsSkipGetValue(prop))
                 {
                     continue;
@@ -380,7 +399,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                 var field = type.GetField(fieldInfo.Name, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
                 if(field == null)
                 {
-                    Debug.LogWarning($"component : {component.name} field: {fieldInfo.Name} is not found.");
+                    //Debug.LogWarning($"component : {component.name} field: {fieldInfo.Name} is not found.");
                     continue;
                 }                
                 var o = field.GetValue(component);

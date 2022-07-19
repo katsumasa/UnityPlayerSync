@@ -33,15 +33,19 @@ public class NewTestScript
     [Test]
     public void SandBox()
     {
-     
-        int[][] jag = new int[2][];
-        var t2 = jag.GetType();
-        var r2 = t2.GetArrayRank();
+        var type1 = typeof(RuntimeAnimatorController);        
+        var type2 = typeof(UnityEditor.Animations.AnimatorController);
+        var type3 = typeof(UnityEngine.Audio.AudioMixer);
+        var type4 = typeof(UnityEngine.Audio.AudioMixerGroup);
 
-        var e2 = t2.GetElementType();
-        var a3 = e2.IsArray;
-        
-     
+        var tmp = System.Type.GetType("UnityEditor.Audio.AudioMixerGroupController,UnityEditor.CoreModule, Version = 0.0.0.0, Culture = neutral, PublicKeyToken = null");
+        var generic = typeof(List<>);
+        Type[] args = { tmp };
+        var type5 = generic.MakeGenericType(args);
+        Debug.Log(type5);
+
+        var type6 = tmp.MakeArrayType();
+        Debug.Log(type6);
     }
 
 

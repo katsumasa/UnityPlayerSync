@@ -19,7 +19,14 @@ namespace UTJ.UnityPlayerSync.Runtime
             {
                 return null;
             }
-            var type = SyncType.GetType(m_Type);
+            System.Type type;
+
+
+            type = SyncType.GetType(m_Type);
+            if (type == null)
+            {                               
+                return null;
+            }
             if(type.IsArray)
             {
                 type = type.GetElementType();
@@ -29,13 +36,36 @@ namespace UTJ.UnityPlayerSync.Runtime
                 type = type.GetGenericArguments()[0];
             }
 
+            // EditorとRuntimeでAssetが異なる場合の処理
+#if UNITY_EDITOR
+            if(type == typeof(RuntimeAnimatorController))
+            {
+                type = typeof(UnityEditor.Animations.AnimatorController);
+            }
+            if(type == typeof(UnityEngine.Audio.AudioMixer))
+            {                
+                type = System.Type.GetType("UnityEditor.Audio.AudioMixerController,UnityEditor.CoreModule, Version = 0.0.0.0, Culture = neutral, PublicKeyToken = null");
+            }
+            if(type == typeof(UnityEngine.Audio.AudioMixerGroup))               
+            {
+                // UnityEditor.Audio.AudioMixerGroupControllerは非公開クラスの為、文字列で変換する
+                type = System.Type.GetType("UnityEditor.Audio.AudioMixerGroupController,UnityEditor.CoreModule, Version = 0.0.0.0, Culture = neutral, PublicKeyToken = null");
+            }            
+#else
 
-#if UNITY_EDITOR            
+#endif
+
+
+
+#if UNITY_EDITOR
             for (var i = 0; i < m_Values.Length; i++)
             {
                 // AssetDataBase内のAssetを検索する
                 var name = ReplaceInstanceName(type,m_Names[i]);
-                var filter = $"{name} t:{type.Name}";
+                var typeName = type.Name;
+                
+
+                var filter = $"{name} t:{typeName}";
                 var guids = AssetDatabase.FindAssets(filter);
                 foreach(var guid in guids) 
                 {

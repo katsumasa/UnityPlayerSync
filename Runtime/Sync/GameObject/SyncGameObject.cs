@@ -257,7 +257,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                 }
                 if (isDelete)
                 {
-                    Debug.Log($"(GameObject:{gameObject.name} Component{t.Name}) is destoyed.");
+                   // Debug.Log($"(GameObject:{gameObject.name} Component:{t.Name}) is destoyed.");
 #if UNITY_EDITOR
                     Object.DestroyImmediate(component);
 #else
