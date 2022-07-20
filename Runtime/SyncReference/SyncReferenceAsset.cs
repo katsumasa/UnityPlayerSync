@@ -36,116 +36,28 @@ namespace UTJ.UnityPlayerSync.Runtime
                 type = type.GetGenericArguments()[0];
             }
 
-            // EditorとRuntimeでAssetが異なる場合の処理
-#if UNITY_EDITOR
-            if(type == typeof(RuntimeAnimatorController))
-            {
-                type = typeof(UnityEditor.Animations.AnimatorController);
-            }
-            if(type == typeof(UnityEngine.Audio.AudioMixer))
-            {                
-                type = System.Type.GetType("UnityEditor.Audio.AudioMixerController,UnityEditor.CoreModule, Version = 0.0.0.0, Culture = neutral, PublicKeyToken = null");
-            }
-            if(type == typeof(UnityEngine.Audio.AudioMixerGroup))               
-            {
-                // UnityEditor.Audio.AudioMixerGroupControllerは非公開クラスの為、文字列で変換する
-                type = System.Type.GetType("UnityEditor.Audio.AudioMixerGroupController,UnityEditor.CoreModule, Version = 0.0.0.0, Culture = neutral, PublicKeyToken = null");
-            }            
-#else
 
-#endif
-
-
-
-#if UNITY_EDITOR
             for (var i = 0; i < m_Values.Length; i++)
             {
-                // AssetDataBase内のAssetを検索する
-                var name = ReplaceInstanceName(type,m_Names[i]);
-                var typeName = type.Name;
-                
-
-                var filter = $"{name} t:{typeName}";
-                var guids = AssetDatabase.FindAssets(filter);
-                foreach(var guid in guids) 
-                {
-                    var path = AssetDatabase.GUIDToAssetPath(guid);                    
-                    var objs = AssetDatabase.LoadAllAssetsAtPath(path);
-                    foreach(var obj in objs)
-                    {
-                        // nullの場合もあると・・・
-                        if(obj == null)
-                        {
-                            continue;
-                        }
-                        try
-                        {
-                            if ((obj.GetType() == type) && (obj.name == name))
-                            {
-                                m_Values[i] = obj;
-                                break;
-                            }
-                        }
-                        catch (System.Exception e)
-                        {
-                            Debug.LogException(e);
-                        }
-                    }
-                    if(m_Values[i] != null)
-                    {
-                        break;
-                    }
-                }                
-                
-
+#if UNITY_EDITOR
+                var name = ReplaceInstanceName(type, m_Names[i]);
+                m_Values[i] = FindAssetInAssetDataBase(type, name);
+#else
+                var name = m_Names[i];
+#endif
                 if (m_Values[i] == null)
                 {
-                    // Resourecesから検索する
-                    var objs = Resources.FindObjectsOfTypeAll(type);
-                    foreach (var obj in objs)
-                    {
-                        if (obj == null)
-                        {
-                            continue;
-                        }
-                        try
-                        {
-                            if ((obj.GetType() == type) && (obj.name == name))
-                            {
-                                m_Values[i] = obj;
-                                break;
-                            }
-                        }
-                        catch (System.Exception e)
-                        {
-                            Debug.LogException(e);
-                        }
-                    }
-                    if (m_Values[i] != null)
-                    {
-                        break;
-                    }
+                    m_Values[i] = FindAssetInResources(type, name);
                 }
                 if (m_Values[i] == null)
                 {
-                    Debug.LogWarning($"{filter} is not found.");
+                    m_Values[i] = FindAssetInBuildinExtraResource(type, name);
                 }
-            }
-#else
-            // Hierarchy内のAssetを検索する
-            var objects = Resources.FindObjectsOfTypeAll(type);
-            for (var i = 0; i < m_Values.Length; i++)
-            {
-                for(var j = 0; j < objects.Length; j++)
+                if (m_Values[i] == null)
                 {
-                    if(objects[j].name == m_Names[i])
-                    {
-                        m_Values[i] = objects[j];
-                        break;
-                    }
+                    Debug.LogWarning($"{type.Name} {name} is not found.");
                 }
             }
-#endif
             return base.GetValue();
         }
 
@@ -173,6 +85,108 @@ namespace UTJ.UnityPlayerSync.Runtime
 
             return name;
         }
+
+        UnityEngine.Object FindAssetInAssetDataBase(System.Type type,string name)
+        {            
+            var typeName = type.Name;
+            var filter = $"{name} t:{typeName}";
+            var guids = AssetDatabase.FindAssets(filter);
+            foreach (var guid in guids)
+            {
+                var path = AssetDatabase.GUIDToAssetPath(guid);
+                var objs = AssetDatabase.LoadAllAssetsAtPath(path);
+                foreach (var obj in objs)
+                {
+                    // nullの場合もあると・・・
+                    if (obj == null)
+                    {
+                        continue;
+                    }
+                    try
+                    {
+                        if ((obj.GetType() == type) && (obj.name == name))
+                        {
+                           return obj;
+                        }
+                    }
+                    catch (System.Exception e)
+                    {
+                        Debug.LogException(e);
+                    }
+                }                
+            }
+            return null;
+        }
 #endif
+        UnityEngine.Object FindAssetInResources(System.Type type,string name)
+        {
+
+            var objs = Resources.FindObjectsOfTypeAll(type);
+            foreach (var obj in objs)
+            {
+                if (obj == null)
+                {
+                    continue;
+                }
+                try
+                {
+                    if ((obj.GetType() == type) && (obj.name == name))
+                    {
+                        return obj;                    
+                    }
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogException(e);
+                }
+            }
+            return null;
+        }
+
+        UnityEngine.Object FindAssetInBuildinExtraResource(System.Type type,string name)
+        {
+            string fpath;
+            if(type == typeof(Sprite)||type == typeof(Texture2D))
+            {
+                // 拡張子は基本'psd'だが一部'png'のものも混じっている
+                string[] paths = {"UI/Skin/", "" };
+                string[] exts = {"psd","png" };
+                
+                for(var i = 0; i < 2; i++)
+                {
+                    fpath = $"{paths[i]}{name}";
+                    fpath = System.IO.Path.ChangeExtension(fpath, exts[i]);
+#if UNITY_EDITOR
+                    var sprite = AssetDatabase.GetBuiltinExtraResource(type, fpath);
+#else
+                    var sprite = Resources.GetBuiltinResource(type, fpath);
+#endif
+                    if (sprite != null)
+                    {
+                        return sprite;
+                    }
+                }
+            }
+            if(type == typeof(Material))
+            {
+                fpath = System.IO.Path.ChangeExtension(name, "mat");
+#if UNITY_EDITOR
+                return AssetDatabase.GetBuiltinExtraResource(type, fpath);
+#else
+                return Resources.GetBuiltinResource(type, fpath);
+#endif
+            }
+
+#if UNITY_EDITOR
+            if (type == typeof(LightmapParameters))
+            {
+                fpath = System.IO.Path.Combine("LightmapParameters",name);
+                fpath = System.IO.Path.ChangeExtension(fpath, "giparams");
+                return AssetDatabase.GetBuiltinExtraResource(type, fpath);
+            }
+#endif
+            return null;
+        }
+
     }
 }
