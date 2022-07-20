@@ -236,7 +236,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                 {
                     continue;
                 }
-                if (IsSkipGetValue(prop))
+                if (IsSkipGetValue(component,prop.PropertyType,prop))
                 {
                     continue;
                 }
@@ -287,29 +287,32 @@ namespace UTJ.UnityPlayerSync.Runtime
         }
 
 
+
+
+
         /// <summary>
         /// 使うと問題のあるプロパティを判定する
         /// </summary>
         /// <param name="info">プロパティ名</param>
         /// <returns>true:問題あり</returns>
-        bool IsSkipGetValue(PropertyInfo info)
+        bool IsSkipGetValue(object declaringObject ,Type type,MemberInfo info)
         {
 #if UNITY_EDITOR
             // mesh/material/materialsはEditorモードではアクセス出来ない為、Skip
             if (info.DeclaringType == typeof(UnityEngine.MeshFilter))
             {
-                if (info.PropertyType == typeof(UnityEngine.Mesh) && info.Name == "mesh")
+                if (type == typeof(UnityEngine.Mesh) && info.Name == "mesh")
                 {
                     return true;
                 }
             }
             if(info.DeclaringType == typeof(UnityEngine.Renderer))
             {
-                if(info.PropertyType == typeof(UnityEngine.Material) && (info.Name == "material"))
+                if(type == typeof(UnityEngine.Material) && (info.Name == "material"))
                 {
                     return true;
                 }
-                if (info.PropertyType == typeof(UnityEngine.Material[]) && (info.Name == "materials"))
+                if (type == typeof(UnityEngine.Material[]) && (info.Name == "materials"))
                 {
                     return true;
                 }
@@ -352,9 +355,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                 {
                     return true;
                 }
-            }
-            
-
+            }           
             return false;
         }       
 
@@ -381,7 +382,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                     //Debug.Log($"{prop.Name} is Obsolete.");
                     continue;
                 }                
-                if (IsSkipGetValue(prop))
+                if (IsSkipGetValue(component,prop.PropertyType,prop))
                 {
                     continue;
                 }
@@ -423,6 +424,10 @@ namespace UTJ.UnityPlayerSync.Runtime
                 {
                     continue;
                 }
+                if (!prop.CanWrite)
+                {
+                    continue;
+                }
                 // Obsoleteなフィールドは無視する
                 var at = Attribute.GetCustomAttribute(prop, typeof(ObsoleteAttribute));
                 if (at != null)
@@ -435,7 +440,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                 object o = null;
                 try
                 {
-                    if (!IsSkipGetValue(prop))
+                    if (!IsSkipGetValue(component, prop.PropertyType,prop))
                     {
                         o = prop.GetValue(component);
                     }
@@ -482,7 +487,13 @@ namespace UTJ.UnityPlayerSync.Runtime
                 if (isNonPublic && !IsSerializeField)
                 {
                     continue;
-                }                
+                }
+                // Inspectorに非表示のフィールドは無視する
+                at = Attribute.GetCustomAttribute(fi, typeof(HideInInspector));
+                if(at != null)
+                {
+                    continue;
+                }
 
                 object o = null;
                 try
