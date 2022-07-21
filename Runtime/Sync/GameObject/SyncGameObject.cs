@@ -55,8 +55,7 @@ namespace UTJ.UnityPlayerSync.Runtime
 
             foreach (var sync in Caches)
             {
-                if((sync.GetInstanceID() == instanceID)||
-                   (sync.GetInstanceEditorID() == instanceID))
+                if(sync.GetInstanceID() == instanceID)
                 {
                     return sync;
                 }
@@ -279,22 +278,31 @@ namespace UTJ.UnityPlayerSync.Runtime
             {                        
                 m_ComponentTypes[i] = new SyncType();
                 m_ComponentTypes[i].Deserialize(binaryReader);
-            }                
+            }
 
-            // Componentのデシリアライズ
-            
+            // デシリアライズする順番をソートする
+            // RequireComponentのアトリビュートを持つ場合、そのComponentは後ろになる
+            // Componentのデシリアライズ            
+            var componentComparableList = new List<ComponentComparable>();
             for (var i = 0; i < len; i++)
-            {                                                
+            {
+                componentComparableList.Add(new ComponentComparable(i, SyncType.GetType(m_ComponentTypes[i])));
+            }
+            componentComparableList.Sort();
+
+            foreach(var componentComparable in componentComparableList)
+            {
+                var i = componentComparable.index;
                 var componentType = SyncType.GetType(m_ComponentTypes[i]);
                 var component = gameObject.GetComponent(componentType);
                 if (component == null)
                 {
                     component = gameObject.AddComponent(componentType);
                 }
-                m_Components[i] = new SyncComponent(component,false);
+                m_Components[i] = new SyncComponent(component, false);
                 m_Components[i].Deserialize(binaryReader);
             }
-
+            
             // 相手側で削除されたコンポーネントをこちらでも削除する
             var components = gameObject.GetComponents<Component>();
             foreach (var component in components)
@@ -365,6 +373,66 @@ namespace UTJ.UnityPlayerSync.Runtime
             {
                 Caches.Remove(this);
             }
+        }
+    }
+
+    public class ComponentComparable : System.IComparable<ComponentComparable>
+    {
+
+        System.Type componentType;
+        public int index;
+
+
+        public ComponentComparable(int index, System.Type type)
+        {
+            this.index = index;
+            this.componentType = type;
+        }
+
+        public int CompareTo(ComponentComparable other)
+        {
+
+            var otherType = other.componentType;
+
+
+            if (IsRequireComponent(componentType, otherType))
+            {
+                return 1;
+            }
+            if (other.IsRequireComponent(otherType, componentType))
+            {
+                return -1;
+            }
+
+            var requireComponents = componentType.GetCustomAttributes(typeof(RequireComponent), true) as RequireComponent[];
+            var otherRequireComponents = other.componentType.GetCustomAttributes(typeof(RequireComponent), true) as RequireComponent[];
+
+            return requireComponents.Length - otherRequireComponents.Length;
+
+        }
+
+
+        private bool IsRequireComponent(System.Type type, System.Type otherType)
+        {
+
+            var requireComponents = type.GetCustomAttributes(typeof(RequireComponent), true) as RequireComponent[];
+            if (requireComponents == null)
+            {
+                return false;
+            }
+
+            while (otherType != null)
+            {
+                foreach (var requireComponent in requireComponents)
+                {
+                    if ((requireComponent.m_Type0 == otherType) || (requireComponent.m_Type1 == otherType) || (requireComponent.m_Type2 == otherType))
+                    {
+                        return true;
+                    }
+                }
+                otherType = otherType.BaseType;
+            }
+            return false;
         }
     }
 
