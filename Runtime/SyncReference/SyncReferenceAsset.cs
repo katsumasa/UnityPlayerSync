@@ -24,9 +24,11 @@ namespace UTJ.UnityPlayerSync.Runtime
 
             type = SyncType.GetType(m_Type);
             if (type == null)
-            {                               
+            {
+                // 型が得られない場合もある
                 return null;
             }
+            // 配列やList<>の場合、実際の型に変換する
             if(type.IsArray)
             {
                 type = type.GetElementType();
@@ -36,7 +38,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                 type = type.GetGenericArguments()[0];
             }
 
-
+            // Assetを検索する
             for (var i = 0; i < m_Values.Length; i++)
             {
 #if UNITY_EDITOR
@@ -66,18 +68,19 @@ namespace UTJ.UnityPlayerSync.Runtime
         // RuntimeではInstance化されたオブジェクト名にInstanceとつくので取り除く必要がある
         string ReplaceInstanceName(System.Type type,string name)
         {
-            if (type == typeof(Material) || type == typeof(Material[]) || type == typeof(List<Material>))
+            if (type == typeof(Material))
             {
                 // Materialの場合
                 name = name.Replace(" (Instance)", "");
             }
-            if(type == typeof(Mesh) || type == typeof(Mesh[]) || type == typeof(List<Mesh>))
+            if(type == typeof(Mesh))
             {
                 // Meshの場合
                 name = name.Replace(" Instance", "");
             }
             // Shaderの場合
-            if(type == typeof(Shader) || type == typeof(Shader[]) || type == typeof(List<Shader>))
+            // Shaderの場合、BuildInExtraResourcesから読む場合、パスがついている必要があるのでこのままだと困るなあ
+            if(type == typeof(Shader))
             {
                 name = System.IO.Path.GetFileName(name);
             }

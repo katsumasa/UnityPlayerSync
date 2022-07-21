@@ -97,7 +97,7 @@ namespace UTJ.UnityPlayerSync.Editor
                             {
                                 var instanceID = binaryReader.ReadInt32();                                
                                 //Debug.Log($"instanceID:{instanceID}");
-                                var sync = SyncGameObject.Find(instanceID);                                
+                                var sync = SyncGameObject.FindEditor(instanceID);                                
                                 if (sync == null)
                                 {
                                     Debug.LogError($"{instanceID} is not found.");

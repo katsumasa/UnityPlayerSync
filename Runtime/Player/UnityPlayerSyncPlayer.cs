@@ -43,10 +43,7 @@ namespace UTJ.UnityPlayerSync.Runtime
 
             try
             {
-                SyncGameObject.ClearList();
-                SyncTransform.Clear();
-                SyncComponent.Clear();
-
+                SyncSceneManager.ClearCache();
 
                 var messageID = (MessageID)binaryReader.ReadInt32();
                 if (m_IsLogEnable)
@@ -105,7 +102,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                             foreach (var sync in syncs)
                             {
                                 // Editor側のInstanceIDを使用
-                                //Debug.Log(sync.GetInstanceEditorID());
+                                Debug.Log($"{sync.GetInstanceID()},{sync.GetInstanceEditorID()}");
                                 binaryWriter.Write(sync.GetInstanceEditorID());
                                 sync.Serialize(binaryWriter);
                             }
@@ -187,9 +184,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                 readerMemory.Close();
                 writerMemory.Close();
 
-                SyncGameObject.ClearList();
-                SyncTransform.Clear();
-                SyncComponent.Clear();
+                SyncSceneManager.ClearCache();
             }                      
         }
 

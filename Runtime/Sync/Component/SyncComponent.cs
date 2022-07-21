@@ -59,8 +59,12 @@ namespace UTJ.UnityPlayerSync.Runtime
             return null;
         }
 
-        public static void Clear()
+        public static void ClearCache()
         {
+            while (Caches.Count > 0)
+            {
+                Caches[0].Dispose();
+            }
             Caches.Clear();
         }
 
@@ -408,7 +412,14 @@ namespace UTJ.UnityPlayerSync.Runtime
             }
         }
 
-
+        public override void Dispose()
+        {
+            base.Dispose();
+            if (Caches.Contains(this))
+            {
+                Caches.Remove(this);
+            }
+        }
 
         void Init()
         {

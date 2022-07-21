@@ -25,9 +25,13 @@ namespace UTJ.UnityPlayerSync.Runtime
         }
 
 
-        public static void ClearList()
+        public static void ClearCache()
         {
-            Caches.Clear();            
+            while(Caches.Count > 0)
+            {
+                Caches[0].Dispose();
+            }
+            Caches.Clear();
         }
 
         public static SyncGameObject Find(GameObject gameObject)
@@ -59,6 +63,23 @@ namespace UTJ.UnityPlayerSync.Runtime
             }
             return null;
         }
+
+        public static SyncGameObject FindEditor(int instanceEditorID)
+        {
+            if (instanceEditorID == SyncUnityEngineObject.InstanceID_None)
+            {
+                return null;
+            }
+            foreach (var sync in Caches)
+            {
+                if (sync.GetInstanceEditorID() == instanceEditorID)
+                {
+                    return sync;
+                }
+            }
+            return null;
+        }
+
 
 
         public static UnityEngine.Object FintObject(int instanceID)
@@ -134,6 +155,10 @@ namespace UTJ.UnityPlayerSync.Runtime
 
             // Transform/RecTransform
             var rectTransform = gameObject.transform as RectTransform;
+            if(m_Transform != null)
+            {
+                m_Transform.Dispose();
+            }
             if (rectTransform == null)
             {
                 m_Transform = new SyncTransform(gameObject.transform);
@@ -154,6 +179,10 @@ namespace UTJ.UnityPlayerSync.Runtime
             {
                 m_ComponentInstancIDs[i - 1] = components[i].GetInstanceID();
                 m_ComponentTypes[i - 1] = new SyncType(components[i].GetType());
+                if(m_Components[i - 1] != null)
+                {
+                    m_Components[i - 1].Dispose();
+                }
                 m_Components[i - 1] = new SyncComponent(components[i]);
             }
 
@@ -200,13 +229,17 @@ namespace UTJ.UnityPlayerSync.Runtime
             gameObject.layer = binaryReader.ReadInt32();
             gameObject.tag = binaryReader.ReadString();
             int rectMode = binaryReader.ReadInt32();
+            if (m_Transform != null)
+            {
+                m_Transform.Dispose();
+            }
             if (rectMode == 0)
             {
                 var rectTransform = gameObject.transform as RectTransform;
                 if (rectTransform != null)
                 {
                     gameObject.AddComponent<Transform>();
-                }
+                }                
                 m_Transform = new SyncTransform(gameObject.transform);
             }
             else
@@ -220,7 +253,19 @@ namespace UTJ.UnityPlayerSync.Runtime
             }
             m_Transform.Deserialize(binaryReader);
             
-            
+            // 既存のSyncComponentをDisposeする
+            if (m_Components != null)
+            {
+                for(var i = 0; i < m_Components.Length; i++)
+                {
+                    if (m_Components[i] != null)
+                    {
+                        m_Components[i].Dispose();
+                    }
+                }
+            }
+
+
             var len = binaryReader.ReadInt32();
             m_ComponentInstancIDs = new int[len];
             m_ComponentTypes = new SyncType[len];
@@ -302,6 +347,20 @@ namespace UTJ.UnityPlayerSync.Runtime
         public override void Dispose()
         {
             base.Dispose();
+            if(m_Transform != null)
+            {
+                m_Transform.Dispose();
+            }
+            if (m_Components != null)
+            {
+                for (var i = 0; i < m_Components.Length; i++)
+                {
+                    if (m_Components[i] != null)
+                    {
+                        m_Components[i].Dispose();
+                    }
+                }
+            }
             if (Caches.Contains(this))
             {
                 Caches.Remove(this);

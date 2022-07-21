@@ -8,7 +8,7 @@ namespace UTJ.UnityPlayerSync.Runtime
     public class SyncTransform : SyncUnityEngineObject
     {
         static List<SyncTransform> m_Caches;
-        static List<SyncTransform> caches
+        static List<SyncTransform> Caches
         {
             get
             {
@@ -23,7 +23,7 @@ namespace UTJ.UnityPlayerSync.Runtime
 
         public static SyncTransform Find(Component component)
         {
-            foreach(var sync in caches)
+            foreach(var sync in Caches)
             {
                 if (component.Equals(sync.Object))
                 {
@@ -36,7 +36,7 @@ namespace UTJ.UnityPlayerSync.Runtime
 
         public static SyncTransform Find(int instanceID)
         {
-            foreach (var sync in caches)
+            foreach (var sync in Caches)
             {
                 if(sync.GetInstanceID() == instanceID)
                 {
@@ -48,13 +48,15 @@ namespace UTJ.UnityPlayerSync.Runtime
         }
 
 
-        public static void Clear()
+        public static void ClearCache()
         {
-            if (m_Caches != null)
+            while (Caches.Count > 0)
             {
-                m_Caches.Clear();
+                Caches[0].Dispose();
             }
+            Caches.Clear();
         }
+
 
         private static SyncTransform GetSyncTransform(int instanceID)
         {
@@ -63,7 +65,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                 return null;
             }
 
-            foreach (var syncTransForm in caches)
+            foreach (var syncTransForm in Caches)
             {
                 if (
                     (syncTransForm.GetInstanceID() == instanceID) ||
@@ -85,7 +87,7 @@ namespace UTJ.UnityPlayerSync.Runtime
 
         public SyncTransform(object obj) : base(obj) 
         {                         
-            caches.Add(this);
+            Caches.Add(this);
         }        
 
 
@@ -149,6 +151,15 @@ namespace UTJ.UnityPlayerSync.Runtime
             transform.localRotation = (Quaternion)localRotation.GetValue();
             transform.localScale = (Vector3)localScale.GetValue();
 
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            if (Caches.Contains(this))
+            {
+                Caches.Remove(this);
+            }
         }
     }
 }
