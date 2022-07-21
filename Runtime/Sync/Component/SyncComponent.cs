@@ -301,8 +301,8 @@ namespace UTJ.UnityPlayerSync.Runtime
         /// <returns>true:問題あり</returns>
         bool IsSkipGetValue(object declaringObject ,Type type,MemberInfo info)
         {
-#if UNITY_EDITOR
             // mesh/material/materialsはEditorモードではアクセス出来ない為、Skip
+            // 代わりのShardMaterialが使われる筈
             if (info.DeclaringType == typeof(UnityEngine.MeshFilter))
             {
                 if (type == typeof(UnityEngine.Mesh) && info.Name == "mesh")
@@ -321,7 +321,6 @@ namespace UTJ.UnityPlayerSync.Runtime
                     return true;
                 }
             }
-#endif
             // Runtime<->Editor間でpixelRectを触ると色々不具合が起きるので触らない
             if(info.DeclaringType == typeof(Camera))
             {
