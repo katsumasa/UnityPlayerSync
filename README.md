@@ -9,7 +9,7 @@ UnityPlayerSyncはUnityEditorでビルドしたアプリケーション(UnityPla
 
 <https://user-images.githubusercontent.com/29646672/177088255-24accd44-5e35-4e97-85bc-5c154905566e.mp4>
 
-Note:同期と謳っていますが、正確には復元である為、復元出来ないケースも多々あります。
+Note:正確には同期ではなく、限られた情報からの復元である為、復元出来ないケースも多々あります。
 
 ## 使い方
 
@@ -131,8 +131,12 @@ A. Profilerでプロファイルが出来ているか確認して下さい。プ
 Q. UnityEditor上で編集したGameObjectがPlayerに反映されません  
 A. Sceneの同期後、UnityEditor上でScriptのコンパイルが走ると同期情報が失われます。コンパイルが発生した場合は、Sceneの同期からやり直して下さい。
 
-Q. Editor上でUIを変更するとPlayer側の表示がおかしくなります。
+Q. Editor上でUIを変更するとPlayer側の表示がおかしくなります。  
 A. デバイスのスクリーンサイズとEditor上のスクリーンサイズが一致していないのが原因だと思われます。Editor上のGameViewのサイズをCanvas ScalerのReference Resolutionの値に合わせてみて下さい。
+
+Q. 同期出来ません。  
+A. 同期済みのGameObjectを削除する場合は必ず、`Sync Delete`から削除を行って下さい。同期の整合性が取れなくなり想定出来ないエラーが発生する場合があります。
+
 
 ## その他
 
