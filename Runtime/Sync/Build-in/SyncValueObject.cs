@@ -192,6 +192,10 @@ namespace UTJ.UnityPlayerSync.Runtime
             {
                 return new SyncReferenceComponent(obj, objectType);
             }
+            if(comapreType == typeof(GameObject))
+            {
+                return new SyncRefernceGameObject(obj, objectType);
+            }
             if (comapreType == typeof(UnityEngine.Object))
             {                
                 return new SyncReferenceAsset(obj, objectType);                
