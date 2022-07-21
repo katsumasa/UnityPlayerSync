@@ -103,14 +103,14 @@ Developmemt Build及びAutoconnect Profilerにチェックを入れてBuld( And 
 
 - Hierarchy内のGameObject
 - GameObjectにAddされているComponent
-- Component内でpublicなプロパティ及びSerializeアトリビュートを持つフィールドの値(Inspecter上で表示されているものと同義) 
+- Component内でpublicなプロパティ及びSerializeアトリビュートを持つフィールドの値(Inspecter上で表示されているものと同義)
 
 Componentのプロパティやフィールドの値に関しては下記の制限があります。
 
 - System.ValuType(int,float,etc..)型と列挙型
 - Componentへの参照
 - メジャーなUnity Build-in struct(Color,Vector3,etc...)
-- Asset(Texture,Mesh,Material,Shader,etc...)に関しては、Editor側で復元する場合は、Assetフォルダに存在する、Player側で復元する場合は[Resources.FindObjectsOfTypeAll](https://docs.unity3d.com/ja/current/ScriptReference/Resources.FindObjectsOfTypeAll.html)で検索可能なAssetに限定されます。（RenderTextureなど、Runtime上で生成されたAssetは同期出来ません。）
+- Asset(Texture,Mesh,Material,Shader,etc...)に関しては、Editor側で復元する場合は、プロジェクトの存在するAsset、Player側で復元する場合はHierarchy上に存在しているAssetに限定されます。
 
 ### 同期出来ないobject
 
@@ -122,21 +122,23 @@ Componentのプロパティやフィールドの値に関しては下記の制�
 - ScriptableObject
 - delegateやUnityEvent
 - 多次元配列・ジャグ配列
+- Particleのパラメーター
+
+などなど・・・
 
 ## Q&A
 
-Q. Sceneの同期が出来ません  
+Q. 同期が出来ません  
 A. Profilerでプロファイルが出来ているか確認して下さい。プロファイルが出来ている場合は、セットアップの章で記載されている通りであるか見直して下さい。プロファイルが出来ていない場合、UnityEditorとデバイスの接続が正しく行われていない可能性があります。[こちら](https://docs.unity3d.com/ja/current/Manual/profiler-profiling-applications.html)を参考に、UnityEditorとデバイスの接続を行って下さい。
-  
-Q. UnityEditor上で編集したGameObjectがPlayerに反映されません  
-A. Sceneの同期後、UnityEditor上でScriptのコンパイルが走ると同期情報が失われます。コンパイルが発生した場合は、Sceneの同期からやり直して下さい。
-
-Q. Editor上でUIを変更するとPlayer側の表示がおかしくなります。  
-A. デバイスのスクリーンサイズとEditor上のスクリーンサイズが一致していないのが原因だと思われます。Editor上のGameViewのサイズをCanvas ScalerのReference Resolutionの値に合わせてみて下さい。
 
 Q. 同期出来ません。  
 A. 同期済みのGameObjectを削除する場合は必ず、`Sync Delete`から削除を行って下さい。同期の整合性が取れなくなり想定出来ないエラーが発生する場合があります。
 
+Q. 同期が出来ません
+A. Sceneの同期後、UnityEditor上でScriptのコンパイルが走ると同期情報が失われます。コンパイルが発生した場合は、Sceneの同期からやり直して下さい。
+
+Q. Editor上でUIを変更するとPlayer側の表示がおかしくなります。  
+A. デバイスのスクリーンサイズとEditor上のGameViewのサイズが一致していないのが原因だと思われます。Editor上のGameViewのサイズをCanvas ScalerのReference Resolutionの値に合わせてみて下さい。
 
 ## その他
 
