@@ -55,6 +55,7 @@ namespace UTJ.UnityPlayerSync.Runtime
             base.Deserialize(binaryReader);
             for (var i = 0; i < m_Length; i++)
             {
+                m_Values[i] = new AnimationCurve();
                 m_Values[i].postWrapMode = (WrapMode)binaryReader.ReadInt32();
                 m_Values[i].preWrapMode = (WrapMode)binaryReader.ReadInt32();
                 var len = binaryReader.ReadInt32();
