@@ -167,24 +167,36 @@ namespace UTJ.UnityPlayerSync.Runtime
                 m_Transform = new SyncRectTransform(gameObject.transform as RectTransform);
             }
             
+            if(m_Components != null)
+            {
+                foreach(var component in m_Components)
+                {
+                    if(component != null)
+                    {
+                        component.Dispose();
+                    }
+                }
+            }
             // Transformの分を抜いておく
             var components = gameObject.GetComponents<Component>();
             m_ComponentInstancIDs = new int[components.Length - 1];
             m_ComponentTypes = new SyncType[components.Length - 1];
             m_Components = new SyncComponent[components.Length - 1];
-
-            // 0番目はTransformである為、1番目から処理する
+            // RequireComponentアトリビュートを考慮してComponentの順番を並び変える
+            var componentComparables = new List<ComponentComparable>();
+            // 0番目はTransformである為、1番目から処理する            
             for (var i = 1; i < components.Length; i++)
             {
-                m_ComponentInstancIDs[i - 1] = components[i].GetInstanceID();
-                m_ComponentTypes[i - 1] = new SyncType(components[i].GetType());
-                if(m_Components[i - 1] != null)
-                {
-                    m_Components[i - 1].Dispose();
-                }
-                m_Components[i - 1] = new SyncComponent(components[i]);
+                componentComparables.Add(new ComponentComparable(components[i]));
             }
-
+            componentComparables.Sort();
+            for(var i = 0; i < componentComparables.Count; i++)
+            {
+                var component = componentComparables[i].component;
+                m_ComponentInstancIDs[i] = component.GetInstanceID();
+                m_ComponentTypes[i] = new SyncType(component.GetType());                
+                m_Components[i] = new SyncComponent(component);
+            }                        
 
             base.Serialize(binaryWriter);            
             // GameObject固有
@@ -264,7 +276,6 @@ namespace UTJ.UnityPlayerSync.Runtime
                 }
             }
 
-
             var len = binaryReader.ReadInt32();
             m_ComponentInstancIDs = new int[len];
             m_ComponentTypes = new SyncType[len];
@@ -280,19 +291,8 @@ namespace UTJ.UnityPlayerSync.Runtime
                 m_ComponentTypes[i].Deserialize(binaryReader);
             }
 
-            // デシリアライズする順番をソートする
-            // RequireComponentのアトリビュートを持つ場合、そのComponentは後ろになる
-            // Componentのデシリアライズ            
-            var componentComparableList = new List<ComponentComparable>();
             for (var i = 0; i < len; i++)
             {
-                componentComparableList.Add(new ComponentComparable(i, SyncType.GetType(m_ComponentTypes[i])));
-            }
-            componentComparableList.Sort();
-
-            foreach(var componentComparable in componentComparableList)
-            {
-                var i = componentComparable.index;
                 var componentType = SyncType.GetType(m_ComponentTypes[i]);
                 var component = gameObject.GetComponent(componentType);
                 if (component == null)
@@ -301,7 +301,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                 }
                 m_Components[i] = new SyncComponent(component, false);
                 m_Components[i].Deserialize(binaryReader);
-            }
+            }            
             
             // 相手側で削除されたコンポーネントをこちらでも削除する
             var components = gameObject.GetComponents<Component>();
@@ -377,50 +377,43 @@ namespace UTJ.UnityPlayerSync.Runtime
     }
 
     public class ComponentComparable : System.IComparable<ComponentComparable>
-    {
-
-        System.Type componentType;
-        public int index;
-
-
-        public ComponentComparable(int index, System.Type type)
+    {        
+        public Component component
         {
-            this.index = index;
-            this.componentType = type;
+            get { return m_Component; }
+        }
+        Component m_Component;
+        System.Type m_Type;
+
+
+        public ComponentComparable(Component component)
+        {
+            m_Component = component;
+            m_Type = m_Component.GetType();
         }
 
         public int CompareTo(ComponentComparable other)
-        {
-
-            var otherType = other.componentType;
-
-
-            if (IsRequireComponent(componentType, otherType))
+        {           
+            if (IsRequireComponent(m_Type, other.m_Type))
             {
                 return 1;
             }
-            if (other.IsRequireComponent(otherType, componentType))
+            if (other.IsRequireComponent(other.m_Type, m_Type))
             {
                 return -1;
             }
-
-            var requireComponents = componentType.GetCustomAttributes(typeof(RequireComponent), true) as RequireComponent[];
-            var otherRequireComponents = other.componentType.GetCustomAttributes(typeof(RequireComponent), true) as RequireComponent[];
-
+            var requireComponents = m_Type.GetCustomAttributes(typeof(RequireComponent), true) as RequireComponent[];
+            var otherRequireComponents = other.m_Type.GetCustomAttributes(typeof(RequireComponent), true) as RequireComponent[];
             return requireComponents.Length - otherRequireComponents.Length;
-
         }
-
 
         private bool IsRequireComponent(System.Type type, System.Type otherType)
         {
-
             var requireComponents = type.GetCustomAttributes(typeof(RequireComponent), true) as RequireComponent[];
             if (requireComponents == null)
             {
                 return false;
             }
-
             while (otherType != null)
             {
                 foreach (var requireComponent in requireComponents)
