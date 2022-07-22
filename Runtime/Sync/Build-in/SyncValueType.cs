@@ -38,29 +38,29 @@ namespace UTJ.UnityPlayerSync.Runtime
             
             if (t.IsArray)
             {                
-                var array = (T[])value;
+                var array = (Array)value;
                 m_Length = array.Length;
                 m_Values = new T[m_Length];                
-                Array.Copy(array, m_Values, array.Length);
+                for(var i = 0; i < m_Length; i++)
+                {
+                    m_Values[i] = (T)array.GetValue(i);
+                }                
             }
             else if (t.IsGenericType)
             {
                 // 現時点ではSyncValuObject.AllocateでList型以外のGenericを弾いているので
                 // Generic型 = List<>である。
                 if (t.GetGenericTypeDefinition() == typeof(List<>))
-                {
-                    List<T> list;
-
+                {                    
                     try
                     {
-                        list = (List<T>)value;
-                        m_Length = list.Count;
+                        var array = (Array)t.GetMethod("ToArray").Invoke(value, new object[] {});
+                        m_Length = array.Length;
                         m_Values = new T[m_Length];
                         for (var i = 0; i < m_Length; i++)
                         {
-                            m_Values[i] = list[i];
+                            m_Values[i] = (T)array.GetValue(i);
                         }
-
                     }
                     catch (System.Exception e)
                     {
