@@ -128,7 +128,7 @@ Here are the following Objects that can't be synced:
 ## Q&A
 
 Q. Unable to sync 1
-A. Check if the profile is created using the Profiler. If the Profile was properly created, please check the Setting UnityPlayerSync section on this page to see if there's any procedure that might get skipped. If the Profile wasn't created, there might be a possibility of UnityEditor and the device not being connected properly. Please refer [here](https://docs.unity3d.com/ja/current/Manual/profiler-profiling-applications.html](https://docs.unity3d.com/2021.3/Documentation/Manual/profiler-profiling-applications.html) to connect the device to UnityEditor.
+A. Check if the profile is created using the Profiler. If the Profile was properly created, please check the Setting UnityPlayerSync section on this page to see if there's any procedure that might get skipped. If the Profile wasn't created, there might be a possibility of UnityEditor and the device not being connected properly. Please refer [here](https://docs.unity3d.com/2021.3/Documentation/Manual/profiler-profiling-applications.html)to connect the device to UnityEditor.
 
 Q. Unable to sync 2
 A. If you wish to delete a synced GameObject, be sure to delete using `Sync Delete`. Inconsistent sync may cause an unexpected error.
