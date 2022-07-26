@@ -29,7 +29,7 @@ namespace UTJ.UnityPlayerSync.Runtime
         /// <summary>
         /// コンストラクター
         /// </summary>
-        public SyncAssembly() { }
+        public SyncAssembly(): this(null){ }
 
 
         /// <summary>
@@ -38,7 +38,13 @@ namespace UTJ.UnityPlayerSync.Runtime
         /// <param name="assembly"></param>
         public SyncAssembly(Assembly assembly)
         {
-            m_FullName = assembly.FullName;
+            if(assembly == null)
+            {
+                return;
+            }
+            //m_FullName = assembly.FullName;
+            // メモリ節約の為、短縮名を使用
+            m_FullName = assembly.GetName().Name;
         }
 
 
@@ -48,7 +54,15 @@ namespace UTJ.UnityPlayerSync.Runtime
         /// <param name="binaryWriter">BinaryWriter</param>
         public override void Serialize(BinaryWriter binaryWriter)
         {
-            binaryWriter.Write(m_FullName);
+            try
+            {
+                binaryWriter.Write(m_FullName);
+            }
+            catch(System.Exception e)
+            {                
+                UnityEngine.Debug.LogException(e);
+                UnityEngine.Debug.Log(m_FullName);
+            }
         }
 
 

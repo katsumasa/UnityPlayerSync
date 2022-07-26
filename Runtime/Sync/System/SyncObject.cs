@@ -3,7 +3,7 @@
 
 namespace UTJ.UnityPlayerSync.Runtime
 {
-    public class SyncObject : Sync
+    public class SyncObject : Sync,System.IDisposable
     {
         protected object m_object;
 
@@ -17,8 +17,11 @@ namespace UTJ.UnityPlayerSync.Runtime
         public override void Serialize(BinaryWriter binaryWriter) { }
         
 
-        public override void Deserialize(BinaryReader binaryReader) { }        
+        public override void Deserialize(BinaryReader binaryReader) { }
 
-       
+        public virtual void Dispose()
+        {
+            m_object = null;
+        }
     }
 }

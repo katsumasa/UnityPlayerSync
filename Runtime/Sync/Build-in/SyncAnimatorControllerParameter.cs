@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace UTJ.UnityPlayerSync.Runtime
 {
-    public class SyncAnimatorControllerParameter : SyncValueType<AnimatorControllerParameter>
+    public class SyncAnimatorControllerParameter : SyncValueObject<AnimatorControllerParameter>
     {
         public SyncAnimatorControllerParameter(object arg) : base(arg) { }
 

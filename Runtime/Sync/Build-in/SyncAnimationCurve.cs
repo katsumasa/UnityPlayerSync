@@ -10,7 +10,7 @@ namespace UTJ.UnityPlayerSync.Runtime
     /// <summary>
     /// AnimationCurveを同期する為のクラス
     /// </summary>
-    public class SyncAnimationCurve : SyncValueType<AnimationCurve>
+    public class SyncAnimationCurve : SyncValueObject<AnimationCurve>
     {
         /// <summary>
         /// コンストラクター

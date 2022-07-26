@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace UTJ.UnityPlayerSync.Runtime
 {
-    public class SyncMatrix4x4 : SyncValueType<Matrix4x4>
+    public class SyncMatrix4x4 : SyncValueObject<Matrix4x4>
     {
         public SyncMatrix4x4(object matrix) : base(matrix) { }
         public override void Serialize(BinaryWriter binaryWriter)

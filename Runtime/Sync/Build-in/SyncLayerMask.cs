@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace UTJ.UnityPlayerSync.Runtime
 {
-    public class SyncLayerMask : SyncValueType<LayerMask>
+    public class SyncLayerMask : SyncValueObject<LayerMask>
     {
         public SyncLayerMask(object obj) : base(obj) { }
 

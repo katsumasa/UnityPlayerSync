@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace UTJ.UnityPlayerSync.Runtime
 {
-    public class SyncLightBakingOutput : SyncValueType<LightBakingOutput>
+    public class SyncLightBakingOutput : SyncValueObject<LightBakingOutput>
     {
         public SyncLightBakingOutput(object lightBakingOutput): base(lightBakingOutput) { }
 

@@ -17,6 +17,7 @@ namespace UTJ.UnityPlayerSync.Runtime
             SyncGameObject.ClearCache();
             SyncTransform.ClearCache();
             SyncComponent.ClearCache();
+            SyncType.Caches.Clear();
         }
 
         protected SyncScene[] m_Scenes;

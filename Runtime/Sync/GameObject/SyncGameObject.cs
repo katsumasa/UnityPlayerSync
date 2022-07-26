@@ -32,6 +32,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                 Caches[0].Dispose();
             }
             Caches.Clear();
+            m_Caches = null;
         }
 
         public static SyncGameObject Find(GameObject gameObject)
@@ -149,9 +150,8 @@ namespace UTJ.UnityPlayerSync.Runtime
 
 
         public override void Serialize(BinaryWriter binaryWriter)
-        {
+        {           
             var gameObject = (GameObject)m_object;
-
             // Transform/RecTransform
             var rectTransform = gameObject.transform as RectTransform;
             if(m_Transform != null)
@@ -193,9 +193,18 @@ namespace UTJ.UnityPlayerSync.Runtime
             for(var i = 0; i < componentComparables.Count; i++)
             {
                 var component = componentComparables[i].component;
+                var key = component.GetType().FullName;
                 m_ComponentInstancIDs[i] = component.GetInstanceID();
-                m_ComponentTypes[i] = new SyncType(component.GetType());                
-                m_Components[i] = new SyncComponent(component);
+                if (SyncType.Caches.ContainsKey(key))
+                {
+                    m_ComponentTypes[i] = SyncType.Caches[key];
+                }
+                else
+                {
+                    m_ComponentTypes[i] = new SyncType(component.GetType());
+                    SyncType.Caches.Add(key, m_ComponentTypes[i]);
+                }
+                m_Components[i] = new SyncComponent(component);                                
             }                        
 
             base.Serialize(binaryWriter);            
@@ -287,8 +296,14 @@ namespace UTJ.UnityPlayerSync.Runtime
             
             for (var i = 0; i < len; i++)
             {                        
-                m_ComponentTypes[i] = new SyncType();
-                m_ComponentTypes[i].Deserialize(binaryReader);
+
+                var syncType = new SyncType();
+                syncType.Deserialize(binaryReader);
+                if (SyncType.Caches.ContainsKey(syncType.FullName) == false)
+                {
+                    SyncType.Caches.Add(syncType.FullName, syncType);
+                }
+                m_ComponentTypes[i] = SyncType.Caches[syncType.FullName];                
             }
 
             for (var i = 0; i < len; i++)
@@ -348,7 +363,7 @@ namespace UTJ.UnityPlayerSync.Runtime
             base.Reset();
             foreach(var component in m_Components)
             {
-                component.Reset();
+                component.Init();
             }
         }
 

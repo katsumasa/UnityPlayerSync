@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace UTJ.UnityPlayerSync.Runtime
 {
-    public class SyncBounds : SyncValueType<Bounds>
+    public class SyncBounds : SyncValueObject<Bounds>
     {
         public SyncBounds(object bounds) : base(bounds) { }
 

@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace UTJ.UnityPlayerSync.Runtime
 {
-    public class SyncVector2 : SyncValueType<Vector2>
+    public class SyncVector2 : SyncValueObject<Vector2>
     {
         public SyncVector2(object vector2) : base(vector2) { }
         
@@ -31,7 +31,7 @@ namespace UTJ.UnityPlayerSync.Runtime
         }        
     }
 
-    public class SyncVector3 : SyncValueType<Vector3>
+    public class SyncVector3 : SyncValueObject<Vector3>
     {
         public SyncVector3(object vector3):base(vector3)
         {     
@@ -61,7 +61,7 @@ namespace UTJ.UnityPlayerSync.Runtime
     }
 
 
-    public class SyncVector4 : SyncValueType<Vector4>
+    public class SyncVector4 : SyncValueObject<Vector4>
     {        
         public SyncVector4(object vector4) : base(vector4) { }
         

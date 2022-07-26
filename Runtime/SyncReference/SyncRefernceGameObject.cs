@@ -5,10 +5,10 @@ using UnityEngine;
 
 namespace UTJ.UnityPlayerSync.Runtime
 {
-    public class SyncRefernceGameObject : SyncValueType<GameObject>
+    public class SyncRefernceGameObject : SyncValueObject<GameObject>
     {
         protected int[] m_InstanceIDs;
-        protected string[] m_Names;
+
 
         public SyncRefernceGameObject() : base() { }
         public SyncRefernceGameObject(object value,System.Type type) : base(value,type) { }
@@ -21,7 +21,6 @@ namespace UTJ.UnityPlayerSync.Runtime
                 for (var i = 0; i < m_Values.Length; i++)
                 {
                     binaryWriter.Write(m_Values[i].GetInstanceID());
-                    binaryWriter.Write(m_Values[i].name);
                 }
             }
         }
@@ -33,11 +32,9 @@ namespace UTJ.UnityPlayerSync.Runtime
             if (m_Values != null)
             {
                 m_InstanceIDs = new int[m_Values.Length];
-                m_Names = new string[m_Values.Length];
                 for (var i = 0; i < m_Values.Length; i++)
                 {
-                    m_InstanceIDs[i] = binaryReader.ReadInt32();
-                    m_Names[i] = binaryReader.ReadString();
+                    m_InstanceIDs[i] = binaryReader.ReadInt32();                    
                 }
             }
         }
@@ -45,8 +42,7 @@ namespace UTJ.UnityPlayerSync.Runtime
 
         public override object GetValue()
         {
-            var gameObjects = new List<GameObject>();
-            
+            var gameObjects = new List<GameObject>();            
             for (var i = 0; i < m_Values.Length; i++)
             {
                 GameObject go = null;

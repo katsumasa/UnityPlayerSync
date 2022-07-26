@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace UTJ.UnityPlayerSync.Runtime
 {        
-    public class SyncValueObject : Sync
+    public class SyncValueObject : Sync,IDisposable
     {
         // 
         /// <summary>
@@ -232,11 +232,8 @@ namespace UTJ.UnityPlayerSync.Runtime
         
 
              
-        public SyncValueObject()
-        {
-            m_Type = new SyncType();            
-        }
-
+        public SyncValueObject() { m_Value = null; }
+        
 
         /// <summary>
         /// コンストラクター
@@ -253,7 +250,17 @@ namespace UTJ.UnityPlayerSync.Runtime
             {
                 var t = o.GetType();
                 m_Type = new SyncType(t);
-            }            
+            }
+
+            if (SyncType.Caches.ContainsKey(m_Type.FullName))
+            {
+                
+                m_Type = SyncType.Caches[m_Type.FullName];
+            }
+            else
+            {
+                SyncType.Caches.Add(m_Type.FullName,m_Type);
+            }
         }                
 
 
@@ -272,10 +279,18 @@ namespace UTJ.UnityPlayerSync.Runtime
         /// </summary>
         /// <param name="binaryReader"></param>
         public override void Deserialize(BinaryReader binaryReader)
-        {            
-            m_Type.Deserialize(binaryReader);                        
+        {
+            m_Type = new SyncType();
+            m_Type.Deserialize(binaryReader);
+            if (SyncType.Caches.ContainsKey(m_Type.FullName))
+            {                
+                m_Type = SyncType.Caches[m_Type.FullName];
+            }
+            else
+            {
+                SyncType.Caches.Add(m_Type.FullName,m_Type);
+            }
         }
-
 
         /// <summary>
         /// 値を取得する
@@ -286,7 +301,6 @@ namespace UTJ.UnityPlayerSync.Runtime
             return m_Value;
         }    
 
-
         public virtual void SetValue(object o)
         {
             if(o != null)
@@ -294,11 +308,16 @@ namespace UTJ.UnityPlayerSync.Runtime
                 var t1 = o.GetType();
                 var t2 = m_Type.GetType();
                 Debug.Assert(t1 == t2);
-
             }
-
             m_Value = o;
         }
-        
+
+        public virtual void Dispose()
+        {
+            m_Type = null;
+            m_Value = null;
+        }
+
+
     }
 }

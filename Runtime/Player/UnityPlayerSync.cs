@@ -20,6 +20,8 @@ namespace UTJ.UnityPlayerSync
     /// </summary>
     public enum MessageID
     {
+        GC,
+        UnLoadUnUsedAsset,
         SyncScene,      // Sceneの同期
         SyncGameObject, // GameObjectの同期
         SyncTransform,  // Transformの同期

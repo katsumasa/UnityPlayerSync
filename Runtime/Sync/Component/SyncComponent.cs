@@ -66,6 +66,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                 Caches[0].Dispose();
             }
             Caches.Clear();
+            m_Caches = null;
         }
 
         /// <summary>
@@ -168,10 +169,6 @@ namespace UTJ.UnityPlayerSync.Runtime
                 var t = SyncType.GetType(m_PropertyInfos[i].PropertyType);
                 if (t == null)
                 {
-                    var typeName = $"{m_PropertyInfos[i].PropertyType.Name},{m_PropertyInfos[i].PropertyType.Assembly.FullName}";
-                    Debug.LogError($"{typeName} is not GetTyped.");
-
-
                     // 現状読み込めないBuild-In型は列挙型だけの筈なので、ダミーの列挙型で空読みを行う
                     //Debug.Log($"{typeName} is not found.");
                     var dummyEnum = DummyEnum.Dummy;
@@ -199,10 +196,7 @@ namespace UTJ.UnityPlayerSync.Runtime
             {
                 var t = SyncType.GetType(m_FieldInfos[i].FieldType);
                 if (t == null)
-                {
-                    var typeName = $"{m_FieldInfos[i].FieldType.Name},{m_FieldInfos[i].FieldType.Assembly.FullName}";
-                    Debug.LogError($"{typeName} is not GetTyped.");
-
+                {                    
                     // 現状読み込めないBuild-In型は列挙型だけの筈なので、ダミーの列挙型で空読みを行う
                     //Debug.Log($"{typeName} is not found.");
                     var dummyEnum = DummyEnum.Dummy;
@@ -291,9 +285,6 @@ namespace UTJ.UnityPlayerSync.Runtime
         }
 
 
-
-
-
         /// <summary>
         /// 使うと問題のあるプロパティを判定する
         /// </summary>
@@ -350,7 +341,7 @@ namespace UTJ.UnityPlayerSync.Runtime
             if(info.DeclaringType == typeof(Light))
             {
                 if(
-                    (info.Name == "shadowRadius ")||
+                    (info.Name == "shadowRadius")||
                     (info.Name == "shadowAngle")  ||
                     (info.Name == "areaSize") ||
                     (info.Name == "lightmapBakeType")
@@ -363,64 +354,70 @@ namespace UTJ.UnityPlayerSync.Runtime
         }       
 
 
-        public override void Reset()
-        {
-            base.Reset();
 
-            var component = (Component)m_object;
-            var type = component.GetType();                        
-            for (var i = 0; i < m_PropertyInfos.Length; i++)
-            {
-                var propInfo = m_PropertyInfos[i];
-                
-                var prop = type.GetProperty(propInfo.Name, BindingFlags.Public | BindingFlags.Instance);
-                if(prop == null)
-                {
-                    //Debug.LogWarning($"component:{component.name} property:{propInfo.Name} is not found.");
-                    continue;
-                }
-                var at = Attribute.GetCustomAttribute(prop, typeof(ObsoleteAttribute));
-                if (at != null)
-                {
-                    //Debug.Log($"{prop.Name} is Obsolete.");
-                    continue;
-                }                
-                if (IsSkipGetValue(component,prop.PropertyType,prop))
-                {
-                    continue;
-                }
-                try
-                {
-                    var o = prop.GetValue(component);
-                    m_Properties[i].SetValue(o);
-                }
-                catch (System.Exception) { }                                    
-            }
-
-            for(var i = 0; i < m_FieldInfos.Length; i++)
-            {
-                var fieldInfo = m_FieldInfos[i];                
-                var field = type.GetField(fieldInfo.Name, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-                if(field == null)
-                {
-                    //Debug.LogWarning($"component : {component.name} field: {fieldInfo.Name} is not found.");
-                    continue;
-                }                
-                var o = field.GetValue(component);
-                m_Fields[i].SetValue(o);                                    
-            }
-        }
 
         public override void Dispose()
         {
             base.Dispose();
+            if (m_Properties != null) {
+                for (var i = 0; i < m_Properties.Length; i++)
+                {
+                    if (m_Properties[i] != null)
+                    {
+                        if (m_Properties[i] != null)
+                        {
+                            m_Properties[i].Dispose();
+                            m_Properties[i] = null;
+                        }
+                    }
+                }
+                m_Properties = null;
+            }
+            if (m_PropertyInfos != null)
+            {
+                for (var i = 0; i < m_PropertyInfos.Length; i++)
+                {
+                    if (m_PropertyInfos[i] != null)
+                    {
+                        m_PropertyInfos[i].Dispose();
+                        m_PropertyInfos[i] = null;
+                    }
+                }
+                m_PropertyInfos = null;
+            }
+
+            if (m_Fields != null)
+            {
+                for (var i = 0; i < m_Fields.Length; i++)
+                {
+                    if (m_Fields[i] != null)
+                    {
+                        m_Fields[i].Dispose();
+                        m_Fields[i] = null;
+                    }
+                }
+                m_Fields = null;
+            }
+            if(m_FieldInfos != null)
+            {
+                for(var i = 0; i < m_FieldInfos.Length; i++)
+                {
+                    if (m_FieldInfos[i] != null)
+                    {
+                        m_FieldInfos[i].Dispose();
+                        m_FieldInfos[i] = null;
+                    }
+                }
+                m_FieldInfos = null;
+            }
+
             if (Caches.Contains(this))
             {
                 Caches.Remove(this);
             }
         }
 
-        void Init()
+        public void Init()
         {
             var component = (Component)m_object;
             var type = component.GetType();
@@ -465,7 +462,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                 {
                     continue;
                 }
-                list.Add(syncValueType);
+                list.Add(syncValueType);                
                 propList.Add(new SyncPropertyInfo(prop));
             }
             m_Properties = list.ToArray();
@@ -519,7 +516,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                 {
                     continue;
                 }
-                list.Add(syncValueType);
+                list.Add(syncValueType);                
                 fiList.Add(new SyncFieldInfo(fi));
             }
             m_Fields = list.ToArray();

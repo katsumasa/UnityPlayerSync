@@ -55,6 +55,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                 Caches[0].Dispose();
             }
             Caches.Clear();
+            m_Caches = null;
         }
 
 

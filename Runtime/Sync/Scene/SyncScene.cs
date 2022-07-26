@@ -26,13 +26,18 @@ namespace UTJ.UnityPlayerSync.Runtime
             }
             else
             {
-                var list = new List<SyncGameObject>();
                 var gameObjects = scene.GetRootGameObjects();
+                int count = 0;
                 foreach (var gameObject in gameObjects)
                 {
-                    AddGameObjectInChildren(gameObject, list);
+                    GetGameObjectCount(gameObject, ref count);
                 }
-                m_syncGameObjects = list.ToArray();
+                m_syncGameObjects = new SyncGameObject[count];
+                count = 0;
+                foreach (var gameObject in gameObjects)
+                {                    
+                    AddGameObjectInChildren(gameObject, ref m_syncGameObjects,ref count);                    
+                }                
             }
         }
 
@@ -55,26 +60,6 @@ namespace UTJ.UnityPlayerSync.Runtime
             var scene = (Scene)m_object;
             scene.name = binaryReader.ReadString();            
             var len = binaryReader.ReadInt32();
-
-#if false
-            if (m_Scene == null)
-            {
-                for (var i = 0; i < SceneManager.sceneCount; i++)
-                {
-                    var scene = SceneManager.GetSceneAt(i);
-                    if (scene.name == m_Name)
-                    {
-                        m_Scene = scene;
-                        break;
-                    }
-                }
-                if(m_Scene == null)
-                {
-                    m_Scene = SceneManager.CreateScene(m_Name);
-                }
-            }
-#endif
-
             
             m_syncGameObjects = new SyncGameObject[len];
             for(var i = 0; i < len; i++)
@@ -95,19 +80,32 @@ namespace UTJ.UnityPlayerSync.Runtime
             }
         }
 
-
-
-        void AddGameObjectInChildren(GameObject go,List<SyncGameObject> syncGames)
+        void  GetGameObjectCount(GameObject go,ref int count)
         {
-            if (go == null || syncGames == null)
+            if (go == null)
             {
                 return;
             }
-            var syncGame = new SyncGameObject(go);
-            syncGames.Add(syncGame);
+
+            count++;
+            for (var i = 0; i < go.transform.childCount; i++)
+            {
+                GetGameObjectCount(go.transform.GetChild(i).gameObject, ref count);
+            }
+        }
+
+
+        void AddGameObjectInChildren(GameObject go,ref SyncGameObject[] syncGames,ref int index)
+        {            
+            if (go == null)
+            {
+                return;
+            }
+            syncGames[index] = new SyncGameObject(go);           
+            index++;
             for(var i = 0; i < go.transform.childCount; i++)
             {
-                AddGameObjectInChildren(go.transform.GetChild(i).gameObject, syncGames);
+                AddGameObjectInChildren(go.transform.GetChild(i).gameObject, ref syncGames,ref index);
             }
         }
     }

@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace UTJ.UnityPlayerSync.Runtime
 {
-    public class SyncRect : SyncValueType<Rect>
+    public class SyncRect : SyncValueObject<Rect>
     {
         public SyncRect(object rect): base(rect) { }
 

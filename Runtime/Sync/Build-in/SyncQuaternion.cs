@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace UTJ.UnityPlayerSync.Runtime
 {
-    public class SyncQuaternion : SyncValueType<Quaternion>
+    public class SyncQuaternion : SyncValueObject<Quaternion>
     {
         public SyncQuaternion(object quaternion) : base(quaternion) { }
 

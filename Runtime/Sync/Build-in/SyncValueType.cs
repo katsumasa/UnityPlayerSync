@@ -9,16 +9,23 @@ using UnityEngine;
 namespace UTJ.UnityPlayerSync.Runtime
 {
     
-    public class SyncValueType<T> : SyncValueObject
+    public class SyncValueObject<T> : SyncValueObject
     {
         protected int m_Length;
         protected T[] m_Values;
-               
-        
-        public SyncValueType() : base() { }
+
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            m_Length = 0;
+            m_Values = null;
+        }
+
+        public SyncValueObject() : base() { }
         
 
-        public SyncValueType(object value,System.Type type):base(value,type)
+        public SyncValueObject(object value,System.Type type):base(value,type)
         {
             m_Length = 0;
             m_Values = null;         
@@ -64,11 +71,8 @@ namespace UTJ.UnityPlayerSync.Runtime
                     }
                     catch (System.Exception e)
                     {
-                        Debug.LogException(e);
-                        Debug.LogWarning(value);
-                        Debug.LogWarning(type);
+                        Debug.LogException(e);                        
                     }
-
                  }
                 else if(t.GetGenericTypeDefinition() == typeof(Dictionary<,>))
                 {
@@ -97,7 +101,7 @@ namespace UTJ.UnityPlayerSync.Runtime
         }
 
 
-        public SyncValueType(object value) : this(value, typeof(T)) { }
+        public SyncValueObject(object value) : this(value, typeof(T)) { }
                         
 
         public override void Serialize(BinaryWriter binaryWriter)
@@ -108,16 +112,23 @@ namespace UTJ.UnityPlayerSync.Runtime
 
         public override void Deserialize(BinaryReader binaryReader)
         {
-            base.Deserialize(binaryReader);
-            m_Length = binaryReader.ReadInt32();
-            if(m_Length == 0)
+            try
             {
-                m_Values = new T[0];
+                base.Deserialize(binaryReader);
+                m_Length = binaryReader.ReadInt32();
+                if (m_Length == 0)
+                {
+                    m_Values = new T[0];
+                }
+                else if (m_Length > 0)
+                {
+                    m_Values = new T[m_Length];
+                }
             }
-            else if (m_Length > 0)
+            catch(System.Exception e)
             {
-                m_Values = new T[m_Length];
-            }            
+                Debug.LogException(e);
+            }
         }
 
 
@@ -167,12 +178,19 @@ namespace UTJ.UnityPlayerSync.Runtime
             }
             else if (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(List<>))
             {
-                var list = (List<T>)value;
-                m_Length = list.Count;
-                m_Values = new T[m_Length];
-                for (var i = 0; i < m_Length; i++)
+                try
                 {
-                    m_Values[i] = list[i];
+                    var list = (List<T>)value;
+                    m_Length = list.Count;
+                    m_Values = new T[m_Length];
+                    for (var i = 0; i < m_Length; i++)
+                    {
+                        m_Values[i] = list[i];
+                    }
+                }
+                catch(System.Exception e)
+                {
+                    Debug.LogException(e);
                 }
             }
             else
@@ -185,7 +203,7 @@ namespace UTJ.UnityPlayerSync.Runtime
     }
 
 
-    public class SyncValueBool : SyncValueType<bool>
+    public class SyncValueBool : SyncValueObject<bool>
     {
         public SyncValueBool() : base() { }
 
@@ -210,7 +228,7 @@ namespace UTJ.UnityPlayerSync.Runtime
         }
     }
 
-    public class SyncValueByte : SyncValueType<byte>
+    public class SyncValueByte : SyncValueObject<byte>
     {
         public SyncValueByte() : base() { }
 
@@ -236,7 +254,7 @@ namespace UTJ.UnityPlayerSync.Runtime
     }
 
 
-    public class SyncValueChar : SyncValueType<char>
+    public class SyncValueChar : SyncValueObject<char>
     {
         public SyncValueChar() : base() { }
 
@@ -262,7 +280,7 @@ namespace UTJ.UnityPlayerSync.Runtime
     }
 
 
-    public class SyncValueEnum : SyncValueType<int>
+    public class SyncValueEnum : SyncValueObject<int>
     {
         public SyncValueEnum() : base() { }
 
@@ -333,7 +351,7 @@ namespace UTJ.UnityPlayerSync.Runtime
         }
     }
 
-    public class SyncValueGuid : SyncValueType<System.Guid>
+    public class SyncValueGuid : SyncValueObject<System.Guid>
     {
         public SyncValueGuid() : base() { }
         public SyncValueGuid(object arg) : base(arg) { }
@@ -362,7 +380,7 @@ namespace UTJ.UnityPlayerSync.Runtime
 
 
 
-    public class SyncValueInt16 : SyncValueType<short>
+    public class SyncValueInt16 : SyncValueObject<short>
     {
         public SyncValueInt16() : base() { }
         public SyncValueInt16(object arg) : base(arg) { }
@@ -387,7 +405,7 @@ namespace UTJ.UnityPlayerSync.Runtime
     }
 
 
-    public class SyncValueInt : SyncValueType<int>
+    public class SyncValueInt : SyncValueObject<int>
     {
         public SyncValueInt() : base() { }
         public SyncValueInt(object arg) : base(arg) { }
@@ -415,7 +433,7 @@ namespace UTJ.UnityPlayerSync.Runtime
     
 
 
-    public class SyncValueInt64 : SyncValueType<long>
+    public class SyncValueInt64 : SyncValueObject<long>
     {
         public SyncValueInt64() : base() { }
 
@@ -440,7 +458,7 @@ namespace UTJ.UnityPlayerSync.Runtime
         }
     }
 
-    public class SyncValueSByte : SyncValueType<sbyte>
+    public class SyncValueSByte : SyncValueObject<sbyte>
     {
         public SyncValueSByte() : base() { }
 
@@ -465,7 +483,7 @@ namespace UTJ.UnityPlayerSync.Runtime
         }        
     }
 
-    public class SyncValueSingle : SyncValueType<float>
+    public class SyncValueSingle : SyncValueObject<float>
     {
         public SyncValueSingle() : base() { }
         public SyncValueSingle(object arg) : base(arg) { }
@@ -489,7 +507,7 @@ namespace UTJ.UnityPlayerSync.Runtime
         }
     }
 
-    public class SyncValueString : SyncValueType<string>
+    public class SyncValueString : SyncValueObject<string>
     {
         public SyncValueString() : base() { }
         public SyncValueString(object arg) : base(arg) { }
@@ -513,7 +531,7 @@ namespace UTJ.UnityPlayerSync.Runtime
         }
     }
 
-    public class SyncValueUInt16 : SyncValueType<ushort>
+    public class SyncValueUInt16 : SyncValueObject<ushort>
     {
         public SyncValueUInt16() : base() { }
         public SyncValueUInt16(object arg) : base(arg) { }
@@ -538,7 +556,7 @@ namespace UTJ.UnityPlayerSync.Runtime
     }
 
 
-    public class SyncValueUInt : SyncValueType<uint>
+    public class SyncValueUInt : SyncValueObject<uint>
     {
         public SyncValueUInt() : base() { }
         public SyncValueUInt(object arg) : base(arg) { }
@@ -564,7 +582,7 @@ namespace UTJ.UnityPlayerSync.Runtime
     }
 
 
-    public class SyncValueUInt64 : SyncValueType<ulong>
+    public class SyncValueUInt64 : SyncValueObject<ulong>
     {
         public SyncValueUInt64() : base() { }
         public SyncValueUInt64(object arg) : base(arg) { }
@@ -589,7 +607,7 @@ namespace UTJ.UnityPlayerSync.Runtime
     }
 
 
-    public class SyncValueComponent : SyncValueType<Component>
+    public class SyncValueComponent : SyncValueObject<Component>
     {
         private int[] m_TransformInstanceIDs;
 

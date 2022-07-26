@@ -10,35 +10,27 @@ namespace UTJ.UnityPlayerSync.Runtime
 {
     public class SyncType : Sync
     {
-        public static TypeCode GetTypeCode(SyncType syncType)
+        static Dictionary<string,SyncType> m_Caches;
+        public static Dictionary<string,SyncType> Caches
         {
-            switch (syncType.m_FullName)
-            {
-                case "System.Empty": return TypeCode.Empty;
-                case "System.Object": return TypeCode.Object;
-                case "System.DBNull": return TypeCode.DBNull;
-                case "System.Boolean": return TypeCode.Boolean;
-                case "System.Char": return TypeCode.Char;
-                case "System.SByte": return TypeCode.SByte;
-                case "System.Byte": return TypeCode.Byte;
-                case "System.Int16": return TypeCode.Int16;
-                case "System.UInt16": return TypeCode.UInt16;
-                case "System.Int32": return TypeCode.Int32;
-                case "System.UInt32": return TypeCode.UInt32;
-                case "System.Int64": return TypeCode.Int64;
-                case "System.UInt64": return TypeCode.UInt64;
-                case "System.Single": return TypeCode.Single;
-                case "System.Double": return TypeCode.Double;
-                case "System.Decimal": return TypeCode.Decimal;
-                case "System.DateTime": return TypeCode.DateTime;
-                case "System.String": return TypeCode.String;
+            get 
+            { 
+                if(m_Caches == null)
+                {
+                    m_Caches = new Dictionary<string, SyncType>();
+                }
+                return m_Caches; 
             }
-            return TypeCode.Object;
         }
-
+        
 
         public static System.Type GetType(SyncType type)
         {
+            if(type.m_Type != null)
+            {
+                return type.m_Type;
+            }
+
 #if !UNITY_EDITOR
             switch(type.FullName)
             {
@@ -46,57 +38,71 @@ namespace UTJ.UnityPlayerSync.Runtime
                     {
                         if (type.IsArray)
                         {
-                            return typeof(RuntimeAnimatorController[]);
+                            type.m_Type =  typeof(RuntimeAnimatorController[]);
                         }
                         else if (type.IsGenericType)
                         {
-                            return typeof(List<RuntimeAnimatorController>);
+                            type.m_Type = typeof(List<RuntimeAnimatorController>);
+                        }else{
+                            type.m_Type = typeof(RuntimeAnimatorController);
                         }
-                        return typeof(RuntimeAnimatorController);
-                    }
+                        return type.m_Type;
+                    }                    
 
                 case "UnityEditor.Audio.AudioMixerController":
                     {
                         if (type.IsArray)
                         {
-                            return typeof(UnityEngine.Audio.AudioMixer[]);
+                            type.m_Type = typeof(UnityEngine.Audio.AudioMixer[]);
                         }
                         else if(type.IsGenericType)
                         {
-                            return typeof(List<UnityEngine.Audio.AudioMixer>);
+                            type.m_Type = typeof(List<UnityEngine.Audio.AudioMixer>);
                         }
-                        return typeof(UnityEngine.Audio.AudioMixer);
+                        else{
+                            type.m_Type = typeof(UnityEngine.Audio.AudioMixer);
+                        }
+                        return type.m_Type;
                     }
+                    
 
                 case "UnityEditor.Audio.AudioMixerGroupController":
                     {
                         if (type.IsArray)
                         {
-                            return typeof(UnityEngine.Audio.AudioMixerGroup[]);
+                            type.m_Type = typeof(UnityEngine.Audio.AudioMixerGroup[]);
                         }
                         else if (type.IsGenericType)
                         {
-                            return typeof(List<UnityEngine.Audio.AudioMixerGroup>);
+                            type.m_Type = typeof(List<UnityEngine.Audio.AudioMixerGroup>);
                         }
-                            
-                        return typeof(UnityEngine.Audio.AudioMixerGroup);
-                    }
+                        else
+                        {
+                            type.m_Type = typeof(UnityEngine.Audio.AudioMixerGroup);
+                        }
+                        return type.m_Type;
+                    }                   
             }
 #else
-            switch(type.FullName)
+            switch (type.FullName)
             {
                 case "UnityEngine.RuntimeAnimatorController":
-                    if (type.IsArray)
                     {
-                        return typeof(UnityEditor.Animations.AnimatorController[]);
+                        if (type.IsArray)
+                        {
+                            type.m_Type = typeof(UnityEditor.Animations.AnimatorController[]);
+                        }
+                        else if (type.IsGenericType)
+                        {
+                            type.m_Type = typeof(List<UnityEditor.Animations.AnimatorController>);
+                        }
+                        else
+                        {
+                            type.m_Type = typeof(UnityEditor.Animations.AnimatorController);
+                        }
+                        return type.m_Type;
                     }
-                    else if (type.IsGenericType)
-                    {
-                        
-
-                        return typeof(List<UnityEditor.Animations.AnimatorController>);
-                    }
-                    return typeof(UnityEditor.Animations.AnimatorController);
+                    
 
                 case "UnityEngine.Audio.AudioMixer":
                     {
@@ -104,35 +110,45 @@ namespace UTJ.UnityPlayerSync.Runtime
 
                         if (type.IsArray)
                         {
-                            return tmp.MakeArrayType();
+                            type.m_Type = tmp.MakeArrayType();
                         }
                         else if (type.IsGenericType)
                         {
                             var generic = typeof(List<>);
-                            Type[] args = {tmp};
-                            return generic.MakeGenericType(args);                            
+                            Type[] args = { tmp };
+                            type.m_Type = generic.MakeGenericType(args);
                         }
-                        return tmp;
-                    }
+                        else
+                        {
+                            type.m_Type = tmp;
+                        }
+                        return type.m_Type;
+                    }                    
+
                 case "UnityEngine.Audio.AudioMixerGroup":
                     {
                         var tmp = System.Type.GetType("UnityEditor.Audio.AudioMixerGroupController,UnityEditor.CoreModule, Version = 0.0.0.0, Culture = neutral, PublicKeyToken = null");
                         if (type.IsArray)
                         {
-                            return tmp.MakeArrayType();
+                            type.m_Type = tmp.MakeArrayType();
                         }
-                        else if (type.IsGenericType) 
+                        else if (type.IsGenericType)
                         {
                             var generic = typeof(List<>);
                             Type[] args = { tmp };
-                            return generic.MakeGenericType(args);
+                            type.m_Type = generic.MakeGenericType(args);
                         }
-                        return tmp;
-                    }
+                        else
+                        {
+                            type.m_Type = tmp;
+                        }
+                        return type.m_Type;
+                    }                    
             }
+            
 #endif
             // 型とAssemblyのフルネームから型を取得する
-            var typeName = $"{type.FullName},{type.Assembly.FullName}";                                
+            var typeName = $"{type.m_FullName},{type.m_Assembly}";                                
             var t = System.Type.GetType(typeName);
             if(t == null)
             {
@@ -141,28 +157,34 @@ namespace UTJ.UnityPlayerSync.Runtime
                 {
                     if (type.IsArray)
                     {
-                        return typeof(System.TypeCode[]);
+                        type.m_Type = typeof(System.TypeCode[]);
                     }
                     else if (type.IsGenericType)
                     {
-                        return typeof(List<TypeCode>);
+                        type.m_Type = typeof(List<TypeCode>);
                     }
-                    return typeof(TypeCode);
+                    else
+                    {
+                        type.m_Type = typeof(TypeCode);
+                    }
+                    return type.m_Type;
                 }
                 // 列挙では無かった場合、Unityのビルドインクラスであれば随時対応
                 Debug.LogError($"{typeName} is not supported. if this class is unity build-in,Prease reauest bug report.");
             }
-            return t;
+
+            type.m_Type = t;
+
+            return type.m_Type;
         }
-
-
+        
+        private System.Type m_Type;        
         protected string m_FullName;
         protected bool m_IsArray;
         protected bool m_IsGenericType;
         protected bool m_IsEnum;
-        protected MemberTypes m_MemberType;
-        protected string m_Name;
-        protected SyncAssembly m_Assembly;
+        protected MemberTypes m_MemberType;        
+        protected string m_Assembly;
 
 
         public string FullName
@@ -185,58 +207,42 @@ namespace UTJ.UnityPlayerSync.Runtime
         {
             get { return m_IsEnum; }
         }
-
-        public string Name
-        {
-            get { return m_Name; }
-        }
-
-
-        public MemberTypes MemberTypes
-        {
-            get { return m_MemberType; }
-        }
-
-
-        public SyncAssembly Assembly
-        {
-            get { return m_Assembly; }
-        }
-
-
-        public SyncType()
-        {
-            m_Assembly = new SyncAssembly();
-        }
+        
+      
+        public SyncType() : this(null) { }
+       
 
         public SyncType(System.Type type)
         {
-            if (type == null)
-            {
-                m_Assembly = new SyncAssembly();
-            }
-            else if (type != null)
+            m_Type = type;
+
+        if (type != null)
             {
                 m_FullName = type.FullName;
                 m_IsArray = type.IsArray;
                 m_IsEnum = type.IsEnum;
                 m_IsGenericType = type.IsGenericType;
-                m_MemberType = type.MemberType;
-                m_Name = type.Name;
-                m_Assembly = new SyncAssembly(type.Assembly);
+                m_MemberType = type.MemberType;                
+                m_Assembly = type.Assembly.GetName().Name;                
             }
         }
 
 
         public override void Serialize(BinaryWriter binaryWriter)
         {
-            binaryWriter.Write(m_FullName);
-            binaryWriter.Write(m_IsArray);
-            binaryWriter.Write(m_IsEnum);
-            binaryWriter.Write(m_IsGenericType);
-            binaryWriter.Write((int)m_MemberType);
-            binaryWriter.Write(m_Name);
-            m_Assembly.Serialize(binaryWriter);
+            try
+            {
+                binaryWriter.Write(m_FullName);
+                binaryWriter.Write(m_IsArray);
+                binaryWriter.Write(m_IsEnum);
+                binaryWriter.Write(m_IsGenericType);
+                binaryWriter.Write((int)m_MemberType);                
+                binaryWriter.Write(m_Assembly);                
+            }
+            catch(System.Exception e)
+            {
+                Debug.LogException(e);
+            }            
         }
 
 
@@ -247,8 +253,54 @@ namespace UTJ.UnityPlayerSync.Runtime
             m_IsEnum = binaryReader.ReadBoolean();
             m_IsGenericType= binaryReader.ReadBoolean();
             m_MemberType = (MemberTypes)binaryReader.ReadInt32();
-            m_Name = binaryReader.ReadString();            
-            m_Assembly.Deserialize(binaryReader);
+            m_Assembly = binaryReader.ReadString();
+        }
+
+        public override bool Equals(object obj)
+        {
+            var other = obj as SyncType;
+            if(other == null)
+            {
+                return false;
+            }
+            if(base.Equals(obj) == false)
+            {
+                return false;
+            }
+            if(m_FullName.Equals(other.FullName) == false)
+            {
+                return false;
+            }
+            if (m_IsArray.Equals(other.IsArray) == false)
+            {
+                return false;
+            }
+            if(m_IsGenericType.Equals(other.m_IsGenericType) == false)
+            {
+                return false;
+            }
+            if(m_IsEnum.Equals(other.m_IsEnum) == false)
+            {
+                return false;
+            }
+            if(m_MemberType.Equals(other.m_MemberType) == false)
+            {
+                return false;
+            }
+            if(m_Assembly.Equals(other.m_Assembly) == false)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public override int GetHashCode()
+        {
+            var hash = new { m_FullName, m_IsArray , m_IsGenericType , m_IsEnum , m_Assembly }.GetHashCode();
+            var hash128 = new Hash128();
+            hash128.Append(base.GetHashCode());
+            hash128.Append(hash);
+            return hash128.GetHashCode();
         }
     }
 }

@@ -68,14 +68,13 @@ namespace UTJ.UnityPlayerSync.Runtime
             if(m_Object == null)
             {
                 binaryWriter.Write(0);
-                binaryWriter.Write("null");
+                binaryWriter.Write("");
             }
             else
             {
                 binaryWriter.Write((int)m_Object.hideFlags);
                 binaryWriter.Write(m_Object.name);
-            }
-            
+            }            
         }
 
 
@@ -105,9 +104,11 @@ namespace UTJ.UnityPlayerSync.Runtime
             return m_InstanceEditorID;
         }
 
-        public virtual void Dispose()
+        public override void Dispose()
         {
-
+            base.Dispose();
+            m_InstanceID = InstanceID_None;
+            m_InstanceEditorID = InstanceID_None;
         }
     }
 }

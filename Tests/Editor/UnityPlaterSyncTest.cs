@@ -17,6 +17,13 @@ public class UnityPlayerSyncTestScript
     [Test]
     public void SandBox()
     {
+
+        var t = typeof(Transform);
+        
+
+        var typeName = $"{t.FullName},{t.Assembly.GetName().Name}";
+        var t1 = System.Type.GetType(typeName);
+        Debug.Log(t1);
     }
     
 

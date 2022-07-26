@@ -16,13 +16,14 @@ namespace UTJ.UnityPlayerSync.Runtime
         [SerializeField] bool m_IsLogEnable;
         [SerializeField] bool m_IsDontDestroyOnLoadEnabled;
 
+        //byte[] m_WriteBuffers = new byte[200 * 1024 * 1024];
 
         private void Start()
         {
             if (m_IsDontDestroyOnLoadEnabled)
             {
                 DontDestroyOnLoad(this.gameObject);
-            }
+            }                       
         }
 
         protected override void OnEnable()
@@ -36,15 +37,16 @@ namespace UTJ.UnityPlayerSync.Runtime
 
         void MessageReciveEventCB(byte[] bytes)
         {
+            SyncSceneManager.ClearCache();
+           
             var readerMemory = new MemoryStream(bytes);
+            //var writerMemory = new MemoryStream(m_WriteBuffers,true);            
             var writerMemory = new MemoryStream();
             var binaryReader = new BinaryReader(readerMemory);
-            var binaryWriter = new BinaryWriter(writerMemory);
+            var binaryWriter = new BinaryWriter(writerMemory);            
 
             try
-            {
-                SyncSceneManager.ClearCache();
-
+            {                               
                 var messageID = (MessageID)binaryReader.ReadInt32();
                 if (m_IsLogEnable)
                 {
@@ -53,12 +55,24 @@ namespace UTJ.UnityPlayerSync.Runtime
 
                 switch (messageID)
                 {
+                    case MessageID.GC:
+                        {
+                            System.GC.Collect();                        
+                        }
+                        break;
+
+                    case MessageID.UnLoadUnUsedAsset:
+                        {
+                            Resources.UnloadUnusedAssets();
+                        }
+                        break;
+
                     case MessageID.SyncScene:
                         {
                             binaryWriter.Write((int)MessageID.SyncScene);
                             var syncSceneManager = new SyncSceneManager(true);
                             syncSceneManager.Serialize(binaryWriter);
-                            var vs = writerMemory.ToArray();
+                            var vs = writerMemory.GetBuffer();
                             SendRemoteMessage(vs);
                         }
                         break;
@@ -106,6 +120,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                                 binaryWriter.Write(sync.GetInstanceEditorID());
                                 sync.Serialize(binaryWriter);
                             }
+
                             SendRemoteMessage(writerMemory.ToArray());
 
                         }
@@ -170,21 +185,31 @@ namespace UTJ.UnityPlayerSync.Runtime
                                 binaryWriter.Write((int)MessageID.SyncDelete);
                                 binaryWriter.Write(instanceID);
                                 SendRemoteMessage(writerMemory.ToArray());
-                            }                            
-                            
+                            }                                                        
                         }
                         break;
                 }
             }
 
+            catch(System.Exception e)
+            {
+                Debug.LogException(e);
+            }
             finally
             {
-                binaryReader.Close();
+
+                Debug.Log($"writerMemorylenght/writerMemory.Position:{writerMemory.Position}/{writerMemory.Length}");
+
+                binaryReader.Close();                
                 binaryWriter.Close();
                 readerMemory.Close();
                 writerMemory.Close();
+                readerMemory.Dispose();
+                writerMemory.Dispose();
+                binaryReader.Dispose();
+                binaryWriter.Dispose();
 
-                SyncSceneManager.ClearCache();
+                SyncSceneManager.ClearCache();                
             }                      
         }
 

@@ -152,7 +152,37 @@ namespace UTJ.UnityPlayerSync.Editor
                     bw.Close();
                     ms.Close();
                 }
-            }            
+            }
+            if (GUILayout.Button("GC"))
+            {
+                var ms = new MemoryStream();
+                var bw = new BinaryWriter(ms);
+                try
+                {
+                    bw.Write((int)MessageID.GC);
+                    SendRemoteMessage(ms.ToArray());
+                }
+                finally
+                {
+                    bw.Close();
+                    ms.Close();
+                }
+            }
+            if(GUILayout.Button("UnLoadUnUsedAsset"))
+            {
+                var ms = new MemoryStream();
+                var bw = new BinaryWriter(ms);
+                try
+                {
+                    bw.Write((int)MessageID.UnLoadUnUsedAsset);
+                    SendRemoteMessage(ms.ToArray());
+                }
+                finally
+                {
+                    bw.Close();
+                    ms.Close();
+                }
+            }
         }
 
 

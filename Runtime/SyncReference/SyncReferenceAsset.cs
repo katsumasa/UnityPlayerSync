@@ -41,6 +41,9 @@ namespace UTJ.UnityPlayerSync.Runtime
             // Assetを検索する
             for (var i = 0; i < m_Values.Length; i++)
             {
+                if (string.IsNullOrEmpty(m_Names[i])){
+                    continue;
+                }
 #if UNITY_EDITOR
                 var name = ReplaceInstanceName(type, m_Names[i]);
                 m_Values[i] = FindAssetInAssetDataBase(type, name);

@@ -9,7 +9,7 @@ using UnityEditor;
 
 namespace UTJ.UnityPlayerSync.Runtime
 {    
-    public class SyncValueUnityEngineObject : SyncValueType<UnityEngine.Object>
+    public class SyncValueUnityEngineObject : SyncValueObject<UnityEngine.Object>
     {
         protected int[] m_InstanceIDs;
         protected string[] m_Names;

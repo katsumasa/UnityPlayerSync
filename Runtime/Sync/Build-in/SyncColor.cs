@@ -7,7 +7,7 @@ using UnityEngine;
 namespace UTJ.UnityPlayerSync.Runtime
 {
 
-    public class SyncColor : SyncValueType<Color>
+    public class SyncColor : SyncValueObject<Color>
     {
         public SyncColor(object color) : base(color) { }
 
@@ -38,7 +38,7 @@ namespace UTJ.UnityPlayerSync.Runtime
     }
 
 
-    public class SyncColor32 : SyncValueType<Color32>
+    public class SyncColor32 : SyncValueObject<Color32>
     {
         public SyncColor32(object color) : base(color) { }
 
