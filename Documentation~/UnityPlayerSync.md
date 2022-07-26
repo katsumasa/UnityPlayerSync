@@ -68,7 +68,7 @@ After deleting the Component from the GameObject and syncing again, the Componen
 
 ### Obtaining Package
 
-In order to use UnityPlayerSync, we also need the [RemoteConnect](https://github.com/katsumasa/RemoteConnect.git) as well。Proceed with the following if you're going to obtain it through git:
+In order to use UnityPlayerSync, we also need the [RemoteConnect](https://github.com/katsumasa/RemoteConnect.git) as well. Proceed with the following if you're going to obtain it through git:
 
 ```:console
 git clone https://github.com/katsumasa/RemoteConnect.git
