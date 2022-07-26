@@ -44,6 +44,10 @@ namespace UTJ.UnityPlayerSync.Runtime
                 if (string.IsNullOrEmpty(m_Names[i])){
                     continue;
                 }
+                if (m_Names[i] == "null")
+                {
+                    continue;
+                }
 #if UNITY_EDITOR
                 var name = ReplaceInstanceName(type, m_Names[i]);
                 m_Values[i] = FindAssetInAssetDataBase(type, name);
@@ -136,7 +140,8 @@ namespace UTJ.UnityPlayerSync.Runtime
                 }
                 try
                 {
-                    if ((obj.GetType() == type) && (obj.name == name))
+                    // Runtimeでは名前にInstanceが含まれる場合があるので部分一致で比較する
+                    if(obj.name.Contains(name))                                        
                     {
                         return obj;                    
                     }
