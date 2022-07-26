@@ -1,146 +1,145 @@
 # UnityPlayerSync
 
-UnityPlayerSyncはUnityEditorでビルドしたアプリケーション(UnityPlayer)とUnityEditorを同期する機能を追加するパッケージです。
-このパッケージによって、UnityEditor上で下記のワークフローを実現することが可能です。
+UnityPlayerSync is a package that'll add a function that can sync with UnityEditor and an app built with UnityEditor(UnityPlayer).
+This package allows the following workflow possible in the UnityEditor.
 
-1. アプリケーションのSceneをUnityEditorに転送する
-2. UnityEditor上でSceneの内容を編集する
-3. 編集した内容をアプリケーションへリアルタイムに反映させる
+1. Transfer the application's Scene to UnityEditor
+2. Edit Scene in the UnityEditor
+3. Apply that edit to the application in real time 
 
 <https://user-images.githubusercontent.com/29646672/177088255-24accd44-5e35-4e97-85bc-5c154905566e.mp4>
 
-Note:正確には同期ではなく、限られた情報からの復元である為、復元出来ないケースも多々あります。
+*Note that UntyPlayerSync functions more like restoring limited information rather than a complete sync. There might be a case where the result might differ from the original scene in the UnityEditor. 
 
-## 使い方
+## How to Use
 
-### Sceneの同期
+### Syncing Scene
 
 <img width="800" alt="Scene" src="https://user-images.githubusercontent.com/29646672/177090991-41c6d907-5c85-4230-919a-529357d9f1d6.gif">
 
-UnityPlayerからUnityEditor上にSceneを取り込む手順は下記の通りです。
+Here are the procedures for importing a Scene from UnityEditor to UnityPlayer:
 
-1. File > New Sceneを選択して新しいSceneを作成する
-2. Hierarchy Window上でScene(New Sceneを作成した直後はUntitled)を選択
-3. 右クリック
-4. コンテキストメニューからSyncを選択
+1. Create a New Scene
+2. Select that New Scene that you've created inside the Hierarchy tab
+3. Right Click 
+4. Select Sync from the Context Menu
 
-これによってアプリケーションで実行されているScene(Hierarchy)をUnity Editor上に展開します。
+With this, UnityEditor can reflect the deployed Scene(Hierarchy) inside the app.
 
 *Note*:
 
-- Sceneの規模に応じて取り込み完了迄に時間が掛かる場合があります。
-- 必ずしも新しいSceneを作る必要はありませんが、既存のSceneの変更内容は保存されず閉じられることに注意して下さい。
+- It may take some time to import depending on the size of the Scene.
+- You don't necessarily have to create a New Scene, but please keep in mind that if you deploy changes to the existing Scene, the changes made can't be saved.
 
-### GameObjectの同期
+### Syncing GameObject
 
 <img width="400" alt="GameObject" src="https://user-images.githubusercontent.com/29646672/177096715-b2b47b6d-9200-4ff8-83cd-8f8138793ea7.png">
 
-UnityEditor上で編集したGameObjectをUnityPlayer側にフィードバックする手順は下記の通りです。
+Here are the procedures for updating UnityPlayer for modified GameOjects in UnityEditor.
 
-1. Hierarchy Window上でフィードバックするGameObjectを選択
-2. 右クリック
-3. コンテキストメニューからSyncを選択
+1. Select the GameObject on the Hierarchy Window you wish to update
+2. Right click
+3. Select Sync from the Context Menu
 
-*Note*：UnityEditor上で新規に作成したGameObjectも上記の手順でUnityPlayerへ反映することが可能です。
+*Note that you could also create/import a new GameObject in UntyEditor and reflect it over to UnityPlayer with the same procedure.
 
-### Componentの同期
+### Syncing Component
 
 <img width="800" alt="Component" src="https://user-images.githubusercontent.com/29646672/177094157-dcfced8b-dd36-4f4a-ac09-47da3c3b12c0.png">
 
-Component単体で同期を行うことで、GameObjectの同期と比較して素早くUnityPlayerと同期を行うことが可能です。
+Since it can sync with Components, a fast syncing experience can be possible in UnityPlayer compared to GameObject Sync.
 
-1. Inspecter Window上でフィードバックするComponentのコンテキストメニューを表示
-2. コンテキストメニューからSyncを選択
+1. Show the Context Menu of the Component you wish to display to the Inspector Window
+2. Select Sync from the Context Menu
 
-### GameObjectの削除
+### Deleting GameObject
 
-下記の手順でPlayer上のGameObjectを削除することが可能です。
+You can also delete the GameObject in the Player by following steps:
 
-1. Hierarchy Window上でフィードバックするGameObjectを選択
-2. 右クリック
-3. コンテキストメニューからSync Deleteを選択
+1. Select the GameObject on the Hierarchy Window you wish to delete
+2. Right click
+3. Select Sync Delete from the Context Menu
 
-### Componentの削除
+### Deleting Component
 
-GameObjectからComponentを削除後、GameObjectの同期を行うことでPlayer上のGameObjectのComponentも削除されます。
+After deleting the Component from the GameObject and syncing again, the Component on the Player side is also deleted as well.
 
-## セットアップ
+## Setting UnityPlayerSync
 
-### Packageの取得
+### Obtaining Package
 
-UnityPlayerSyncは別途[RemoteConnect](https://github.com/katsumasa/RemoteConnect.git)パッケージを使用します。UnityPlayerSyncと合わせて取得して下さい。
-パッケージの取得にgitを取得する場合、下記の通りです。
+In order to use UnityPlayerSync, we also need the [RemoteConnect](https://github.com/katsumasa/RemoteConnect.git) as well。Proceed with the following if you're going to obtain it through git:
 
 ```:console
 git clone https://github.com/katsumasa/RemoteConnect.git
 git clone https://github.com/katsumasa/UnityPlayerSync.git
 ```
 
-### Prefabの配置
+### Placing Prefab
 
 <img width="800" alt="Prefab" src="https://user-images.githubusercontent.com/29646672/177100609-e0b11bac-d8b6-4cf6-a167-4053937f7545.gif">
 
-ビルドの対象となるSceneにUnityPLayerSyncのPrefabを配置してください。
+Place UnityPlayerSync Prefab in the scene you wish to build.
 
 ### Scripting Backend
 
 <img width="800" alt="Prefab" src="https://user-images.githubusercontent.com/29646672/177101210-aa86af64-015e-440d-9ccb-9e121d572105.png">
 
-Scripting BackendにはMonoを指定する必要があります。
-Editor -> Project Settings ->PlayerScripting BackendにMonoを設定してください。
+Set the Scripting Backend to Mono.
+Go to Editor -> Project Settings ->PlayerScripting and assign the Backend to Mono.
 
 ### Build
 
 <img width="800" alt="Prefab" src="https://user-images.githubusercontent.com/29646672/177100904-b3b66b86-2d46-4230-aa17-b3cd0d0ecf2f.png">
 
-Developmemt Build及びAutoconnect Profilerにチェックを入れてBuld( And Run)を実行してください。
+Put a check in the Development Build and Autoconnect Profiler and execute Build(And Run).
 
 ## Tips
 
-### 同期出来るobject
+### Objects that can be synced
 
-同期出来るobjectは下記の通りです。
+Here are the Objects that can be synced:
 
-- Hierarchy内のGameObject
-- GameObjectにAddされているComponent
-- Component内でpublicなプロパティ及びSerializeアトリビュートを持つフィールドの値(Inspecter上で表示されているものと同義)
+- Hierarchy within the GameObject
+- Component that's added to the GameObject
+- Values of public properties and serialized attributes inside the Component (The same value displayed by the Inspector).
 
-Componentのプロパティやフィールドの値に関しては下記の制限があります。
+There are restrictions to Component properties and field values:
 
-- System.ValuType(int,float,etc..)型と列挙型
-- Componentへの参照
-- メジャーなUnity Build-in struct(Color,Vector3,etc...)
-- Asset(Texture,Mesh,Material,Shader,etc...)に関しては、Editor側で復元する場合は、プロジェクトの存在するAsset、Player側で復元する場合はHierarchy上に存在しているAssetに限定されます。
+- System.ValueType(int, float, etc..) and Enumerated type
+- Reference to Component
+- Major Unity Build-in struct(Color, Vector3, etc...)
+- When restoring an Asset(Texture, Mesh, Material, Shader, etc...) on the Editor side, it is limited to what exists within the Project. When restoring an Asset on the Player side, it is limited to what exists within the Hierarchy.
 
-### 同期出来ないobject
+### Objects that can't be synced
 
-同期出来ないオブジェクトの例は以下の通りです。
+Here are the following Objects that can't be synced:
 
-- LightmapやSkyboxのようなHierarchy上に存在しないデータ-
-- Componentを継承しないClassや構造体(Unity Build-inのオブジェクトに関しては可能な限り対応しますが、packageで提供されているオブジェクトに関しては対応する予定はありません。)
-- Runtime及びEditorどちらか一方にしか存在しないAsset
+- Data that doesn't exist in Hierarchy (e.g. Lightmap, Skybox).
+- Classes and structures that don't inherit from the Component (I will try to support Unity's Built-in objects as much as possible, but not for objects provided in the package).
+- Asset that exists only in either Runtime or Editor
 - ScriptableObject
-- delegateやUnityEvent
-- 多次元配列・ジャグ配列
-- Particleのパラメーター
+- delegate, UnityEvent
+- Multidimensional and Jagged arrays
+- Multidimensional and Jagged arrays
 
-などなど・・・
+  and etc ・・・
 
 ## Q&A
 
-Q. 同期が出来ません  
-A. Profilerでプロファイルが出来ているか確認して下さい。プロファイルが出来ている場合は、セットアップの章で記載されている通りであるか見直して下さい。プロファイルが出来ていない場合、UnityEditorとデバイスの接続が正しく行われていない可能性があります。[こちら](https://docs.unity3d.com/ja/current/Manual/profiler-profiling-applications.html)を参考に、UnityEditorとデバイスの接続を行って下さい。
+Q. Unable to sync 1
+A. Check if the profile is created using the Profiler. If the Profile was properly created, please check the Setting UnityPlayerSync section on this page to see if there's any procedure that might get skipped. If the Profile wasn't created, there might be a possibility of UnityEditor and the device not being connected properly. Please refer [here](https://docs.unity3d.com/ja/current/Manual/profiler-profiling-applications.html](https://docs.unity3d.com/2021.3/Documentation/Manual/profiler-profiling-applications.html) to connect the device to UnityEditor.
 
-Q. 同期出来ません。  
-A. 同期済みのGameObjectを削除する場合は必ず、`Sync Delete`から削除を行って下さい。同期の整合性が取れなくなり想定出来ないエラーが発生する場合があります。
+Q. Unable to sync 2
+A. If you wish to delete a synced GameObject, be sure to delete using `Sync Delete`. Inconsistent sync may cause an unexpected error.
 
-Q. 同期が出来ません
-A. Sceneの同期後、UnityEditor上でScriptのコンパイルが走ると同期情報が失われます。コンパイルが発生した場合は、Sceneの同期からやり直して下さい。
+Q. Unable to sync 3
+A. If Compile runs on UnityEditor after syncing to a Scene, it could lose the synced information. Be sure to resync the Scene if a Compile occurs.
 
-Q. Editor上でUIを変更するとPlayer側の表示がおかしくなります。  
-A. デバイスのスクリーンサイズとEditor上のGameViewのサイズが一致していないのが原因だと思われます。Editor上のGameViewのサイズをCanvas ScalerのReference Resolutionの値に合わせてみて下さい。
+Q. The result of the UI looks different in the Player display when I applied sync after making changes to the UI in Editor. 
+A. This is due to the difference between the screen size of the device and the size of the GameView in the Editor. Try to match the size of the GameView in the Editor to Canvas Scaler's Reference Resolution value. 
 
-## その他
+## Other
 
-- 要望・ご意見・不具合に関してはIssueから報告をお願いします。約束は出来ませんが可能な限り対応します。
-- 不具合報告に関してはそれを再現する為のプロジェクトの添付及び再現手順などの記述をお願いします。こちらで再現が取れない場合、対応出来ない場合があります。
+- Please report any requests, comments, or problems through Issue. We cannot promise, but will do our best to respond.
+- When reporting an Issue, please attach a project that could reproduce the problem and describe the steps on how it can be replicated. If the problem cannot be reproduced, we may not be able to help.
