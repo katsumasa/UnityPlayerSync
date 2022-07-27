@@ -143,6 +143,9 @@ A. デバイスのスクリーンサイズとEditor上のGameViewのサイズが
 Q. 同期中にOut of Memoryが発生します。  
 A. Scenenを構成するObjectが多くなる程マ、ネージドメモリから確保するメモリ量が多くなって行きます。UnityPlayerSyncPlayerの`Use Stream Buffer Capacity`を有効にし、`Capacity Size[MB]`で適切な値を設定することで複雑なシーンでも同期が成功する場合があります。（あまり大きな値を設定すると同期前にOut of Memoryが発生するので注意して下さい。)
 
+![b223d923249ba487d60ff4c016f86624](https://user-images.githubusercontent.com/29646672/181192810-38ab173c-8f97-497c-b8b9-f8c6eab1b90e.png)
+
+
 Q. 同期が終わりません。  
 A. Sceneを構成するObjectと比例する形で、同期にかかる時間が伸びて行きます。Unityが提供しているサンプルプロジェクトGameKit3Dを例にとると、Start Sceneは10秒程度で同期が完了しますが、インゲーム中のSceneでは同期に5分以上かかります。
 
