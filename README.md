@@ -140,6 +140,12 @@ A. Sceneの同期後、UnityEditor上でScriptのコンパイルが走ると同�
 Q. Editor上でUIを変更するとPlayer側の表示がおかしくなります。  
 A. デバイスのスクリーンサイズとEditor上のGameViewのサイズが一致していないのが原因だと思われます。Editor上のGameViewのサイズをCanvas ScalerのReference Resolutionの値に合わせてみて下さい。
 
+Q. 同期中にOut of Memoryが発生します。  
+A. Scenenを構成するObjectが多くなる程マ、ネージドメモリから確保するメモリ量が多くなって行きます。UnityPlayerSyncPlayerの`Use Stream Buffer Capacity`を有効にし、`Capacity Size[MB]`で適切な値を設定することで複雑なシーンでも同期が成功する場合があります。（あまり大きな値を設定すると同期前にOut of Memoryが発生するので注意して下さい。)
+
+Q. 同期が終わりません。  
+A. Sceneを構成するObjectと比例する形で、同期にかかる時間が伸びて行きます。Unityが提供しているサンプルプロジェクトGameKit3Dを例にとると、Start Sceneは10秒程度で同期が完了しますが、インゲーム中のSceneでは同期に5分以上かかります。
+
 ## その他
 
 - 要望・ご意見・不具合に関してはIssueから報告をお願いします。約束は出来ませんが可能な限り対応します。
