@@ -1,5 +1,6 @@
 ﻿
 using System.IO;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 #if UNITY_EDITOR
 using UnityEditor.SceneManagement;
@@ -27,12 +28,36 @@ namespace UTJ.UnityPlayerSync.Runtime
         {
             if (isPlayer)
             {
+                // DontDestroyOnloadされたGameObjectは専用のSceneへ移動されるが、
+                // SceneManagerからのそのSceneへのアクセスパスが無い為、
+                // DontDestroyOnloadされたGameObjectのscneプロパティからscene情報を取得するというトリッキーコード
+                bool dontDestroyOnload = false;
+                var go = new GameObject();
+                GameObject.DontDestroyOnLoad(go);
+                var dontDestroyOnloadScne = go.scene;
+                GameObject.DestroyImmediate(go);
+                if (dontDestroyOnloadScne != null && dontDestroyOnloadScne.rootCount > 0)
+                {
+                    dontDestroyOnload = true;
+                }
                 var len = SceneManager.sceneCount;
-                m_Scenes = new SyncScene[len];
+                if (dontDestroyOnload)
+                {
+                    m_Scenes = new SyncScene[len + 1];
+                }
+                else
+                {
+                    m_Scenes = new SyncScene[len];
+                }
+                
                 for (var i = 0; i < len; i++)
                 {
                     var scene = SceneManager.GetSceneAt(i);
                     m_Scenes[i] = new SyncScene(scene);
+                }
+                if (dontDestroyOnload)
+                {
+                    m_Scenes[m_Scenes.Length - 1] = new SyncScene(dontDestroyOnloadScne);
                 }
             }
         }
@@ -67,7 +92,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                 }
                 else
                 {
-                    scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Additive);
+                    scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Additive);                 
                 }
 #else
                 // Runtime上でDeserializeが走ることは想定していない為、ここが実行されることは現時点では想定外
@@ -75,6 +100,17 @@ namespace UTJ.UnityPlayerSync.Runtime
 #endif
                 m_Scenes[i] = new SyncScene(scene);
                 m_Scenes[i].Deserialize(binaryReader);
+
+#if UNITY_EDITOR
+                // Unity Editorでは名前無しのSceneは一つしか存在出来ない為、マルチシーンを構築する為にはSceneをSaveする必要がある。
+                // ここではプロジェクトのテンプフォルダーへScneを保存しています。
+                var name = scene.name;
+                var fpath = UnityEditor.FileUtil.GetUniqueTempPathInProject();
+                fpath = Path.GetDirectoryName(fpath);
+                fpath = Path.Combine(fpath, scene.name);                
+                fpath = System.IO.Path.ChangeExtension(fpath, "unity");
+                EditorSceneManager.SaveScene(scene,fpath);                
+#endif
             }
         }    
         
