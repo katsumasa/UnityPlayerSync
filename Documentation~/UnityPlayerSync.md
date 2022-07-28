@@ -1,5 +1,7 @@
 # UnityPlayerSync
 
+[Japanese Version](https://github.com/katsumasa/UnityPlayerSync/blob/develop/README.md)
+
 UnityPlayerSync is a package that'll add a function that can sync with UnityEditor and an app built with UnityEditor(UnityPlayer).
 This package allows the following workflow possible in the UnityEditor.
 
