@@ -151,4 +151,4 @@ A. This is due to the difference between the screen size of the device and the s
 ## Other
 
 - Please report any requests, comments, or problems through Issue. We cannot promise, but will do our best to respond.
-- When reporting an Issue, please attach a project that could reproduce the problem and describe the steps on how it can be replicated. If the problem cannot be reproduced, we may not be able to help.
+- When reporting an [Issue](https://github.com/katsumasa/UnityPlayerSync/issues), please attach a project that could reproduce the problem and describe the steps on how it can be replicated. If the problem cannot be reproduced, we may not be able to help.
