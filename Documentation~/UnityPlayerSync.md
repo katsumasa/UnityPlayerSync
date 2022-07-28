@@ -11,6 +11,13 @@ This package allows the following workflow possible in the UnityEditor.
 
 <https://user-images.githubusercontent.com/29646672/177088255-24accd44-5e35-4e97-85bc-5c154905566e.mp4>
 
+GameKit2D  
+<img width="800" alt="GameKit2D" src="https://user-images.githubusercontent.com/29646672/181436438-3a3e868d-7e98-4a9b-bc3a-97de5bbf62d4.gif">
+
+Candy Rock Star  
+<img width="800" alt="CRS" src="https://user-images.githubusercontent.com/29646672/181443227-5dfe513d-bac5-4c03-8d97-60101e0b72a7.gif">
+
+
 *Note that UntyPlayerSync functions more like restoring limited information rather than a complete sync. There might be a case where the result might differ from the original scene in the UnityEditor. 
 
 ## How to Use
