@@ -9,6 +9,15 @@ UnityPlayerSyncはUnityEditorでビルドしたアプリケーション(UnityPla
 
 <https://user-images.githubusercontent.com/29646672/177088255-24accd44-5e35-4e97-85bc-5c154905566e.mp4>
 
+既存のプロジェクトによる同期の例(撮影の都合上、Androidエミュレーターを使用しています。）
+
+GameKit2D  
+<img width="800" alt="GameKit2D" src="https://user-images.githubusercontent.com/29646672/181436438-3a3e868d-7e98-4a9b-bc3a-97de5bbf62d4.gif">
+
+Candy Rock Star  
+<img width="800" alt="CRS" src="https://user-images.githubusercontent.com/29646672/181443227-5dfe513d-bac5-4c03-8d97-60101e0b72a7.gif">
+
+
 Note:正確には同期ではなく、限られた情報からの復元である為、復元出来ないケースも多々あります。
 
 ## 使い方
