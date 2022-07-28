@@ -9,7 +9,9 @@ UnityPlayerSyncはUnityEditorでビルドしたアプリケーション(UnityPla
 2. UnityEditor上でSceneの内容を編集する
 3. 編集した内容をアプリケーションへリアルタイムに反映させる
 
-<https://user-images.githubusercontent.com/29646672/177088255-24accd44-5e35-4e97-85bc-5c154905566e.mp4>
+
+https://user-images.githubusercontent.com/29646672/181483550-17334b57-63a5-4e8e-b257-fc58af7f1249.mp4
+
 
 既存のプロジェクトによる同期の例(撮影の都合上、Androidエミュレーターを使用しています。）
 
