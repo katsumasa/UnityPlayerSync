@@ -96,7 +96,7 @@ namespace UTJ.UnityPlayerSync.Runtime
             }            
             if(m_Values == null)
             {
-                Debug.Log($"{type.Name}: m_Values is null.");
+                Debug.LogError($"{type.Name}: m_Values is null.");
             }
         }
 

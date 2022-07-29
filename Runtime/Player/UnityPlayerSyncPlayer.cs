@@ -165,7 +165,9 @@ namespace UTJ.UnityPlayerSync.Runtime
                                             foreach (var sync in syncs)
                                             {
                                                 // Editor側のInstanceIDを使用
+                                              if (m_IsLogEnable){
                                                 Debug.Log($"{sync.GetInstanceID()},{sync.GetInstanceEditorID()}");
+                                              }
                                                 binaryWriter.Write(sync.GetInstanceEditorID());
                                                 sync.Serialize(binaryWriter);
                                             }
@@ -232,7 +234,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                                     var gameObject = SyncUnityEngineObject.FindObjectFromInstanceID(instanceID) as GameObject;
                                     if (gameObject == null)
                                     {
-                                        Debug.LogWarning($"instanceID;{instanceID} is not found.");
+                                        Debug.LogWarning($"instanceID:{instanceID} is not found.");
                                     }
                                     else
                                     {
