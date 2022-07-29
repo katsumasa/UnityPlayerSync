@@ -323,8 +323,8 @@ namespace UTJ.UnityPlayerSync.Runtime
 
         public override int GetHashCode()
         {            
-            var hash = base.GetHashCode();
-            hash = (hash * 397) ^ m_FullName.GetHashCode();
+            
+            var hash = m_FullName.GetHashCode();
             hash = (hash * 397) ^ m_IsArray.GetHashCode();
             hash = (hash * 397) ^ m_IsGenericType.GetHashCode();
             hash = (hash * 397) ^ m_IsEnum.GetHashCode();
