@@ -1,0 +1,26 @@
+{
+    "name": "UTJ.UnityPlayerSync.Editor",
+    "rootNamespace": "",
+    "references": [
+        "UTJ.RemoteConnection.Editor",
+        "UTJ.RemoteConnect",
+        "UTJ.UnityPlayerSync.Runtime"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "Select...",
+            "expression": "",
+            "define": ""
+        }
+    ],
+    "noEngineReferences": false
+}
