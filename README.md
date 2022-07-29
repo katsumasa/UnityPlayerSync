@@ -1,6 +1,6 @@
 # UnityPlayerSync
 
-[English Version](https://github.com/katsumasa/UnityPlayerSync/blob/develop/Documentation~/UnityPlayerSync.md)
+[English Version README](https://github.com/katsumasa/UnityPlayerSync/blob/develop/Documentation~/UnityPlayerSync.md)
 
 UnityPlayerSyncはUnityEditorでビルドしたアプリケーション(UnityPlayer)とUnityEditorを同期する機能を追加するパッケージです。
 このパッケージによって、UnityEditor上で下記のワークフローを実現することが可能です。
