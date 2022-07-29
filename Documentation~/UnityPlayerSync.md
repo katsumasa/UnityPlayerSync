@@ -1,6 +1,6 @@
 # UnityPlayerSync
 
-[Japanese Version](https://github.com/katsumasa/UnityPlayerSync/blob/develop/README.md)
+[Japanese Version README](https://github.com/katsumasa/UnityPlayerSync/blob/develop/README.md)
 
 UnityPlayerSync is a package that'll add a function that can sync with UnityEditor and an app built with UnityEditor(UnityPlayer).
 This package allows the following workflow possible in the UnityEditor.
@@ -147,6 +147,12 @@ A. If Compile runs on UnityEditor after syncing to a Scene, it could lose the sy
 
 Q. The result of the UI looks different in the Player display when I applied sync after making changes to the UI in Editor. 
 A. This is due to the difference between the screen size of the device and the size of the GameView in the Editor. Try to match the size of the GameView in the Editor to Canvas Scaler's Reference Resolution value. 
+
+Q. Out of Memory occurs during synchronization.  
+A. The more objects in a scene, the more memory is allocated from the naged memory. (If you set too large a value, the synchronization may succeed even in complex scenes. (Note that setting too large a value will cause Out of Memory before synchronization).
+
+Q. Synchronization does not finish.  
+A. Synchronization time increases in proportion to the objects that make up the scene. However, the in-game Scene takes more than 5 minutes to synchronize.
 
 ## Other
 
