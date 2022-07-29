@@ -5,9 +5,9 @@
 UnityPlayerSyncはUnityEditorでビルドしたアプリケーション(UnityPlayer)とUnityEditorを同期する機能を追加するパッケージです。
 このパッケージによって、UnityEditor上で下記のワークフローを実現することが可能です。
 
-1. アプリケーションのSceneをUnityEditorに転送する
-2. UnityEditor上でSceneの内容を編集する
-3. 編集した内容をアプリケーションへリアルタイムに反映させる
+1. アプリケーション上のSceneをUnityEditorに転送する
+2. UnityEditor上で上記のSceneの内容を編集する
+3. 編集した内容をリアルタイムでアプリケーションに反映させる
 
 
 https://user-images.githubusercontent.com/29646672/181483550-17334b57-63a5-4e8e-b257-fc58af7f1249.mp4
