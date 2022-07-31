@@ -250,17 +250,7 @@ namespace UTJ.UnityPlayerSync.Runtime
             {
                 var t = o.GetType();
                 m_Type = new SyncType(t);
-            }
-
-            if (SyncType.Caches.ContainsKey(m_Type.FullName))
-            {
-                
-                m_Type = SyncType.Caches[m_Type.FullName];
-            }
-            else
-            {
-                SyncType.Caches.Add(m_Type.FullName,m_Type);
-            }
+            }            
         }                
 
 
@@ -270,7 +260,12 @@ namespace UTJ.UnityPlayerSync.Runtime
         /// <param name="binaryWriter"></param>
         public override void Serialize(BinaryWriter binaryWriter)
         {
-            m_Type.Serialize(binaryWriter);            
+            var hash = m_Type.GetHashCode();
+            binaryWriter.Write(hash);
+            if(SyncTypeTree.Instances.ContainsKey(hash) == false)
+            {
+                SyncTypeTree.Instances.Add(hash, m_Type);
+            }
         }
 
 
@@ -280,16 +275,8 @@ namespace UTJ.UnityPlayerSync.Runtime
         /// <param name="binaryReader"></param>
         public override void Deserialize(BinaryReader binaryReader)
         {
-            m_Type = new SyncType();
-            m_Type.Deserialize(binaryReader);
-            if (SyncType.Caches.ContainsKey(m_Type.FullName))
-            {                
-                m_Type = SyncType.Caches[m_Type.FullName];
-            }
-            else
-            {
-                SyncType.Caches.Add(m_Type.FullName,m_Type);
-            }
+            var hash = binaryReader.ReadInt32();
+            m_Type = SyncTypeTree.Instances[hash];            
         }
 
         /// <summary>

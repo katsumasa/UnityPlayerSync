@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Diagnostics;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -8,22 +9,49 @@ using UnityEngine;
 
 namespace UTJ.UnityPlayerSync.Runtime
 {
-    public class SyncType : Sync
+    public static class SyncTypeTree
     {
-        static Dictionary<string,SyncType> m_Caches;
-        public static Dictionary<string,SyncType> Caches
+        public static Dictionary<int, SyncType> m_Instance;
+        public static Dictionary<int, SyncType> Instances
         {
-            get 
-            { 
-                if(m_Caches == null)
+            get
+            {
+                if(m_Instance == null)
                 {
-                    m_Caches = new Dictionary<string, SyncType>();
+                    m_Instance = new Dictionary<int, SyncType>();
                 }
-                return m_Caches; 
+                return m_Instance;
+            }
+        }               
+
+        public static void Serialize(BinaryWriter binaryWriter)
+        {
+            binaryWriter.Write(Instances.Count);
+            foreach(var instance in Instances)
+            {
+                binaryWriter.Write(instance.Key);
+                instance.Value.Serialize(binaryWriter);
             }
         }
-        
 
+        public static void Deserialize(BinaryReader binaryReader)
+        {
+            var len = binaryReader.ReadInt32();
+            for(var i = 0; i < len; i++)
+            {
+                var hash = binaryReader.ReadInt32();
+                var syncType = new SyncType();
+                syncType.Deserialize(binaryReader);
+                Instances.Add(hash, syncType);
+            }
+        }
+
+    }
+
+
+    public class SyncType : Sync
+    {        
+                
         public static System.Type GetType(SyncType type)
         {
             if(type.m_Type != null)
@@ -170,7 +198,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                     return type.m_Type;
                 }
                 // 列挙では無かった場合、Unityのビルドインクラスであれば随時対応
-                Debug.LogError($"{typeName} is not supported. if this class is unity build-in,Prease reauest bug report.");
+                UnityEngine.Debug.LogError($"{typeName} is not supported. if this class is unity build-in,Prease reauest bug report.");
             }
 
             type.m_Type = t;
@@ -241,19 +269,26 @@ namespace UTJ.UnityPlayerSync.Runtime
             }
             catch(System.Exception e)
             {
-                Debug.LogException(e);
+                UnityEngine.Debug.LogException(e);
             }            
         }
 
 
         public override void Deserialize(BinaryReader binaryReader)
         {
-            m_FullName = binaryReader.ReadString();
-            m_IsArray = binaryReader.ReadBoolean();
-            m_IsEnum = binaryReader.ReadBoolean();
-            m_IsGenericType= binaryReader.ReadBoolean();
-            m_MemberType = (MemberTypes)binaryReader.ReadInt32();
-            m_Assembly = binaryReader.ReadString();
+            try
+            {
+                m_FullName = binaryReader.ReadString();
+                m_IsArray = binaryReader.ReadBoolean();
+                m_IsEnum = binaryReader.ReadBoolean();
+                m_IsGenericType= binaryReader.ReadBoolean();
+                m_MemberType = (MemberTypes)binaryReader.ReadInt32();
+                m_Assembly = binaryReader.ReadString();
+            }
+            catch(System.Exception e)
+            {
+                UnityEngine.Debug.LogException(e);
+            }
         }
 
         public override bool Equals(object obj)
@@ -295,12 +330,27 @@ namespace UTJ.UnityPlayerSync.Runtime
         }
 
         public override int GetHashCode()
+        {                        
+            var hash = m_FullName.GetHashCode();
+            hash = (hash * 397) ^ m_IsArray.GetHashCode();
+            hash = (hash * 397) ^ m_IsGenericType.GetHashCode();
+            hash = (hash * 397) ^ m_IsEnum.GetHashCode();
+            hash = (hash * 397) ^ m_MemberType.GetHashCode();
+            hash = (hash * 397) ^ m_Assembly.GetHashCode();
+            return hash;
+        }
+
+        public override string ToString()
         {
-            var hash = new { m_FullName, m_IsArray , m_IsGenericType , m_IsEnum , m_Assembly }.GetHashCode();
-            var hash128 = new Hash128();
-            hash128.Append(base.GetHashCode());
-            hash128.Append(hash);
-            return hash128.GetHashCode();
+            if (m_IsArray)
+            {
+                return $"{m_FullName}[],{m_Assembly}";
+            }
+            else if (m_IsGenericType)
+            {
+                return $"List<{m_FullName}>,{m_Assembly}";
+            }
+            return $"{m_FullName},{m_Assembly}";
         }
     }
 }

@@ -48,14 +48,8 @@ namespace UTJ.UnityPlayerSync.Runtime
             m_IsNotSerialized = fieldInfo.IsNotSerialized;
             m_IsPrivate = fieldInfo.IsPrivate;
             m_IsPublic = fieldInfo.IsPublic;
-            m_IsStatic = fieldInfo.IsStatic;
-            var key = fieldInfo.FieldType.FullName;
-            if (SyncType.Caches.ContainsKey(key) == false)
-            {
-                var syncType = new SyncType(fieldInfo.FieldType);
-                SyncType.Caches.Add(syncType.FullName, syncType);
-            }
-            m_FieldType = SyncType.Caches[key];
+            m_IsStatic = fieldInfo.IsStatic;            
+            m_FieldType = new SyncType(fieldInfo.FieldType);
         }
 
         public override void Serialize(BinaryWriter binaryWriter)
@@ -65,7 +59,12 @@ namespace UTJ.UnityPlayerSync.Runtime
             binaryWriter.Write(m_IsPrivate);
             binaryWriter.Write(m_IsPublic);
             binaryWriter.Write(m_IsStatic);
-            m_FieldType.Serialize(binaryWriter);
+            var hash = m_FieldType.GetHashCode();
+            binaryWriter.Write(hash);
+            if(SyncTypeTree.Instances.ContainsKey(hash) == false)
+            {
+                SyncTypeTree.Instances.Add(hash, m_FieldType);
+            }
         }
 
         public override void Deserialize(BinaryReader binaryReader)
@@ -75,14 +74,8 @@ namespace UTJ.UnityPlayerSync.Runtime
             m_IsPrivate = binaryReader.ReadBoolean();
             m_IsPublic = binaryReader.ReadBoolean();
             m_IsStatic = binaryReader.ReadBoolean();
-            var syncType = new SyncType();
-            syncType.Deserialize(binaryReader);
-            var key = syncType.FullName;
-            if (SyncType.Caches.ContainsKey(key) == false)
-            {
-                SyncType.Caches.Add(key, syncType);
-            }
-            m_FieldType = SyncType.Caches[key];
+            var hash = binaryReader.ReadInt32();                                    
+            m_FieldType = SyncTypeTree.Instances[hash];
         }
 
         public override void Dispose()
@@ -127,7 +120,13 @@ namespace UTJ.UnityPlayerSync.Runtime
 
         public override int GetHashCode()
         {
-            return new { m_IsNotSerialized, m_IsPrivate, m_IsPublic, m_IsStatic , m_FieldType }.GetHashCode() ^ base.GetHashCode();            
-        }
+            var hash = base.GetHashCode();
+            hash = (hash * 397) ^ m_IsNotSerialized.GetHashCode();
+            hash = (hash * 397) ^ m_IsPrivate.GetHashCode();
+            hash = (hash * 397) ^ m_IsPublic.GetHashCode();
+            hash = (hash * 397) ^ m_IsStatic.GetHashCode();
+            hash = (hash * 397) ^ m_FieldType.GetHashCode();
+            return hash;
+        }        
     }
 }

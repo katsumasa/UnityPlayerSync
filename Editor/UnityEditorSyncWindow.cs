@@ -81,6 +81,16 @@ namespace UTJ.UnityPlayerSync.Editor
                 {
                     case MessageID.SyncScene:
                         {
+                            SyncSceneManager.ClearCache();
+
+                            var ofst = binaryReader.ReadInt64();
+                            var returnPos = binaryReader.BaseStream.Position;
+                            binaryReader.BaseStream.Seek(ofst, SeekOrigin.Begin);
+
+                            SyncTypeTree.Deserialize(binaryReader);
+                                                        
+                            binaryReader.BaseStream.Seek(returnPos, SeekOrigin.Begin);
+
                             var sm = new SyncSceneManager(false);
                             sm.Deserialize(binaryReader);
                             sm.WriteBack();
@@ -91,6 +101,12 @@ namespace UTJ.UnityPlayerSync.Editor
 
                     case MessageID.SyncGameObject:
                         {
+                            var treetypePos = binaryReader.ReadInt64();
+                            var bodyPos = binaryReader.BaseStream.Position;
+                            binaryReader.BaseStream.Seek(treetypePos, SeekOrigin.Begin);
+                            SyncTypeTree.Deserialize(binaryReader);
+                            binaryReader.BaseStream.Seek(bodyPos, SeekOrigin.Begin);
+
                             var syncs = new List<SyncGameObject>();
                             var count = binaryReader.ReadInt32();
                             for (var i = 0; i < count; i++)
