@@ -81,7 +81,6 @@ namespace UTJ.UnityPlayerSync.Runtime
         }
 
 
-
         public static UnityEngine.Object FintObject(int instanceID)
         {
             if (instanceID == SyncUnityEngineObject.InstanceID_None)
@@ -192,21 +191,11 @@ namespace UTJ.UnityPlayerSync.Runtime
             componentComparables.Sort();
             for(var i = 0; i < componentComparables.Count; i++)
             {
-                var component = componentComparables[i].component;
-                var key = component.GetType().FullName;
-                m_ComponentInstancIDs[i] = component.GetInstanceID();
-                if (SyncType.Caches.ContainsKey(key))
-                {
-                    m_ComponentTypes[i] = SyncType.Caches[key];
-                }
-                else
-                {
-                    m_ComponentTypes[i] = new SyncType(component.GetType());
-                    SyncType.Caches.Add(key, m_ComponentTypes[i]);
-                }
+                var component = componentComparables[i].component;             
+                m_ComponentInstancIDs[i] = component.GetInstanceID();                
+                m_ComponentTypes[i] = new SyncType(component.GetType());
                 m_Components[i] = new SyncComponent(component);                                
             }                        
-
             base.Serialize(binaryWriter);            
             // GameObject固有
             binaryWriter.Write(gameObject.activeSelf);
@@ -233,7 +222,12 @@ namespace UTJ.UnityPlayerSync.Runtime
             }
             for(var i = 0; i < len; i++)
             {
-                m_ComponentTypes[i].Serialize(binaryWriter);                
+                var hash = m_ComponentTypes[i].GetHashCode();
+                binaryWriter.Write(hash);
+                if(SyncTypeTree.Instances.ContainsKey(hash) == false)
+                {
+                    SyncTypeTree.Instances.Add(hash, m_ComponentTypes[i]);
+                }
             }
             for (var i = 0; i < len; i++)
             {
@@ -292,20 +286,12 @@ namespace UTJ.UnityPlayerSync.Runtime
             for(var i = 0; i < len; i++)
             {
                 m_ComponentInstancIDs[i] = binaryReader.ReadInt32();
-            }                              
-            
+            }                                          
             for (var i = 0; i < len; i++)
-            {                        
-
-                var syncType = new SyncType();
-                syncType.Deserialize(binaryReader);
-                if (SyncType.Caches.ContainsKey(syncType.FullName) == false)
-                {
-                    SyncType.Caches.Add(syncType.FullName, syncType);
-                }
-                m_ComponentTypes[i] = SyncType.Caches[syncType.FullName];                
+            {
+                var hash = binaryReader.ReadInt32();                
+                m_ComponentTypes[i] = SyncTypeTree.Instances[hash];
             }
-
             for (var i = 0; i < len; i++)
             {
                 var componentType = SyncType.GetType(m_ComponentTypes[i]);

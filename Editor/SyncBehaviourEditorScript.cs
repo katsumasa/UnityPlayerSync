@@ -46,24 +46,28 @@ namespace UTJ.UnityPlayerSync.Editor
                         return;
                     }
                 }
-                var ms = new MemoryStream();
-                var bw = new BinaryWriter(ms);
+                using var ms = new MemoryStream();
+                using var bw = new BinaryWriter(ms);
                 try
                 {
+                    SyncTypeTree.Instances.Clear();                    
+                    bw.Write((int)MessageID.SyncGameObject);
+                    var ofsetPos = bw.BaseStream.Position;
+                    bw.Write((long)0);    // TreeTypeへのオフセットのリザーブ                
                     int count = 0;
                     GetGameObjectCount(go, ref count);
-
-                    //Debug.Log($"count : {count}");
-                    
-                    bw.Write((int)MessageID.SyncGameObject);
                     bw.Write(count);
-                    SerializeGameObject(go, bw);                    
+                    SerializeGameObject(go, bw);
+
+                    var typeTreePos = bw.BaseStream.Position;
+                    SyncTypeTree.Serialize(bw);
+                    bw.BaseStream.Seek(ofsetPos, SeekOrigin.Begin);
+                    bw.Write(typeTreePos);
+
                     UnityEditorSyncWindow.SendMessage(ms.ToArray());
                 }
                 finally
-                {
-                    bw.Close();
-                    ms.Close();
+                {                    
                 }                
             }
         }
@@ -77,9 +81,8 @@ namespace UTJ.UnityPlayerSync.Editor
                 var sync = SyncGameObject.Find(go);
                 if(sync != null)
                 {
-                    var ms = new MemoryStream();
-                    var bw = new BinaryWriter(ms);
-
+                    using var ms = new MemoryStream();
+                    using var bw = new BinaryWriter(ms);
                     try
                     {
                         bw.Write((int)MessageID.SyncDelete);
@@ -87,9 +90,7 @@ namespace UTJ.UnityPlayerSync.Editor
                         UnityEditorSyncWindow.SendMessage(ms.ToArray());
                     }
                     finally
-                    {
-                        bw.Close();
-                        ms.Close();
+                    {                        
                     }
                 }
             }
@@ -148,16 +149,23 @@ namespace UTJ.UnityPlayerSync.Editor
             // Transformのみ特別処理
             if (component is Transform)
             {
-                var ms = new MemoryStream();
-                var bw = new BinaryWriter(ms);
+                using var ms = new MemoryStream();
+                using var bw = new BinaryWriter(ms);
                 try
                 {
                     var sync = SyncTransform.Find(component);
                     if (sync != null)
-                    {                        
+                    {
+                        SyncTypeTree.Instances.Clear();
                         bw.Write((int)MessageID.SyncTransform);
+                        var ofst1 = bw.BaseStream.Position;
+                        bw.Write((long)0);
                         bw.Write(sync.GetInstanceID());
                         sync.Serialize(bw);
+                        var ofst2 = bw.BaseStream.Position;
+                        SyncTypeTree.Serialize(bw);
+                        bw.BaseStream.Seek(ofst1, SeekOrigin.Begin);
+                        bw.Write(ofst2);
                         UnityEditorSyncWindow.SendMessage(ms.ToArray());
                     }
                     else
@@ -166,24 +174,29 @@ namespace UTJ.UnityPlayerSync.Editor
                     }
                 }
                 finally
-                {
-                    bw.Close();
-                    ms.Close();
+                {                    
                 }
             }
             else
             {
-                var ms = new MemoryStream();
-                var bw = new BinaryWriter(ms);
+                using var ms = new MemoryStream();
+                using var bw = new BinaryWriter(ms);
                 try
                 {
                     var sync = SyncComponent.Find(component);
                     if (sync != null)
-                    {                        
+                    {
+                        SyncTypeTree.Instances.Clear();
                         bw.Write((int)MessageID.SyncComponent);
+                        var ofst1 = bw.BaseStream.Position;
+                        bw.Write((long)0);
                         bw.Write(sync.GetInstanceID());
-                        sync.Reset();
+                        sync.Init();
                         sync.Serialize(bw);
+                        var ofst2 = bw.BaseStream.Position;
+                        SyncTypeTree.Serialize(bw);
+                        bw.BaseStream.Seek(ofst1, SeekOrigin.Begin);
+                        bw.Write(ofst2);
                         UnityEditorSyncWindow.SendMessage(ms.ToArray());
                     }
                     else
@@ -193,8 +206,7 @@ namespace UTJ.UnityPlayerSync.Editor
                 }
                 finally
                 {
-                    bw.Close();
-                    ms.Close();
+                    SyncTypeTree.Instances.Clear();
                 }
             }
         }

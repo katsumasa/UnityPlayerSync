@@ -42,7 +42,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                 {
                     return sync;
                 }
-                Debug.Log(sync.GetInstanceID());
+                //Debug.Log(sync.GetInstanceID());
             }
             return null;
         }

@@ -18,7 +18,7 @@ namespace UTJ.UnityPlayerSync.Runtime
             SyncGameObject.ClearCache();
             SyncTransform.ClearCache();
             SyncComponent.ClearCache();
-            SyncType.Caches.Clear();
+            SyncTypeTree.Instances.Clear();
         }
 
         protected SyncScene[] m_Scenes;
@@ -75,10 +75,7 @@ namespace UTJ.UnityPlayerSync.Runtime
 
 
         public override void Deserialize(BinaryReader binaryReader)
-        {
-
-            ClearCache();
-
+        {            
             base.Deserialize(binaryReader);
             var len = binaryReader.ReadInt32();
             m_Scenes = new SyncScene[len];
