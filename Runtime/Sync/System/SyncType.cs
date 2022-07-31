@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Diagnostics;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -197,7 +198,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                     return type.m_Type;
                 }
                 // 列挙では無かった場合、Unityのビルドインクラスであれば随時対応
-                Debug.LogError($"{typeName} is not supported. if this class is unity build-in,Prease reauest bug report.");
+                UnityEngine.Debug.LogError($"{typeName} is not supported. if this class is unity build-in,Prease reauest bug report.");
             }
 
             type.m_Type = t;
@@ -268,19 +269,26 @@ namespace UTJ.UnityPlayerSync.Runtime
             }
             catch(System.Exception e)
             {
-                Debug.LogException(e);
+                UnityEngine.Debug.LogException(e);
             }            
         }
 
 
         public override void Deserialize(BinaryReader binaryReader)
         {
-            m_FullName = binaryReader.ReadString();
-            m_IsArray = binaryReader.ReadBoolean();
-            m_IsEnum = binaryReader.ReadBoolean();
-            m_IsGenericType= binaryReader.ReadBoolean();
-            m_MemberType = (MemberTypes)binaryReader.ReadInt32();
-            m_Assembly = binaryReader.ReadString();
+            try
+            {
+                m_FullName = binaryReader.ReadString();
+                m_IsArray = binaryReader.ReadBoolean();
+                m_IsEnum = binaryReader.ReadBoolean();
+                m_IsGenericType= binaryReader.ReadBoolean();
+                m_MemberType = (MemberTypes)binaryReader.ReadInt32();
+                m_Assembly = binaryReader.ReadString();
+            }
+            catch(System.Exception e)
+            {
+                UnityEngine.Debug.LogException(e);
+            }
         }
 
         public override bool Equals(object obj)
@@ -322,8 +330,7 @@ namespace UTJ.UnityPlayerSync.Runtime
         }
 
         public override int GetHashCode()
-        {            
-            
+        {                        
             var hash = m_FullName.GetHashCode();
             hash = (hash * 397) ^ m_IsArray.GetHashCode();
             hash = (hash * 397) ^ m_IsGenericType.GetHashCode();
