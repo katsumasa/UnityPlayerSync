@@ -36,6 +36,7 @@ namespace UTJ.UnityPlayerSync.Runtime
 
         public static void Deserialize(BinaryReader binaryReader)
         {
+            Instances.Clear();
             var len = binaryReader.ReadInt32();
             for(var i = 0; i < len; i++)
             {

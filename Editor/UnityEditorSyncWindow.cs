@@ -100,7 +100,7 @@ namespace UTJ.UnityPlayerSync.Editor
                         break;
 
                     case MessageID.SyncGameObject:
-                        {
+                        {                            
                             var treetypePos = binaryReader.ReadInt64();
                             var bodyPos = binaryReader.BaseStream.Position;
                             binaryReader.BaseStream.Seek(treetypePos, SeekOrigin.Begin);
