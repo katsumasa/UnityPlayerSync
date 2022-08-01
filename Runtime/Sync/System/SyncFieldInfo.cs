@@ -65,6 +65,10 @@ namespace UTJ.UnityPlayerSync.Runtime
             {
                 SyncTypeTree.Instances.Add(hash, m_FieldType);
             }
+            else
+            {
+                m_FieldType = SyncTypeTree.Instances[hash];
+            }
         }
 
         public override void Deserialize(BinaryReader binaryReader)

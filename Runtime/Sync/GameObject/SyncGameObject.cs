@@ -228,6 +228,10 @@ namespace UTJ.UnityPlayerSync.Runtime
                 {
                     SyncTypeTree.Instances.Add(hash, m_ComponentTypes[i]);
                 }
+                else
+                {
+                    m_ComponentTypes[i] = SyncTypeTree.Instances[hash];
+                }
             }
             for (var i = 0; i < len; i++)
             {
