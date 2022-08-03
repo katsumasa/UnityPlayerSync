@@ -65,7 +65,7 @@ UnityEditor上で編集したGameObjectをUnityPlayer側にフィードバック
 
 Component単体で同期を行うことで、GameObjectの同期と比較して素早くUnityPlayerと同期を行うことが可能です。
 
-1. Inspecter Window上でフィードバックするComponentのコンテキストメニューを表示
+1. Inspector Window上でフィードバックするComponentのコンテキストメニューを表示
 2. コンテキストメニューからSyncを選択
 
 ### GameObjectの削除
@@ -96,7 +96,7 @@ git clone https://github.com/katsumasa/UnityPlayerSync.git
 
 <img width="800" alt="Prefab" src="https://user-images.githubusercontent.com/29646672/177100609-e0b11bac-d8b6-4cf6-a167-4053937f7545.gif">
 
-ビルドの対象となるSceneにUnityPLayerSyncのPrefabを配置してください。
+ビルドの対象となるSceneにUnityPlayerSyncのPrefabを配置してください。
 
 ### Scripting Backend
 
@@ -109,7 +109,7 @@ Editor -> Project Settings ->PlayerScripting BackendにMonoを設定してくだ
 
 <img width="800" alt="Prefab" src="https://user-images.githubusercontent.com/29646672/177100904-b3b66b86-2d46-4230-aa17-b3cd0d0ecf2f.png">
 
-Developmemt Build及びAutoconnect Profilerにチェックを入れてBuld( And Run)を実行してください。
+Development Build及びAutoconnect Profilerにチェックを入れてBuld( And Run)を実行してください。
 
 ## Tips
 
@@ -119,11 +119,11 @@ Developmemt Build及びAutoconnect Profilerにチェックを入れてBuld( And 
 
 - Hierarchy内のGameObject
 - GameObjectにAddされているComponent
-- Component内でpublicなプロパティ及びSerializeアトリビュートを持つフィールドの値(Inspecter上で表示されているものと同義)
+- Component内でpublicなプロパティ及びSerializeアトリビュートを持つフィールドの値(Inspector上で表示されているものと同義)
 
 Componentのプロパティやフィールドの値に関しては下記の制限があります。
 
-- System.ValuType(int,float,etc..)型と列挙型
+- System.ValueType(int,float,etc..)型と列挙型
 - Componentへの参照
 - メジャーなUnity Build-in struct(Color,Vector3,etc...)
 - Asset(Texture,Mesh,Material,Shader,etc...)に関しては、Editor側で復元する場合は、プロジェクトの存在するAsset、Player側で復元する場合はHierarchy上に存在しているAssetに限定されます。
@@ -157,7 +157,7 @@ Q. Editor上でUIを変更するとPlayer側の表示がおかしくなります
 A. デバイスのスクリーンサイズとEditor上のGameViewのサイズが一致していないのが原因だと思われます。Editor上のGameViewのサイズをCanvas ScalerのReference Resolutionの値に合わせてみて下さい。
 
 Q. 同期中にOut of Memoryが発生します。  
-A. Scenenを構成するObjectが多くなる程マ、ネージドメモリから確保するメモリ量が多くなって行きます。UnityPlayerSyncPlayerの`Use Stream Buffer Capacity`を有効にし、`Capacity Size[MB]`で適切な値を設定することで複雑なシーンでも同期が成功する場合があります。（あまり大きな値を設定すると同期前にOut of Memoryが発生するので注意して下さい。)
+A. Sceneを構成するObjectが多くなる程マ、ネージドメモリから確保するメモリ量が多くなって行きます。UnityPlayerSyncPlayerの`Use Stream Buffer Capacity`を有効にし、`Capacity Size[MB]`で適切な値を設定することで複雑なシーンでも同期が成功する場合があります。（あまり大きな値を設定すると同期前にOut of Memoryが発生するので注意して下さい。)
 
 ![b223d923249ba487d60ff4c016f86624](https://user-images.githubusercontent.com/29646672/181192810-38ab173c-8f97-497c-b8b9-f8c6eab1b90e.png)
 
