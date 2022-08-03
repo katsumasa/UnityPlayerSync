@@ -157,7 +157,7 @@ A. The more Objects you put in a Scene, the more memory is secured from the mana
 ![b223d923249ba487d60ff4c016f86624](https://user-images.githubusercontent.com/29646672/181192810-38ab173c-8f97-497c-b8b9-f8c6eab1b90e.png)
 
 Q. Unable to complete the Sync 
-A. The more Object in the Scene, the time for Sync to complete increases. As a reference, GameKit3D's Start Scene takes about 10 seconds to sync, but the In-game Scene takes about 5 minutes to sync. 
+A. The more Object in the Scene, the time for Sync to complete increases. As a reference, GameKit3D's* Start Scene takes about 10 seconds to sync, but the In-game Scene takes about 5 minutes to sync. 
 
 *GameKit3D is a sample Project provided by Unity.
 
