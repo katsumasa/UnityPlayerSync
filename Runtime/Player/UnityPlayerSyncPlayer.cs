@@ -135,16 +135,8 @@ namespace UTJ.UnityPlayerSync.Runtime
                                     var ofst = binaryReader.ReadInt64();
                                     var returnPos = binaryReader.BaseStream.Position;
                                     binaryReader.BaseStream.Seek(ofst, SeekOrigin.Begin);
-                                    var len = binaryReader.ReadInt32();
-                                    for (var i = 0; i < len; i++)
-                                    {
-                                        var hash = binaryReader.ReadInt32();
-                                        var syncType = new SyncType();
-                                        syncType.Deserialize(binaryReader);
-                                        SyncTypeTree.Instances.Add(hash, syncType);                                        
-                                    }
+                                    SyncTypeTree.Deserialize(binaryReader);                                                                        
                                     binaryReader.BaseStream.Seek(returnPos, SeekOrigin.Begin);
-
 
                                     var syncs = new List<SyncGameObject>();
                                     var count = binaryReader.ReadInt32();
