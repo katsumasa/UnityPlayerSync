@@ -151,11 +151,15 @@ A. If Compile runs on UnityEditor after syncing to a Scene, it could lose the sy
 Q. The result of the UI looks different in the Player display when I applied sync after making changes to the UI in Editor. 
 A. This is due to the difference between the screen size of the device and the size of the GameView in the Editor. Try to match the size of the GameView in the Editor to Canvas Scaler's Reference Resolution value. 
 
-Q. Out of Memory occurs during synchronization.  
-A. The more objects in a scene, the more memory is allocated from the naged memory. (If you set too large a value, the synchronization may succeed even in complex scenes. (Note that setting too large a value will cause Out of Memory before synchronization).
+Q. Out of Memory occurs during the sync
+A. The more Objects you put in a Scene, the more memory is secured from the managed memory. Such complex Scene can be synced by enabling UnityPlayerSyncPlayer's `Use Stream Buffer Capacity` and adjust the `Capacity Size[MB]`(Setting large value might lead to Out of Memory before the sync).
 
-Q. Synchronization does not finish.  
-A. Synchronization time increases in proportion to the objects that make up the scene. However, the in-game Scene takes more than 5 minutes to synchronize.
+![b223d923249ba487d60ff4c016f86624](https://user-images.githubusercontent.com/29646672/181192810-38ab173c-8f97-497c-b8b9-f8c6eab1b90e.png)
+
+Q. Unable to complete the Sync 
+A. The more Object in the Scene, the time for Sync to complete increases. As a reference, GameKit3D's Start Scene takes about 10 seconds to sync, but the In-game Scene takes about 5 minutes to sync. 
+*GameKit3D is a sample Project provided by Unity.
+
 
 ## Other
 
