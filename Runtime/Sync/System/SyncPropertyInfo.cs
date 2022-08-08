@@ -36,6 +36,10 @@ namespace UTJ.UnityPlayerSync.Runtime
             {
                 SyncTypeTree.Instances.Add(hash, m_PropertyType);
             }
+            else
+            {
+                m_PropertyType = SyncTypeTree.Instances[hash];
+            }
         }
 
         public override void Deserialize(BinaryReader binaryReader)
