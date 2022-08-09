@@ -126,7 +126,7 @@ Development Build及びAutoconnect Profilerにチェックを入れてBuld( And 
 ビルドが完了し、実機上でアプリケーションが実行されたらいよいよ動作確認です。　　
 1. UnityEditor上で`File > New Scene`を選択します。
 2. `Hierarchy Viwe`上でGameObjectを何も選択していない状態で右クリック > Syncを実行します。しばらく待つとHierarchy Viewに実機上のアプリにScene情報が構築されます。
-3. 適当なGameObjectを選択し、InspecterからTransformの値を変更してみましょう。
+3. 適当なGameObjectを選択し、InspectorからTransformの値を変更してみましょう。
 4. Hierarchy ViewでGameObjectを選択したまま、右クリック > Syncを実行します。実機上でも該当するGameObjectのTransformの値が更新されることが確認出来る筈です。
 
 ![402f527086e746b601a17ddcc6f9d09a](https://user-images.githubusercontent.com/29646672/183376337-ad6b1073-44fe-4330-a649-6801dba3e421.gif)
