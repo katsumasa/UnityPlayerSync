@@ -52,15 +52,15 @@ namespace UTJ.UnityPlayerSync.Runtime
     /// </summary>
     public class UnityPlayerSyncPlayer : UTJ.RemoteConnect.Player
     {
-        [SerializeField,Tooltip("Enable log output.")] bool m_IsLogEnable;
-        [SerializeField,Tooltip("Enable DontDestroyOnLoad")] bool m_IsDontDestroyOnLoadEnabled;
+        [SerializeField,Tooltip("Enable log output.")] bool m_EnableLog;
+        [SerializeField,Tooltip("Enable DontDestroyOnLoad")] bool m_EnableDontDestroyOnLoad;
         [HideInInspector,SerializeField] bool m_UseFixedStreamBuffer = false;
         [HideInInspector,SerializeField, Range(1,500)] int m_StreamBufferCapacityMB = 1;
         
 
         private void Start()
         {
-            if (m_IsDontDestroyOnLoadEnabled)
+            if (m_EnableDontDestroyOnLoad)
             {
                 DontDestroyOnLoad(this.gameObject);
             }
@@ -87,7 +87,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                     {
 
                         var messageID = (MessageID)binaryReader.ReadInt32();
-                        if (m_IsLogEnable)
+                        if (m_EnableLog)
                         {
                             Debug.Log($"messageID:{messageID}");
                         }
@@ -143,7 +143,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                                     for (var i = 0; i < count; i++)
                                     {
                                         var instanceID = binaryReader.ReadInt32();
-                                        if (m_IsLogEnable)
+                                        if (m_EnableLog)
                                         {
                                             Debug.Log($"instanceID:{instanceID}");
                                         }
@@ -151,7 +151,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                                         var go = SyncUnityEngineObject.FindObjectFromInstanceID(instanceID) as GameObject;
                                         if (go == null)
                                         {
-                                            if (m_IsLogEnable)
+                                            if (m_EnableLog)
                                             {
                                                 Debug.Log($"{instanceID} is new GameObject.");
                                             }
@@ -185,7 +185,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                                             foreach (var sync in syncs)
                                             {
                                                 // Editor側のInstanceIDを使用
-                                                if (m_IsLogEnable){
+                                                if (m_EnableLog){
                                                     Debug.Log($"{sync.GetInstanceID()},{sync.GetInstanceEditorID()}");
                                                 }
                                                 binaryWriter.Write(sync.GetInstanceEditorID());
@@ -212,7 +212,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                                         binaryReader.BaseStream.Seek(ofst2, SeekOrigin.Begin);
                                     }
                                     var instanceID = binaryReader.ReadInt32();
-                                    if (m_IsLogEnable)
+                                    if (m_EnableLog)
                                     {
                                         Debug.Log($"instanceID:{instanceID}");
                                     }
@@ -239,7 +239,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                                         binaryReader.BaseStream.Seek(ofst2, SeekOrigin.Begin);
                                     }
                                     var instanceID = binaryReader.ReadInt32();
-                                    if (m_IsLogEnable)
+                                    if (m_EnableLog)
                                     {
                                         Debug.Log($"instanceID:{instanceID}");
                                     }
@@ -260,7 +260,7 @@ namespace UTJ.UnityPlayerSync.Runtime
                             case MessageID.SyncDelete:
                                 {
                                     var instanceID = binaryReader.ReadInt32();
-                                    if (m_IsLogEnable)
+                                    if (m_EnableLog)
                                     {
                                         Debug.Log($"instanceID:{instanceID}");
                                     }

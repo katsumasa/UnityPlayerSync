@@ -12,7 +12,6 @@ UnityPlayerSyncはUnityEditorでビルドしたアプリケーション(UnityPla
 2. UnityEditor上で上記のSceneの内容を編集する
 3. 編集した内容をリアルタイムでアプリケーションに反映させる
 
-
 https://user-images.githubusercontent.com/29646672/181483550-17334b57-63a5-4e8e-b257-fc58af7f1249.mp4
 
 
@@ -82,15 +81,25 @@ GameObjectからComponentを削除後、GameObjectの同期を行うことでPla
 
 ## セットアップ
 
-### Packageの取得
+UnityPlayerSyncは別途[RemoteConnect](https://github.com/katsumasa/RemoteConnect.git)パッケージを使用します。UnityPlayerSyncと合わせて取得して下さい。　　
+取得したパッケージを任意のUnityプロジェクトへ追加することでセットアップは完了です。
 
-UnityPlayerSyncは別途[RemoteConnect](https://github.com/katsumasa/RemoteConnect.git)パッケージを使用します。UnityPlayerSyncと合わせて取得して下さい。
-パッケージの取得にgitを取得する場合、下記の通りです。
+### パッケージの取得方法
+
+パッケージはGitHubで管理されています。
+
+#### コマンドラインのgitを使用してパッケージ取得する場合
 
 ```:console
 git clone https://github.com/katsumasa/RemoteConnect.git
 git clone https://github.com/katsumasa/UnityPlayerSync.git
 ```
+
+#### Webページから取得する場合
+
+1. [UnityPlayerSync](https://github.com/katsumasa/UnityPlayerSync)及び[RemoteConnect](https://github.com/katsumasa/RemoteConnect)のWebページへアクセスし、それぞれ画面右上のCode > Download Zipを選択し、ZIPファイルを取得する
+<img width="800" alt="Code" src="https://user-images.githubusercontent.com/29646672/183364441-1dd3da87-be04-419c-b060-448817ec0cec.gif">
+2. ZIPファイルを解凍する
 
 ### Prefabの配置
 
@@ -110,6 +119,40 @@ Editor -> Project Settings ->PlayerScripting BackendにMonoを設定してくだ
 <img width="800" alt="Prefab" src="https://user-images.githubusercontent.com/29646672/177100904-b3b66b86-2d46-4230-aa17-b3cd0d0ecf2f.png">
 
 Development Build及びAutoconnect Profilerにチェックを入れてBuld( And Run)を実行してください。
+
+### 動作確認
+
+ビルドが完了し、実機上でアプリケーションが実行されたらいよいよ動作確認です。　　
+1. UnityEditor上で`File > New Scene`を選択します。
+2. `Hierarchy View`上でGameObjectを何も選択していない状態で右クリック > Syncを実行します。しばらく待つとHierarchy Viewに実機上のアプリにScene情報が構築されます。
+3. 適当なGameObjectを選択し、InspectorからTransformの値を変更してみましょう。
+4. Hierarchy ViewでGameObjectを選択したまま、右クリック > Syncを実行します。実機上でも該当するGameObjectのTransformの値が更新されることが確認出来る筈です。
+
+![402f527086e746b601a17ddcc6f9d09a](https://user-images.githubusercontent.com/29646672/183376337-ad6b1073-44fe-4330-a649-6801dba3e421.gif)
+
+
+### UnityPlayerSyncEditorWindow
+
+<img width="400" alt="image" src="https://user-images.githubusercontent.com/29646672/183376759-3a074cbc-8da8-4959-8977-42d1bbcda4b4.png">
+
+Window > UTJ > UnityPlayerSyncを選択する、もしくは実機とUnityEditorが接続すると自動的に開くWindowです。
+
+#### ConnectTo
+
+UnityEditorに複数のデバイスが接続されている場合、接続先を切り替えることが可能です。この値はUnityProfilerと連動しています。
+
+#### SYNC
+
+デバイス上のSceneをUnityEditorへ展開します。
+Hierarchy ViewからGameObjectを選択せずに、右クリック > Syncを実行した時と同じです。
+
+#### GC
+
+実機上でSystem.GC.Collect()を実行します。
+
+#### UnloadUnusedAssets
+
+実機上でResources.UnloadUnusedAssets()を実行します。
 
 ## Tips
 
@@ -159,7 +202,9 @@ A. デバイスのスクリーンサイズとEditor上のGameViewのサイズが
 Q. 同期中にOut of Memoryが発生します。  
 A. Sceneを構成するObjectが多くなる程マ、ネージドメモリから確保するメモリ量が多くなって行きます。UnityPlayerSyncPlayerの`Use Stream Buffer Capacity`を有効にし、`Capacity Size[MB]`で適切な値を設定することで複雑なシーンでも同期が成功する場合があります。（あまり大きな値を設定すると同期前にOut of Memoryが発生するので注意して下さい。)
 
-![b223d923249ba487d60ff4c016f86624](https://user-images.githubusercontent.com/29646672/181192810-38ab173c-8f97-497c-b8b9-f8c6eab1b90e.png)
+
+![image](https://user-images.githubusercontent.com/29646672/183591982-a5b3c71f-370f-4855-aedc-da448a74e614.png)
+
 
 
 Q. 同期が終わりません。  
