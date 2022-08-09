@@ -43,7 +43,10 @@ namespace UTJ.UnityPlayerSync.Runtime
                 var hash = binaryReader.ReadInt32();
                 var syncType = new SyncType();
                 syncType.Deserialize(binaryReader);
-                Instances.Add(hash, syncType);
+                if (Instances.ContainsKey(hash) == false)
+                {
+                    Instances.Add(hash, syncType);
+                }
             }
         }
 
