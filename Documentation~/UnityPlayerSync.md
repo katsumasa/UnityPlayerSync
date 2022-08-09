@@ -14,6 +14,8 @@ This package allows the following workflow possible in the UnityEditor.
 
 <https://user-images.githubusercontent.com/29646672/181483550-17334b57-63a5-4e8e-b257-fc58af7f1249.mp4>
 
+Sample of sync with existing project(used Android emulator since it's easier to visualize).
+
 GameKit2D  
 <img width="800" alt="GameKit2D" src="https://user-images.githubusercontent.com/29646672/181436438-3a3e868d-7e98-4a9b-bc3a-97de5bbf62d4.gif">
 
@@ -53,7 +55,7 @@ Here are the procedures for updating UnityPlayer for modified GameOjects in Unit
 2. Right click
 3. Select Sync from the Context Menu
 
-*Note that you could also create/import a new GameObject in UntyEditor and reflect it over to UnityPlayer with the same procedure.
+*Note* You could also create/import a new GameObject in UntyEditor and reflect it over to UnityPlayer with the same procedure.
 
 ### Syncing Component
 
@@ -78,14 +80,23 @@ After deleting the Component from the GameObject and syncing again, the Componen
 
 ## Setting UnityPlayerSync
 
-### Obtaining Package
+In order to use UnityPlayerSync, we also need the [RemoteConnect](https://github.com/katsumasa/RemoteConnect.git) as well. The setup is complete once the package was added to the Unity project.
 
-In order to use UnityPlayerSync, we also need the [RemoteConnect](https://github.com/katsumasa/RemoteConnect.git) as well. Proceed with the following if you're going to obtain it through git:
+### Getting the Package
+
+The package is managed by GitHub including any future updates.
+
+### When using command line to get the package through git 
 
 ```:console
 git clone https://github.com/katsumasa/RemoteConnect.git
 git clone https://github.com/katsumasa/UnityPlayerSync.git
 ```
+### When getting the package from a web
+
+1. Go to [UnityPlayerSync](https://github.com/katsumasa/UnityPlayerSync) page and click on [RemoteConnect](https://github.com/katsumasa/RemoteConnect). Go to Code > Download ZIP on the top right of the page. 
+<img width="800" alt="Code" src="https://user-images.githubusercontent.com/29646672/183364441-1dd3da87-be04-419c-b060-448817ec0cec.gif">
+2. Extract the Zip file
 
 ### Placing Prefab
 
@@ -105,6 +116,38 @@ Go to Editor -> Project Settings ->PlayerScripting and assign the Backend to Mon
 <img width="800" alt="Prefab" src="https://user-images.githubusercontent.com/29646672/177100904-b3b66b86-2d46-4230-aa17-b3cd0d0ecf2f.png">
 
 Put a check in the Development Build and Autoconnect Profiler and execute Build(And Run).
+
+### Operational Test
+
+Once the build is complete and the app is running on the actual device, it's finally time to test.
+1. Select `File > New Scene` in UnityEditor 
+2. With no GameObject selected in the `Hierarchy View`, right-click and execute Sync. After waiting for a while, Scene information will appear in the Hierarchy View on the actual device's screen.
+3. Select any GameObject and change the value of Transformation inside the Inspector tab.
+4. With the GameObject selected in the Hierarchy View, right click and execute Sync. You should be able to confirm that the Transform value of the corresponding GameObject is updated on the actual device.
+
+![402f527086e746b601a17ddcc6f9d09a](https://user-images.githubusercontent.com/29646672/183376337-ad6b1073-44fe-4330-a649-6801dba3e421.gif)
+
+### UnityPlayerSyncEditorWindow
+
+<img width="400" alt="image" src="https://user-images.githubusercontent.com/29646672/183376759-3a074cbc-8da8-4959-8977-42d1bbcda4b4.png">
+
+Slect Window > UTJ > UnityPlayerSync. This window pops up once the UnityEditor is connected to the actual device.
+
+#### ConnectTo
+
+If multiple devices are connected to UnityEditor and this allows you to switch from one device to another. This value works syncs with UnityProfiler.
+
+#### SYNC
+
+Allows you to relect the Scene on the actual device to UnityEditor. This works the same as right-click and execute Sync without selecting any GameObject in Hierarchy.
+
+#### GC
+
+Executes System.GC.Collect() on the actual device.
+
+#### UnloadUnusedAssets
+
+Executes Resources.UnloadUnusedAssets() on the actual device.
 
 ## Tips
 
