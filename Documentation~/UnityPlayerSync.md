@@ -14,7 +14,7 @@ This package allows the following workflow possible in the UnityEditor.
 
 <https://user-images.githubusercontent.com/29646672/181483550-17334b57-63a5-4e8e-b257-fc58af7f1249.mp4>
 
-Sample of sync with existing project(used Android emulator since it's easier to visulaize).
+Sample of sync with existing project(used Android emulator since it's easier to visualize).
 
 GameKit2D  
 <img width="800" alt="GameKit2D" src="https://user-images.githubusercontent.com/29646672/181436438-3a3e868d-7e98-4a9b-bc3a-97de5bbf62d4.gif">
