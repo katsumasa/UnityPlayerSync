@@ -12,7 +12,6 @@ UnityPlayerSyncはUnityEditorでビルドしたアプリケーション(UnityPla
 2. UnityEditor上で上記のSceneの内容を編集する
 3. 編集した内容をリアルタイムでアプリケーションに反映させる
 
-
 https://user-images.githubusercontent.com/29646672/181483550-17334b57-63a5-4e8e-b257-fc58af7f1249.mp4
 
 
@@ -125,7 +124,7 @@ Development Build及びAutoconnect Profilerにチェックを入れてBuld( And 
 
 ビルドが完了し、実機上でアプリケーションが実行されたらいよいよ動作確認です。　　
 1. UnityEditor上で`File > New Scene`を選択します。
-2. `Hierarchy Viwe`上でGameObjectを何も選択していない状態で右クリック > Syncを実行します。しばらく待つとHierarchy Viewに実機上のアプリにScene情報が構築されます。
+2. `Hierarchy View`上でGameObjectを何も選択していない状態で右クリック > Syncを実行します。しばらく待つとHierarchy Viewに実機上のアプリにScene情報が構築されます。
 3. 適当なGameObjectを選択し、InspectorからTransformの値を変更してみましょう。
 4. Hierarchy ViewでGameObjectを選択したまま、右クリック > Syncを実行します。実機上でも該当するGameObjectのTransformの値が更新されることが確認出来る筈です。
 
