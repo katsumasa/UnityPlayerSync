@@ -81,12 +81,13 @@ GameObjectからComponentを削除後、GameObjectの同期を行うことでPla
 
 ## セットアップ
 
-UnityPlayerSyncは別途[RemoteConnect](https://github.com/katsumasa/RemoteConnect.git)パッケージを使用します。UnityPlayerSyncと合わせて取得して下さい。　　
+UnityPlayerSyncは別途[RemoteConnect](https://github.com/katsumasa/RemoteConnect.git)パッケージを使用します。UnityPlayerSyncと合わせて取得して下さい。  　
 取得したパッケージを任意のUnityプロジェクトへ追加することでセットアップは完了です。
 
 ### パッケージの取得方法
 
-パッケージはGitHubで管理されています。
+パッケージはGitHubで管理されており、取得方法の例を下記へ記載します。
+
 
 #### コマンドラインのgitを使用してパッケージ取得する場合
 
@@ -100,6 +101,20 @@ git clone https://github.com/katsumasa/UnityPlayerSync.git
 1. [UnityPlayerSync](https://github.com/katsumasa/UnityPlayerSync)及び[RemoteConnect](https://github.com/katsumasa/RemoteConnect)のWebページへアクセスし、それぞれ画面右上のCode > Download Zipを選択し、ZIPファイルを取得する
 <img width="800" alt="Code" src="https://user-images.githubusercontent.com/29646672/183364441-1dd3da87-be04-419c-b060-448817ec0cec.gif">
 2. ZIPファイルを解凍する
+
+#### PackageManagerで取得する[お勧め]
+
+1. Window > Package ManagerでPackage Managerを開く
+2. Package Manager左上の+のプルダウンメニューからAdd package form git URL...を選択する
+3. ダイアログへ`https://github.com/katsumasa/RemoteConnect.git`を設定し、Addボタンを押す
+4. Package Manager左上の+のプルダウンメニューからAdd package form git URL...を選択する
+5. ダイアログへ `https://github.com/katsumasa/UnityPlayerSync.git`を設定し、Addボタンを押す
+
+<img width="813" alt="image" src="https://user-images.githubusercontent.com/29646672/183819326-f43d7fde-5cf9-469f-bd8b-02d0c52f4fa4.png">
+
+※RemoteConnectを先に追加する必要があることに注意して下さい。
+
+
 
 ### Prefabの配置
 
@@ -202,13 +217,16 @@ A. デバイスのスクリーンサイズとEditor上のGameViewのサイズが
 Q. 同期中にOut of Memoryが発生します。  
 A. Sceneを構成するObjectが多くなる程マ、ネージドメモリから確保するメモリ量が多くなって行きます。UnityPlayerSyncPlayerの`Use Stream Buffer Capacity`を有効にし、`Capacity Size[MB]`で適切な値を設定することで複雑なシーンでも同期が成功する場合があります。（あまり大きな値を設定すると同期前にOut of Memoryが発生するので注意して下さい。)
 
-
 ![image](https://user-images.githubusercontent.com/29646672/183591982-a5b3c71f-370f-4855-aedc-da448a74e614.png)
-
-
 
 Q. 同期が終わりません。  
 A. Sceneを構成するObjectと比例する形で、同期にかかる時間が伸びて行きます。Unityが提供しているサンプルプロジェクトGameKit3Dを例にとると、Start Sceneは10秒程度で同期が完了しますが、インゲーム中のSceneでは同期に5分以上かかります。
+
+
+Q.[UnityPlayerSync](https://github.com/katsumasa/UnityPlayerSync)と[UnityChoseKun](https://github.com/katsumasa/UnityChoseKun)の違いを教えて下さい。
+A.UnityChoseKunはアプリケーション上のHierarchyの情報及び必要最低限のComponentの情報を取得し、その情報をアプリケーションへダイレクトに反映し、UnityPlayerSyncはアプリケーションのHierarchyをUnityEditor上にそのまま再現し、変更された内容をアプリケーションに反映します。 その為、UnityPlayerSyncはUnityChoseKunよりも得られる情報量が多い一方、アプリケーションとUnityEditorの同期にかかる時間はUnityChoseKunの方が短くなっています。
+
+例えば、アプリケーションのパラメーターを調整してパフォーマンスチューニングや見た目の調整を行うような用途であればUnityChoseKunが適しています。 一方、UnityPlayerSyncは通常のUnityEditorのワークフローと殆ど変わらないGUIで操作することが出来る為、エンジニア以外のクリエーターでも直観的に操作が出来るというメリットがあります。
 
 ## その他
 
