@@ -36,6 +36,24 @@ namespace UTJ.UnityPlayerSync.Runtime
             }
         }
 
+        /// <summary>
+        /// null objectを持つSyncComponentをCachesから削除する
+        /// </summary>
+        static void RemoveInvalidCache()
+        {
+            List<SyncComponent> tmps = new List<SyncComponent>();
+            foreach (var sys in Caches)
+            {
+                if (sys.Object == null)
+                {
+                    tmps.Add(sys);
+                }
+            }
+            foreach(var sys in tmps)
+            {
+                Caches.Remove(sys);
+            }
+        }
 
         /// <summary>
         /// ComponentをキーにしてSyncComponentを検索する
@@ -44,11 +62,12 @@ namespace UTJ.UnityPlayerSync.Runtime
         /// <returns>SyncComponent</returns>
         public static SyncComponent Find(Component component)
         {
-            foreach(var sys in Caches)
+            RemoveInvalidCache();
+
+            foreach (var sys in Caches)
             {
                 if(sys.Object == null)
-                {
-                    Caches.Remove(sys);
+                {            
                     continue;
                 }
                 if (component.Equals(sys.Object))
